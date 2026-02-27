@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>幻龙工作室</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #000000;
+            color: #f5f5f7;
+            line-height: 1.47059;
+            font-weight: 400;
+            letter-spacing: -0.022em;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* 进入动画遮罩层 */
+        .entry-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            z-index: 10000;
+            pointer-events: none;
+            animation: entryFlash 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes entryFlash {
+            0% { opacity: 1; backdrop-filter: blur(0px); }
+            30% { opacity: 0.8; backdrop-filter: blur(10px); }
+            60% { opacity: 0.3; backdrop-filter: blur(5px); }
+            100% { opacity: 0; backdrop-filter: blur(0px); display: none; }
+        }
+
+        /* 动态背景图片容器 - 静止 */
+        .page-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        .bg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .bg-layer.active {
+            opacity: 0.6;
+        }
+
+        #bgHome { background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format&fit=crop'); }
+        #bgProducts { background-image: url('https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=2070&auto=format&fit=crop'); }
+        #bgAbout { background-image: url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop'); }
+        #bgPayment { background-image: url('https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?q=80&w=2070&auto=format&fit=crop'); }
+
+        /* 漂浮小元素容器 */
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .float-item {
+            position: absolute;
+            opacity: 0.3;
+            filter: blur(1px);
+            animation: floatMove linear infinite;
+        }
+
+        .star {
+            color: #ffd700;
+            font-size: 24px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(41, 151, 255, 0.4);
+            box-shadow: 0 0 20px rgba(41, 151, 255, 0.3);
+        }
+
+        .square {
+            width: 25px;
+            height: 25px;
+            background: rgba(255, 100, 100, 0.3);
+            transform: rotate(45deg);
+            box-shadow: 0 0 20px rgba(255, 100, 100, 0.3);
+        }
+
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 25px solid rgba(100, 255, 100, 0.3);
+            filter: drop-shadow(0 0 10px rgba(100, 255, 100, 0.3));
+        }
+
+        .diamond {
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 200, 100, 0.3);
+            transform: rotate(45deg);
+            box-shadow: 0 0 20px rgba(255, 200, 100, 0.3);
+        }
+
+        @keyframes floatMove {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(30px, -30px) rotate(90deg); }
+            50% { transform: translate(60px, 0) rotate(180deg); }
+            75% { transform: translate(30px, 30px) rotate(270deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+
+        .float-item:nth-child(1) { top: 10%; left: 5%; animation-duration: 25s; }
+        .float-item:nth-child(2) { top: 20%; left: 85%; animation-duration: 30s; animation-delay: -5s; }
+        .float-item:nth-child(3) { top: 70%; left: 15%; animation-duration: 28s; animation-delay: -10s; }
+        .float-item:nth-child(4) { top: 80%; left: 80%; animation-duration: 32s; animation-delay: -15s; }
+        .float-item:nth-child(5) { top: 30%; left: 40%; animation-duration: 22s; animation-delay: -2s; }
+        .float-item:nth-child(6) { top: 50%; left: 60%; animation-duration: 35s; animation-delay: -8s; }
+        .float-item:nth-child(7) { top: 15%; left: 70%; animation-duration: 27s; animation-delay: -12s; }
+        .float-item:nth-child(8) { top: 85%; left: 25%; animation-duration: 29s; animation-delay: -18s; }
+        .float-item:nth-child(9) { top: 45%; left: 20%; animation-duration: 31s; animation-delay: -7s; }
+        .float-item:nth-child(10) { top: 65%; left: 75%; animation-duration: 26s; animation-delay: -14s; }
+        .float-item:nth-child(11) { top: 25%; left: 55%; animation-duration: 33s; animation-delay: -22s; }
+        .float-item:nth-child(12) { top: 55%; left: 10%; animation-duration: 24s; animation-delay: -3s; }
+
+        /* 顶部标签导航 */
+        .tab-navigation {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(20, 20, 25, 0.75);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 8px 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slideDown {
+            0% { opacity: 0; transform: translateY(-100%); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .tab-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            flex-wrap: wrap;
+        }
+
+        .tab-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-item {
+            padding: 10px 0;
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            letter-spacing: -0.01em;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tab-item:hover {
+            color: #ffffff;
+            border-bottom-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .tab-item.active {
+            color: #ffffff;
+            border-bottom-color: #2997ff;
+            font-weight: 600;
+            text-shadow: 0 0 10px rgba(41,151,255,0.5);
+        }
+
+        /* 产品标签容器 */
+        .product-tabs-container {
+            display: none;
+            margin-left: 20px;
+            padding-left: 20px;
+            border-left: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .product-tabs-container.visible {
+            display: flex;
+            gap: 24px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .product-tab {
+            padding: 10px 0;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .product-tab:hover {
+            color: #ffffff;
+            border-bottom-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .product-tab.active {
+            color: #2997ff;
+            border-bottom-color: #2997ff;
+        }
+
+        .tab-icon {
+            font-size: 16px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        /* 滚动公告条 */
+        .marquee-container {
+            width: 100%;
+            background: rgba(41, 151, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(41, 151, 255, 0.3);
+            border-bottom: 1px solid rgba(41, 151, 255, 0.3);
+            padding: 12px 0;
+            overflow: hidden;
+            position: relative;
+            z-index: 90;
+            animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+        }
+
+        .marquee-content {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 25s linear infinite;
+            font-size: 16px;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(41,151,255,0.5);
+        }
+
+        .marquee-content span {
+            display: inline-block;
+            margin-right: 50px;
+        }
+
+        .marquee-content i {
+            color: #2997ff;
+            font-style: normal;
+            margin: 0 15px;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* 页面容器 */
+        .page {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            min-height: calc(100vh - 180px);
+        }
+
+        .page.active-page {
+            display: block;
+            opacity: 1;
+            animation: pageFadeIn 0.8s ease forwards;
+        }
+
+        @keyframes pageFadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideOutLeft {
+            to { opacity: 0; transform: translateX(-100px); }
+        }
+
+        @keyframes slideOutDown {
+            to { opacity: 0; transform: translateY(100px); }
+        }
+
+        .page-exit-left {
+            animation: slideOutLeft 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+        }
+
+        .page-exit-down {
+            animation: slideOutDown 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+        }
+
+        /* 内容区域 */
+        .content {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ===== 首页样式 ===== */
+        .home-section {
+            padding: 40px 0 60px;
+        }
+
+        .hero-banner {
+            text-align: center;
+            padding: 60px 20px;
+            margin-bottom: 40px;
+            background: rgba(30, 30, 35, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+        }
+
+        @keyframes scaleIn {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .mission-card {
+            background: rgba(30, 30, 35, 0.6);
+            backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 0;
+            padding: 50px;
+            margin: 40px 0;
+            text-align: center;
+            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+        }
+
+        .updates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .update-card {
+            background: rgba(30, 30, 35, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 30px;
+            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+        }
+
+        .update-card:nth-child(2) {
+            animation-delay: 0.6s;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 50px 0;
+        }
+
+        .gallery-item {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
+        }
+
+        .gallery-item:nth-child(2) {
+            animation-delay: 0.8s;
+        }
+
+        @keyframes fadeUp {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .gallery-item .caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 15px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .caption {
+            transform: translateY(0);
+        }
+
+        /* ===== QQ群组展示区域 - 单群横向布局 ===== */
+        .qq-group-section {
+            margin: 60px 0 40px;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(41, 151, 255, 0.3);
+            border-radius: 0;
+            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.9s both;
+        }
+
+        .qq-group-title {
+            text-align: center;
+            font-size: 36px;
+            color: #2997ff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(41, 151, 255, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .qq-group-title .qq-icon {
+            font-size: 48px;
+            filter: drop-shadow(0 0 10px #2997ff);
+        }
+
+        .qq-group-subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
+
+        /* 单群横向卡片容器 */
+        .qq-single-container {
+            display: flex;
+            justify-content: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* 横向卡片 */
+        .qq-card-single {
+            width: 100%;
+            background: rgba(30, 30, 35, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(41, 151, 255, 0.3);
+            padding: 35px 40px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .qq-card-single:hover {
+            transform: translateY(-5px);
+            border-color: #2997ff;
+            box-shadow: 0 0 40px rgba(41, 151, 255, 0.3);
+        }
+
+        .qq-card-single::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(41,151,255,0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+
+        .qq-card-single:hover::before {
+            opacity: 1;
+        }
+
+        /* 左侧信息区域 */
+        .qq-info-area {
+            flex: 2;
+            text-align: left;
+        }
+
+        .qq-card-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #2997ff;
+            filter: drop-shadow(0 0 10px rgba(41,151,255,0.5));
+        }
+
+        .qq-card-name {
+            font-size: 28px;
+            color: #ffffff;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .qq-card-number {
+            font-size: 32px;
+            color: #2997ff;
+            font-weight: 700;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(41,151,255,0.5);
+        }
+
+        .qq-card-desc {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+            line-height: 1.7;
+            margin-bottom: 5px;
+        }
+
+        /* 右侧二维码和按钮区域 */
+        .qq-qr-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .qq-card-qr {
+            width: 120px;
+            height: 120px;
+            background: #ffffff;
+            padding: 8px;
+            border: 2px solid #2997ff;
+            transition: transform 0.3s ease;
+        }
+
+        .qq-card-qr img {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .qq-card-qr:hover {
+            transform: scale(1.1);
+        }
+
+        .qq-card-button {
+            display: inline-block;
+            padding: 12px 25px;
+            background: rgba(41, 151, 255, 0.2);
+            border: 1px solid #2997ff;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-weight: 500;
+            width: 100%;
+            text-align: center;
+        }
+
+        .qq-card-button:hover {
+            background: #2997ff;
+            color: #ffffff;
+        }
+
+        /* 彩蛋区域 - 鱼游泳动画 */
+        .easter-egg {
+            margin: 80px 0 40px;
+            padding: 30px;
+            background: rgba(20, 30, 40, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 1s both;
+        }
+
+        .fish {
+            position: absolute;
+            font-size: 40px;
+            filter: drop-shadow(0 0 10px rgba(41,151,255,0.5));
+            animation: swim 15s linear infinite;
+        }
+
+        .fish-1 { top: 30%; animation-delay: 0s; }
+        .fish-2 { top: 60%; animation-delay: 3s; font-size: 30px; }
+        .fish-3 { top: 20%; animation-delay: 7s; font-size: 50px; }
+
+        @keyframes swim {
+            0% { transform: translateX(-100px) scaleX(1); }
+            49% { transform: translateX(calc(100vw + 100px)) scaleX(1); }
+            50% { transform: translateX(calc(100vw + 100px)) scaleX(-1); }
+            99% { transform: translateX(-100px) scaleX(-1); }
+            100% { transform: translateX(-100px) scaleX(1); }
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: 0;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            animation: bubble 3s ease-in infinite;
+        }
+
+        @keyframes bubble {
+            0% { transform: translateY(0); opacity: 0.8; }
+            100% { transform: translateY(-150px); opacity: 0; }
+        }
+
+        /* 产品卡片 */
+        .cards-grid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            margin: 30px 0 60px;
+        }
+
+        .product-card {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(30, 30, 35, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 28px 32px;
+            transition: all 0.3s ease;
+            animation: cardSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .product-card:nth-child(1) { animation-delay: 0.1s; }
+        .product-card:nth-child(2) { animation-delay: 0.2s; }
+        .product-card:nth-child(3) { animation-delay: 0.3s; }
+        .product-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes cardSlideIn {
+            0% { opacity: 0; transform: translateX(-100px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        .product-card:hover {
+            background: rgba(40, 40, 48, 0.7);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .product-card.active {
+            border: 2px solid #2997ff;
+            box-shadow: 0 0 30px rgba(41,151,255,0.3);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .card-title {
+            font-size: 26px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .card-price {
+            font-size: 24px;
+            color: #2997ff;
+            font-weight: 600;
+        }
+
+        .card-subtitle {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 16px;
+        }
+
+        .card-desc {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 16px;
+        }
+
+        .chip-container {
+            margin-bottom: 20px;
+        }
+
+        .chip {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 4px 12px;
+            font-size: 12px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .product-qa {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .product-qa-title {
+            font-size: 16px;
+            color: #2997ff;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .product-qa-item {
+            margin-bottom: 10px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .product-qa-question {
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #ffffff;
+            font-size: 14px;
+            cursor: pointer;
+            background: rgba(255,255,255,0.03);
+        }
+
+        .product-qa-question:hover {
+            background: rgba(255,255,255,0.08);
+        }
+
+        .product-qa-answer {
+            max-height: 0;
+            padding: 0 15px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.3);
+            color: rgba(255,255,255,0.8);
+            font-size: 13px;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .product-qa-item.expanded .product-qa-answer {
+            max-height: 100px;
+            padding: 12px 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .product-qa-item.expanded .arrow {
+            transform: rotate(90deg);
+            color: #2997ff;
+        }
+
+        .buy-button {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .buy-link {
+            color: #2997ff;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 8px 20px;
+            background: rgba(41,151,255,0.1);
+            border: 1px solid #2997ff;
+            display: inline-block;
+        }
+
+        .buy-link:hover {
+            background: #2997ff;
+            color: #ffffff;
+        }
+
+        /* 关于我们页面 */
+        .about-section {
+            padding: 40px 0;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .team-card {
+            background: rgba(30, 30, 35, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 30px 20px;
+            text-align: center;
+            animation: scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .team-card:nth-child(1) { animation-delay: 0.2s; }
+        .team-card:nth-child(2) { animation-delay: 0.4s; }
+
+        .team-card:hover {
+            border-color: #2997ff;
+        }
+
+        .avatar-container {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            border: 3px solid #2997ff;
+            overflow: hidden;
+            border-radius: 0;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 支付页面 */
+        .payment-section {
+            padding: 30px 0 60px;
+            min-height: calc(100vh - 200px);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .payment-card {
+            max-width: 700px;
+            margin: 0 auto;
+            background: rgba(30, 30, 35, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 40px 40px 30px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            animation: scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+        }
+
+        .payment-product-name {
+            font-size: 32px;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .payment-product-price {
+            font-size: 48px;
+            color: #2997ff;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .qr-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+            z-index: 20;
+        }
+
+        .qr-code {
+            width: 280px;
+            height: 280px;
+            background: #ffffff;
+            padding: 15px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 30;
+            border: 2px solid #2997ff;
+            box-shadow: 0 0 20px rgba(41,151,255,0.3);
+            cursor: default;
+            animation: pulseIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+        }
+
+        @keyframes pulseIn {
+            0% { opacity: 0; transform: scale(0.8); }
+            50% { transform: scale(1.05); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .qr-code img {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .qr-hint {
+            color: #86868b;
+            font-size: 14px;
+            margin-top: 12px;
+            position: relative;
+            z-index: 30;
+            animation: fadeUp 0.6s ease 0.6s both;
+        }
+
+        .disclaimer {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 70, 70, 0.1);
+            border-left: 4px solid #ff4646;
+            text-align: left;
+            position: relative;
+            z-index: 20;
+            animation: fadeUp 0.6s ease 0.7s both;
+        }
+
+        .disclaimer-title {
+            color: #ff9999;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .disclaimer-content {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .qq-info {
+            background: rgba(41, 151, 255, 0.1);
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid #2997ff;
+            display: inline-block;
+        }
+
+        .payment-qa-section {
+            max-width: 700px;
+            margin: 30px auto 0;
+            padding: 30px;
+            background: rgba(20, 20, 25, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 15;
+            animation: fadeUp 0.6s ease 0.8s both;
+        }
+
+        .payment-qa-title {
+            font-size: 22px;
+            color: #2997ff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .payment-qa-item {
+            margin-bottom: 12px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .payment-qa-question {
+            padding: 12px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #ffffff;
+            font-size: 15px;
+            cursor: pointer;
+            background: rgba(255,255,255,0.03);
+        }
+
+        .payment-qa-answer {
+            max-height: 0;
+            padding: 0 18px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.3);
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .payment-qa-item.expanded .payment-qa-answer {
+            max-height: 150px;
+            padding: 12px 18px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .back-to-products {
+            margin-top: 30px;
+            color: #2997ff;
+            cursor: pointer;
+            font-size: 16px;
+            display: inline-block;
+            padding: 10px 25px;
+            border: 1px solid #2997ff;
+            position: relative;
+            z-index: 20;
+            animation: fadeUp 0.6s ease 0.9s both;
+        }
+
+        .back-to-products:hover {
+            background: #2997ff;
+            color: #ffffff;
+        }
+
+        .footer-note {
+            text-align: center;
+            padding: 30px 0;
+            color: #86868b;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            z-index: 10;
+            animation: fadeUp 0.6s ease 1s both;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .qq-card-single {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .qq-info-area {
+                text-align: center;
+            }
+            
+            .qq-qr-area {
+                width: 100%;
+            }
+            
+            .qq-card-button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 进入动画遮罩层 -->
+    <div class="entry-overlay"></div>
+
+    <!-- 动态背景层 - 静止 -->
+    <div class="page-background">
+        <div class="bg-layer" id="bgHome"></div>
+        <div class="bg-layer" id="bgProducts"></div>
+        <div class="bg-layer" id="bgAbout"></div>
+        <div class="bg-layer" id="bgPayment"></div>
+    </div>
+
+    <!-- 漂浮小元素层 -->
+    <div class="floating-elements">
+        <div class="float-item star">★</div>
+        <div class="float-item star">✧</div>
+        <div class="float-item star">✦</div>
+        <div class="float-item star">☆</div>
+        <div class="float-item circle"></div>
+        <div class="float-item circle"></div>
+        <div class="float-item circle"></div>
+        <div class="float-item square"></div>
+        <div class="float-item square"></div>
+        <div class="float-item triangle"></div>
+        <div class="float-item diamond"></div>
+        <div class="float-item circle" style="width: 10px; height: 10px;"></div>
+        <div class="float-item circle" style="width: 15px; height: 15px; background: rgba(255, 150, 150, 0.3);"></div>
+    </div>
+
+    <!-- 顶部标签导航 -->
+    <div class="tab-navigation">
+        <div class="tab-container">
+            <div class="tab-item active" data-target="home">
+                <span class="tab-icon">🏠</span>
+                <span>首页</span>
+            </div>
+            <div class="tab-item" data-target="products" id="productsMainTab">
+                <span class="tab-icon">📃</span>
+                <span>产品</span>
+            </div>
+            
+            <div class="product-tabs-container" id="productTabsContainer">
+                <div class="product-tab" data-product="iphone">
+                    <span class="tab-icon">📗</span>
+                    <span>体验版5次点卡</span>
+                </div>
+                <div class="product-tab" data-product="macbook">
+                    <span class="tab-icon">📘</span>
+                    <span>10次卡密点卡</span>
+                </div>
+                <div class="product-tab" data-product="ipad">
+                    <span class="tab-icon">📕</span>
+                    <span>100次卡密点卡</span>
+                </div>
+                <div class="product-tab" data-product="airpods">
+                    <span class="tab-icon">📙</span>
+                    <span>1K次使用次数点卡</span>
+                </div>
+            </div>
+
+            <div class="tab-item" data-target="about">
+                <span class="tab-icon">👥</span>
+                <span>关于我们</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 滚动公告条 -->
+    <div class="marquee-container">
+        <div class="marquee-content">
+            <span>测试版SansHub绕过卡密系统发布 <i>✦</i> 限时特惠：体验仅需5元起 <i>✦</i> 联系QQ：2984967309获取技术支持 <i>✦</i> 每日第一个购买赠送2次机会 <i>✦</i></span>
+            <span>测试版SansHub绕过卡密系统发布 <i>✦</i> 限时特惠：体验仅需5元起 <i>✦</i> 联系QQ：2984967309获取技术支持 <i>✦</i> 每日第一个购买赠送2次机会 <i>✦</i></span>
+        </div>
+    </div>
+
+    <!-- 首页页面 -->
+    <div id="homePage" class="page active-page">
+        <div class="home-section">
+            <div class="hero-banner">
+                <h1>SnasHub</h1>
+                <p>体验最佳流畅绕过功能</p>
+            </div>
+
+            <div class="content">
+                <div class="mission-card">
+                    <h2>我们的品质要求</h2>
+                    <p>创作出最佳脚本页面和最佳绕过技术</p>
+                </div>
+
+                <h2 style="font-size: 32px; margin: 40px 0 20px; color: #2997ff;">📋 更新日志</h2>
+                <div class="updates-grid">
+                    <div class="update-card">
+                        <div class="update-date">2024.03.15</div>
+                        <div class="update-title">v1更新</div>
+                        <div class="update-desc">新增设备验证</div>
+                    </div>
+                    <div class="update-card">
+                        <div class="update-date">2024.03.10</div>
+                        <div class="update-title">支付系统上线</div>
+                        <div class="update-desc">支持二维码支付，点击购买可查看对应产品支付页面。</div>
+                    </div>
+                </div>
+
+                <h2 style="font-size: 32px; margin: 60px 0 20px; color: #2997ff;">📸 日常瞬间</h2>
+                <div class="gallery-grid">
+                    <div class="gallery-item" style="background-image: url('https://i.postimg.cc/VvJc0Tg6/006.jpg')">
+                        <div class="caption">开发者小白</div>
+                    </div>
+                    <div class="gallery-item" style="background-image: url('https://i.postimg.cc/1XnL3FRB/QQ-1758802114714.png')">
+                        <div class="caption">幻龙工作室游戏画面</div>
+                    </div>
+                </div>
+
+                <!-- QQ群组展示区域 - 单群横向布局 -->
+                <div class="qq-group-section">
+                    <div class="qq-group-title">
+                        <span class="qq-icon">💬</span>
+                        <span>幻龙工作室 · 官方QQ群</span>
+                        <span class="qq-icon">💬</span>
+                    </div>
+                    <div class="qq-group-subtitle">
+                        加入群聊，获取资讯、技术支持与玩家交流
+                    </div>
+
+                    <!-- 单群横向卡片 -->
+                    <div class="qq-single-container">
+                        <div class="qq-card-single">
+                            <!-- 左侧信息区域 -->
+                            <div class="qq-info-area">
+                                <div class="qq-card-icon">👥</div>
+                                <div class="qq-card-name">幻龙脚本主群</div>
+                                <div class="qq-card-number">1053432647</div>
+                                <div class="qq-card-desc">
+                                    核心玩家聚集地 · 脚本问题解答<br>
+                                    版本更新通知 · 管理员24小时在线
+                                </div>
+                            </div>
+                            
+                            <!-- 右侧二维码和按钮区域 -->
+                            <div class="qq-qr-area">
+                                <div class="qq-card-qr">
+                                    <img src="https://i.postimg.cc/prw9jX5d/ec68e88d5c0a0a88f400985f4a238629.png" alt="群二维码">
+                                </div>
+                                <a href="https://qm.qq.com/q/aRjT3VRHBm" target="_blank" class="qq-card-button">立即加入</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 彩蛋 - 鱼游泳动画 -->
+                <div class="easter-egg">
+                    <div class="fish fish-1">😋</div>
+                    <div class="fish fish-2">😀</div>
+                    <div class="fish fish-3">🐷</div>
+                    <div class="bubble" style="left: 10%;"></div>
+                    <div class="bubble" style="left: 30%; animation-delay: 1s;"></div>
+                    <div class="bubble" style="left: 50%; animation-delay: 0.5s;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 产品页面 -->
+    <div id="productsPage" class="page">
+        <div class="content">
+            <div class="hero-text" style="text-align:center; padding:40px 0 20px;">
+                <h1 style="font-size:48px;">目前开放卡密充值次数</h1>
+                <p style="color:#86868b;">点击产品标签查看更多细节</p>
+            </div>
+
+            <div class="cards-grid" id="productsGrid">
+                <!-- 体验版 幻龙脚本 -->
+                <div class="product-card" id="iphone-card" data-product="iphone">
+                    <div class="card-header">
+                        <span class="card-title">体验版 5次卡密绕过</span>
+                        <span class="card-price">¥3</span>
+                    </div>
+                    <div class="card-subtitle">体验版 · 卡密绕过</div>
+                    <div class="card-desc">懒得写</div>
+                    <div class="chip-container">
+                        <span class="chip">新手适合</span>
+                        <span class="chip">便宜</span>
+                        <span class="chip">绕过忍者卡密</span>
+                    </div>
+                    
+                    <div class="product-qa">
+                        <div class="product-qa-title">常见问题</div>
+                        <div class="product-qa-item">
+                            <div class="product-qa-question">
+                                <span>如何绕过？</span>
+                                <span class="arrow">▶</span>
+                            </div>
+                            <div class="product-qa-answer">去问豆包或者元宝</div>
+                        </div>
+                        <div class="product-qa-item">
+                            <div class="product-qa-question">
+                                <span>支持哪些？</span>
+                                <span class="arrow">▶</span>
+                            </div>
+                            <div class="product-qa-answer">支持基本LootLabs，WorkLink，Linkvertise，只要是市面出现的都允许绕过</div>
+                        </div>
+                    </div>
+                    
+                    <div class="buy-button">
+                        <span class="buy-link" data-product="iphone">立即购买 →</span>
+                    </div>
+                </div>
+
+                <!-- 常规款 幻龙脚本 -->
+                <div class="product-card" id="macbook-card" data-product="macbook">
+                    <div class="card-header">
+                        <span class="card-title">常规款 10次绕过次数</span>
+                        <span class="card-price">¥5</span>
+                    </div>
+                    <div class="card-subtitle">SansHub · 开发创作</div>
+                    <div class="card-desc">懒得写</div>
+                    <div class="chip-container">
+                        <span class="chip">通用支持</span>
+                    </div>
+                    
+                    <div class="product-qa">
+                        <div class="product-qa-title">常见问题</div>
+                        <div class="product-qa-item">
+                            <div class="product-qa-question">
+                                <span>可以使用几个账户？</span>
+                                <span class="arrow">▶</span>
+                            </div>
+                            <div class="product-qa-answer">支持最多1个账户</div>
+                        </div>
+                        <div class="product-qa-item">
+                            <div class="product-qa-question">
+                                <span>允许升级吗？</span>
+                                <span class="arrow">▶</span>
+                            </div>
+                            <div class="product-qa-answer">这是购买次数非剑客的会员时长</div>
+                        </div>
+                    </div>
+                    
+                    <div class="buy-button">
+                        <span class="buy-link" data-product="macbook">立即购买 →</span>
+                    </div>
+                </div>
+
+                <!-- 高级版 500次绕过机会 -->
+                <div class="product-card" id="ipad-card" data-product="ipad">
+                    <div class="card-header">
+                        <span class="card-title">性价比 70+30[赠送]次卡密</span>
+                        <span class="card-price">¥25起</span>
+                    </div>
+                    <div class="card-subtitle">SansHub支持</div>
+                    <div class="card-desc">依旧懒得写</div>
+                    <div class="chip-container">
+                        <span class="chip">link全通用</span>
+                        <span class="chip">好用</span>
+                        <span class="chip">响应最快</span>
+                    </div>
+                    
+                    <div class="product-qa">
+                        <div class="product-qa-title">常见问题</div>
+                        <div class="product-qa-item">
+                            <div class="product-qa-question">
+                                <span>支持些什么？？</span>
+                                <span class="arrow">▶</span>
+                            </div>
+                            <div class="product-qa-answer">支持上述所有绕过</div>
+                        </div>
+                        <div class="product-qa-item">
+                            <div class="product-qa-question">
+                                <span>有验证吗？</span>
+                                <span class="arrow">▶</span>
+                            </div>
+                            <div class="product-qa-answer">根据你qq邮箱用户添加次数绑定锁死</div>
+                        </div>
+                    </div>
+                    
+                    <div class="buy-button">
+                        <span class="buy-link" data-product="ipad">立即购买 →</span>
+                    </div>
+                </div>
+
+                <!-- 高级版 + 附赠SansHub绕过卡密服务 -->
+                <div class="product-card" id="airpods-card" data-product="airpods">
+                    <div class="card-header">
+                        <span class="card-title">人上人版 1000次卡密绕过</span>
+                        <span class="card-price">¥120</span>
+                    </div>
+                    <div class="card-subtitle">顶配</div>
+                    <div class="card-desc">最牛逼克拉斯的赠送群管理员名额</div>
+                    <div class="chip-container">
+                        <span class="chip">绕过linkvertise</span>
+                        <span class="chip">绕过LootLabs</span>
+                        <span class="chip">绕过WorkLink</span>
+                        <span class="chip">允许解忍者卡密</span>
+                    </div>
+                    
+                    <div class="product-qa">
+                        <div class="product-qa-title">常见问题</div>
+                        <div class="product-qa-item">
+                            <div class="product-qa-question">
+                                <span>包含内容有什么？</span>
+                                <span class="arrow">▶</span>
+                            </div>
+                            <div class="product-qa-answer">具备主动绕过Roblox脚本作者喜欢的广告服务</div>
+                        </div>
+                        <div class="product-qa-item">
+                            <div class="product-qa-question">
+                                <span>不跑路吗？</span>
+                                <span class="arrow">▶</span>
+                            </div>
+                            <div class="product-qa-answer">跑个蛋我们群组永远支持</div>
+                        </div>
+                    </div>
+                    
+                    <div class="buy-button">
+                        <span class="buy-link" data-product="airpods">立即购买 →</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 关于我们页面 -->
+    <div id="aboutPage" class="page">
+        <div class="content">
+            <h2 style="font-size:48px; text-align:center; margin:40px 0 20px; background: linear-gradient(145deg, #ffffff, #a0a0a8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">关于我们</h2>
+            <p style="text-align:center; color:#86868b; margin-bottom:60px;">Meet the team</p>
+            
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="avatar-container">
+                        <img class="avatar" src="https://q.qlogo.cn/headimg_dl?dst_uin=2984967309&spec=640" alt="小白头像" onerror="this.src='https://i.postimg.cc/tC9JSdkz/Image-293894247015959.jpg'">
+                    </div>
+                    <h3 class="team-name">小白</h3>
+                    <div class="team-role">合作者 & 网站开发者</div>
+                    <div class="team-bio">拥有2年roblox脚本经验。</div>
+                    <div class="team-social" style="margin-top:15px;">
+                        <span style="color:#2997ff;">QQ: 付款界面查看</span>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="avatar-container">
+                        <img class="avatar" src="https://q.qlogo.cn/headimg_dl?dst_uin=1208931506&spec=640" alt="小小鱼头像" onerror="this.src='https://i.postimg.cc/tC9JSdkz/Image-293894247015959.jpg'">
+                    </div>
+                    <h3 class="team-name">小小鱼</h3>
+                    <div class="team-role">技术总监 & 负责人</div>
+                    <div class="team-bio">全栈开发专家，负责核心架构。</div>
+                    <div class="team-social" style="margin-top:15px;">
+                        <span style="color:#2997ff;">QQ: 秘密</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 支付页面 -->
+    <div id="paymentPage" class="page">
+        <div class="content payment-section">
+            <div class="payment-card">
+                <div class="payment-product-name" id="paymentProductName">体验版 幻龙脚本</div>
+                <div class="payment-product-price" id="paymentProductPrice">¥5起</div>
+                
+                <div class="qr-wrapper">
+                    <div class="qr-code" id="qrCode">
+                        <img src="https://i.postimg.cc/3xF2dJw6/mmexport1772021478184.jpg" alt="QR Code">
+                    </div>
+                    <span class="qr-hint">使用微信扫码支付</span>
+                </div>
+                
+                <div class="disclaimer">
+                    <div class="disclaimer-title">
+                        <span>⚠️ 免责声明</span>
+                    </div>
+                    <div class="disclaimer-content">
+                        <p>• 付款请备注你注册qq邮箱号</p>
+                        <p>• 管理员QQ：<strong style="color:#2997ff; font-size:18px;">2984967309</strong> (24小时在线)</p>
+                        <p>• 添加QQ时请备注：订单号+产品名称</p>
+                        <p>• 订单处理时间：工作日18:00-22:00，节假日正常处理</p>
+                        <div class="qq-info">
+                            📱 扫码后请截图保存订单号<br>
+                            💬 QQ咨询时请提供付款截图
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="back-to-products" id="backToProducts">← 返回产品列表</div>
+            </div>
+
+            <div class="payment-qa-section">
+                <div class="payment-qa-title">付款常见问题</div>
+                
+                <div class="payment-qa-item">
+                    <div class="payment-qa-question">
+                        <span>付款后多久可以拿到？</span>
+                        <span class="arrow">▶</span>
+                    </div>
+                    <div class="payment-qa-answer">按照免责声明步骤约10分钟内相应</div>
+                </div>
+                
+                <div class="payment-qa-item">
+                    <div class="payment-qa-question">
+                        <span>如何查询订单状态？</span>
+                        <span class="arrow">▶</span>
+                    </div>
+                    <div class="payment-qa-answer">添加管理员QQ 2984967309，提供订单号即可查询实时状态。</div>
+                </div>
+                
+                <div class="payment-qa-item">
+                    <div class="payment-qa-question">
+                        <span>支持哪些支付方式？</span>
+                        <span class="arrow">▶</span>
+                    </div>
+                    <div class="payment-qa-answer">本页面仅支持微信扫码支付，暂不支持其他方式。</div>
+                </div>
+                
+                <div class="payment-qa-item">
+                    <div class="payment-qa-question">
+                        <span>可以申请退款吗？</span>
+                        <span class="arrow">▶</span>
+                    </div>
+                    <div class="payment-qa-answer">当作捐款处理。</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        * 我不喜欢剑客的人机行为搞vip形式
+    </div>
+
+    <script>
+        (function() {
+            const tabs = document.querySelectorAll('.tab-item');
+            const productTabsContainer = document.getElementById('productTabsContainer');
+            const productsMainTab = document.getElementById('productsMainTab');
+            const productTabs = document.querySelectorAll('.product-tab');
+            
+            const pages = {
+                home: document.getElementById('homePage'),
+                products: document.getElementById('productsPage'),
+                about: document.getElementById('aboutPage'),
+                payment: document.getElementById('paymentPage')
+            };
+            
+            const bgLayers = {
+                home: document.getElementById('bgHome'),
+                products: document.getElementById('bgProducts'),
+                about: document.getElementById('bgAbout'),
+                payment: document.getElementById('bgPayment')
+            };
+            
+            const buyLinks = document.querySelectorAll('.buy-link');
+            const backToProducts = document.getElementById('backToProducts');
+            const paymentProductName = document.getElementById('paymentProductName');
+            const paymentProductPrice = document.getElementById('paymentProductPrice');
+            
+            const qaItems = document.querySelectorAll('.product-qa-item');
+            const paymentQaItems = document.querySelectorAll('.payment-qa-item');
+            
+            let currentPage = 'home';
+            let isTransitioning = false;
+            let isProductsExpanded = false;
+
+            function setActiveBg(pageId) {
+                Object.keys(bgLayers).forEach(key => {
+                    bgLayers[key].classList.remove('active');
+                });
+                if (bgLayers[pageId]) {
+                    bgLayers[pageId].classList.add('active');
+                }
+            }
+
+            function toggleProductTabs(expand) {
+                if (expand) {
+                    productTabsContainer.classList.add('visible');
+                    productsMainTab.classList.add('active');
+                    isProductsExpanded = true;
+                } else {
+                    productTabsContainer.classList.remove('visible');
+                    if (currentPage !== 'products') {
+                        productsMainTab.classList.remove('active');
+                    }
+                    isProductsExpanded = false;
+                }
+            }
+
+            function scrollToTop() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            function switchPage(targetPageId, exitAnimation = 'left') {
+                if (isTransitioning || currentPage === targetPageId) return;
+                
+                isTransitioning = true;
+                
+                const currentPageEl = pages[currentPage];
+                const targetPageEl = pages[targetPageId];
+                
+                if (!currentPageEl || !targetPageEl) {
+                    isTransitioning = false;
+                    return;
+                }
+
+                currentPageEl.classList.add(exitAnimation === 'left' ? 'page-exit-left' : 'page-exit-down');
+
+                tabs.forEach(tab => {
+                    const target = tab.getAttribute('data-target');
+                    if (target === targetPageId) {
+                        tab.classList.add('active');
+                    } else {
+                        tab.classList.remove('active');
+                    }
+                });
+
+                if (targetPageId === 'products') {
+                    toggleProductTabs(true);
+                } else {
+                    toggleProductTabs(false);
+                }
+
+                setTimeout(() => {
+                    currentPageEl.classList.remove('active-page', 'page-exit-left', 'page-exit-down');
+                    targetPageEl.classList.add('active-page');
+                    
+                    setActiveBg(targetPageId);
+                    
+                    currentPage = targetPageId;
+                    
+                    scrollToTop();
+                    
+                    setTimeout(() => {
+                        isTransitioning = false;
+                    }, 100);
+                }, 450);
+            }
+
+            function scrollToProduct(productId) {
+                const productCard = document.getElementById(`${productId}-card`);
+                if (productCard) {
+                    productCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    document.querySelectorAll('.product-card').forEach(c => c.classList.remove('active'));
+                    productCard.classList.add('active');
+                }
+            }
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    if (isTransitioning) return;
+                    
+                    const targetId = this.getAttribute('data-target');
+                    
+                    if (targetId === 'products') {
+                        if (currentPage !== 'products') {
+                            switchPage('products', currentPage === 'payment' ? 'down' : 'left');
+                        } else {
+                            toggleProductTabs(!isProductsExpanded);
+                        }
+                    } else {
+                        switchPage(targetId, currentPage === 'payment' ? 'down' : 'left');
+                    }
+                });
+            });
+
+            productTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const productId = this.getAttribute('data-product');
+                    
+                    if (currentPage !== 'products') {
+                        switchPage('products', 'left');
+                        setTimeout(() => {
+                            scrollToProduct(productId);
+                        }, 600);
+                    } else {
+                        scrollToProduct(productId);
+                    }
+                });
+            });
+
+            buyLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const productId = this.getAttribute('data-product');
+                    const productCard = document.getElementById(`${productId}-card`);
+                    
+                    if (productCard) {
+                        const title = productCard.querySelector('.card-title').textContent;
+                        const price = productCard.querySelector('.card-price').textContent;
+                        
+                        paymentProductName.textContent = title;
+                        paymentProductPrice.textContent = price;
+                    }
+                    
+                    switchPage('payment', 'left');
+                });
+            });
+
+            backToProducts.addEventListener('click', function() {
+                switchPage('products', 'down');
+            });
+
+            qaItems.forEach(item => {
+                const question = item.querySelector('.product-qa-question');
+                question.addEventListener('click', function() {
+                    item.classList.toggle('expanded');
+                });
+            });
+
+            paymentQaItems.forEach(item => {
+                const question = item.querySelector('.payment-qa-question');
+                question.addEventListener('click', function() {
+                    item.classList.toggle('expanded');
+                });
+            });
+
+            setActiveBg('home');
+            pages.home.classList.add('active-page');
+            
+            setTimeout(() => {
+                document.getElementById('iphone-card').classList.add('active');
+            }, 100);
+        })();
+    </script>
+</body>
+</html>
