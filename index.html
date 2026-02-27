@@ -921,7 +921,7 @@
             object-fit: cover;
         }
 
-        /* 视频展示区域 */
+        /* 视频展示区域 - YouTube */
         .video-showcase {
             margin-top: 60px;
             padding: 40px 20px;
@@ -968,13 +968,13 @@
             background: #000;
         }
 
-        .video-container video {
+        .video-container iframe {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            border: none;
         }
 
         .video-info {
@@ -1562,7 +1562,7 @@
         </div>
     </div>
 
-    <!-- 关于我们页面 -->
+    <!-- 关于我们页面 - YouTube视频版本 -->
     <div id="aboutPage" class="page">
         <div class="content">
             <h2 style="font-size:48px; text-align:center; margin:40px 0 20px; background: linear-gradient(145deg, #ffffff, #a0a0a8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">关于我们</h2>
@@ -1585,8 +1585,8 @@
                         <img class="avatar" src="https://q.qlogo.cn/headimg_dl?dst_uin=3822304607&spec=640" alt="彩蛋头像" onerror="this.src='https://i.postimg.cc/tC9JSdkz/Image-293894247015959.jpg'">
                     </div>
                     <h3 class="team-name">mlaO</h3>
-                    <div class="team-role">神秘鸡王</div>
-                    <div class="team-bio">3822304607</div>
+                    <div class="team-role">神秘鸡哥</div>
+                    <div class="team-bio">UwU</div>
                     <div class="team-social" style="margin-top:15px;">
                         <span style="color:#2997ff;">3822304607</span>
                     </div>
@@ -1604,40 +1604,31 @@
                 </div>
             </div>
 
-            <!-- 视频展示区域 -->
+            <!-- 视频展示区域 - YouTube视频 -->
             <div class="video-showcase">
-                <h3 class="video-title">抽象视频</h3>
+                <h3 class="video-title">🎬 产品演示视频</h3>
                 <div class="video-grid">
                     <div class="video-card">
                         <div class="video-container">
-                            <video controls poster="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=400">
-                                <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
-                                您的浏览器不支持视频播放
-                            </video>
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         </div>
                         <div class="video-info">
-                            <h3>SansHub 绕过演示</h3>
+                            <h3>SansHub 开源代码展示</h3>
                             <p>快速绕过Linkvertise、LootLabs等广告平台，仅需3秒完成验证</p>
                         </div>
                     </div>
                     <div class="video-card">
                         <div class="video-container">
-                            <video controls poster="https://images.unsplash.com/photo-1611162618071-b39a2ec055fb?w=400">
-                                <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
-                                您的浏览器不支持视频播放
-                            </video>
+                            <iframe src="https://www.youtube.com/embed/S0sSVaZst5E" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         </div>
                         <div class="video-info">
-                            <h3>卡密使用教程</h3>
+                            <h3>留给心怀不轨的傻子</h3>
                             <p>购买后如何兑换卡密，绑定QQ邮箱，开启绕过服务</p>
                         </div>
                     </div>
                     <div class="video-card">
                         <div class="video-container">
-                            <video controls poster="https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=400">
-                                <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
-                                您的浏览器不支持视频播放
-                            </video>
+                            <iframe src="https://www.youtube.com/embed/AbX1g6qvwQY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         </div>
                         <div class="video-info">
                             <h3>群组互动日常</h3>
@@ -1772,10 +1763,8 @@
             function toggleMusic() {
                 if (isMusicVisible) {
                     musicPlayer.classList.remove('visible');
-                    musicIcon.textContent = '🎵';
                 } else {
                     musicPlayer.classList.add('visible');
-                    musicIcon.textContent = '🎵';
                 }
                 isMusicVisible = !isMusicVisible;
             }
