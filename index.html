@@ -167,15 +167,16 @@
             animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        @keyframes slideDown {
-            0% { opacity: 0; transform: translateY(-100%); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        .tab-container {
+        .nav-wrapper {
             max-width: 1280px;
             margin: 0 auto;
             padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .tab-container {
             display: flex;
             align-items: center;
             gap: 32px;
@@ -183,6 +184,7 @@
             scrollbar-width: none;
             -ms-overflow-style: none;
             flex-wrap: wrap;
+            flex: 1;
         }
 
         .tab-container::-webkit-scrollbar {
@@ -261,6 +263,72 @@
         .tab-icon {
             font-size: 16px;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        /* 音乐控制按钮 */
+        .music-control {
+            margin-left: 20px;
+            flex-shrink: 0;
+        }
+
+        .music-btn {
+            background: rgba(41, 151, 255, 0.15);
+            border: 1px solid #2997ff;
+            color: #ffffff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .music-btn:hover {
+            background: #2997ff;
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(41, 151, 255, 0.5);
+        }
+
+        .music-btn.muted {
+            background: rgba(255, 70, 70, 0.2);
+            border-color: #ff4646;
+            color: #ff9999;
+        }
+
+        .music-btn.muted:hover {
+            background: #ff4646;
+            color: #ffffff;
+        }
+
+        /* 网易云音乐播放器容器 - 默认隐藏 */
+        .music-player-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 2px solid #2997ff;
+            background: #000;
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.9);
+            pointer-events: none;
+        }
+
+        .music-player-container.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        .music-player-container iframe {
+            display: block;
         }
 
         /* 滚动公告条 */
@@ -832,6 +900,7 @@
 
         .team-card:nth-child(1) { animation-delay: 0.2s; }
         .team-card:nth-child(2) { animation-delay: 0.4s; }
+        .team-card:nth-child(3) { animation-delay: 0.6s; }
 
         .team-card:hover {
             border-color: #2997ff;
@@ -850,6 +919,78 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        /* 视频展示区域 */
+        .video-showcase {
+            margin-top: 60px;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(41, 151, 255, 0.3);
+            animation: fadeUp 0.6s ease 0.8s both;
+        }
+
+        .video-title {
+            text-align: center;
+            font-size: 32px;
+            color: #2997ff;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px rgba(41, 151, 255, 0.5);
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .video-card {
+            background: rgba(30, 30, 35, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(41, 151, 255, 0.3);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .video-card:hover {
+            transform: translateY(-10px);
+            border-color: #2997ff;
+            box-shadow: 0 0 40px rgba(41, 151, 255, 0.3);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 宽高比 */
+            background: #000;
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-info {
+            padding: 20px;
+        }
+
+        .video-info h3 {
+            font-size: 20px;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .video-info p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            line-height: 1.6;
         }
 
         /* 支付页面 */
@@ -1064,6 +1205,30 @@
             .qq-card-button {
                 width: 100%;
             }
+
+            .video-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-wrapper {
+                flex-wrap: wrap;
+            }
+
+            .music-control {
+                margin-left: 0;
+                margin-top: 5px;
+            }
+
+            .music-player-container {
+                width: 300px;
+                right: 10px;
+                bottom: 10px;
+            }
+            
+            .music-player-container iframe {
+                width: 300px;
+                height: 400px;
+            }
         }
     </style>
 </head>
@@ -1096,40 +1261,49 @@
         <div class="float-item circle" style="width: 15px; height: 15px; background: rgba(255, 150, 150, 0.3);"></div>
     </div>
 
-    <!-- 顶部标签导航 -->
+    <!-- 顶部标签导航 - 带音乐按钮 -->
     <div class="tab-navigation">
-        <div class="tab-container">
-            <div class="tab-item active" data-target="home">
-                <span class="tab-icon">🏠</span>
-                <span>首页</span>
-            </div>
-            <div class="tab-item" data-target="products" id="productsMainTab">
-                <span class="tab-icon">📃</span>
-                <span>产品</span>
+        <div class="nav-wrapper">
+            <div class="tab-container">
+                <div class="tab-item active" data-target="home">
+                    <span class="tab-icon">🏠</span>
+                    <span>首页</span>
+                </div>
+                <div class="tab-item" data-target="products" id="productsMainTab">
+                    <span class="tab-icon">📃</span>
+                    <span>产品</span>
+                </div>
+                
+                <div class="product-tabs-container" id="productTabsContainer">
+                    <div class="product-tab" data-product="iphone">
+                        <span class="tab-icon">📗</span>
+                        <span>体验版5次点卡</span>
+                    </div>
+                    <div class="product-tab" data-product="macbook">
+                        <span class="tab-icon">📘</span>
+                        <span>10次卡密点卡</span>
+                    </div>
+                    <div class="product-tab" data-product="ipad">
+                        <span class="tab-icon">📕</span>
+                        <span>100次卡密点卡</span>
+                    </div>
+                    <div class="product-tab" data-product="airpods">
+                        <span class="tab-icon">📙</span>
+                        <span>1K次使用次数点卡</span>
+                    </div>
+                </div>
+
+                <div class="tab-item" data-target="about">
+                    <span class="tab-icon">👥</span>
+                    <span>关于我们</span>
+                </div>
             </div>
             
-            <div class="product-tabs-container" id="productTabsContainer">
-                <div class="product-tab" data-product="iphone">
-                    <span class="tab-icon">📗</span>
-                    <span>体验版5次点卡</span>
+            <!-- 音乐控制按钮 -->
+            <div class="music-control">
+                <div class="music-btn" id="musicToggle" title="开启/关闭音乐播放器">
+                    <span class="music-icon">🎵</span>
                 </div>
-                <div class="product-tab" data-product="macbook">
-                    <span class="tab-icon">📘</span>
-                    <span>10次卡密点卡</span>
-                </div>
-                <div class="product-tab" data-product="ipad">
-                    <span class="tab-icon">📕</span>
-                    <span>100次卡密点卡</span>
-                </div>
-                <div class="product-tab" data-product="airpods">
-                    <span class="tab-icon">📙</span>
-                    <span>1K次使用次数点卡</span>
-                </div>
-            </div>
-
-            <div class="tab-item" data-target="about">
-                <span class="tab-icon">👥</span>
-                <span>关于我们</span>
             </div>
         </div>
     </div>
@@ -1408,7 +1582,7 @@
                 </div>
                 <div class="team-card">
                     <div class="avatar-container">
-                        <img class="avatar" src="https://i.postimg.cc/B6s1SRSn/QQ-1772161707400.png'">
+                        <img class="avatar" src="https://i.postimg.cc/B6s1SRSn/QQ-1772161707400.png" alt="彩蛋头像" onerror="this.src='https://i.postimg.cc/tC9JSdkz/Image-293894247015959.jpg'">
                     </div>
                     <h3 class="team-name">彩蛋：幻龙 [龙Sir]</h3>
                     <div class="team-role">娱乐彩蛋请勿当真他并不是我们的人</div>
@@ -1426,6 +1600,49 @@
                     <div class="team-bio">全栈开发专家，负责核心架构。</div>
                     <div class="team-social" style="margin-top:15px;">
                         <span style="color:#2997ff;">QQ: 秘密</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 视频展示区域 -->
+            <div class="video-showcase">
+                <h3 class="video-title">🎬 产品演示视频</h3>
+                <div class="video-grid">
+                    <div class="video-card">
+                        <div class="video-container">
+                            <video controls poster="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=400">
+                                <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+                                您的浏览器不支持视频播放
+                            </video>
+                        </div>
+                        <div class="video-info">
+                            <h3>SansHub 绕过演示</h3>
+                            <p>快速绕过Linkvertise、LootLabs等广告平台，仅需3秒完成验证</p>
+                        </div>
+                    </div>
+                    <div class="video-card">
+                        <div class="video-container">
+                            <video controls poster="https://images.unsplash.com/photo-1611162618071-b39a2ec055fb?w=400">
+                                <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+                                您的浏览器不支持视频播放
+                            </video>
+                        </div>
+                        <div class="video-info">
+                            <h3>卡密使用教程</h3>
+                            <p>购买后如何兑换卡密，绑定QQ邮箱，开启绕过服务</p>
+                        </div>
+                    </div>
+                    <div class="video-card">
+                        <div class="video-container">
+                            <video controls poster="https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=400">
+                                <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+                                您的浏览器不支持视频播放
+                            </video>
+                        </div>
+                        <div class="video-info">
+                            <h3>群组互动日常</h3>
+                            <p>幻龙工作室成员日常交流、问题解答、新功能内测现场</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1503,6 +1720,11 @@
         </div>
     </div>
 
+    <!-- 网易云音乐播放器 - 默认隐藏，点击按钮后显示并自动播放 -->
+    <div class="music-player-container" id="musicPlayer">
+        <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="450" src="//music.163.com/outchain/player?type=1&id=358533583&auto=1&height=430"></iframe>
+    </div>
+
     <div class="footer-note">
         * 我不喜欢剑客的人机行为搞vip形式
     </div>
@@ -1539,6 +1761,29 @@
             let currentPage = 'home';
             let isTransitioning = false;
             let isProductsExpanded = false;
+
+            // 音乐播放器控制
+            const musicPlayer = document.getElementById('musicPlayer');
+            const musicToggle = document.getElementById('musicToggle');
+            const musicIcon = musicToggle.querySelector('.music-icon');
+            let isMusicVisible = false; // 默认隐藏
+
+            // 切换音乐播放器显示/隐藏
+            function toggleMusic() {
+                if (isMusicVisible) {
+                    musicPlayer.classList.remove('visible');
+                    musicIcon.textContent = '🎵';
+                } else {
+                    musicPlayer.classList.add('visible');
+                    musicIcon.textContent = '🎵';
+                }
+                isMusicVisible = !isMusicVisible;
+            }
+
+            // 音乐按钮点击事件
+            if (musicToggle) {
+                musicToggle.addEventListener('click', toggleMusic);
+            }
 
             function setActiveBg(pageId) {
                 Object.keys(bgLayers).forEach(key => {
