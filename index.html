@@ -304,7 +304,7 @@
             color: #ffffff;
         }
 
-        /* 网易云音乐播放器容器 - 默认隐藏 */
+        /* 网易云音乐播放器容器 - 多音乐版本 */
         .music-player-container {
             position: fixed;
             bottom: 20px;
@@ -318,6 +318,10 @@
             visibility: hidden;
             transform: scale(0.9);
             pointer-events: none;
+            width: 360px;
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border-radius: 8px;
+            overflow: hidden;
         }
 
         .music-player-container.visible {
@@ -327,8 +331,140 @@
             pointer-events: auto;
         }
 
-        .music-player-container iframe {
-            display: block;
+        .music-player-header {
+            padding: 15px;
+            border-bottom: 1px solid rgba(41, 151, 255, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .music-player-header .cover {
+            width: 50px;
+            height: 50px;
+            background: #2997ff;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .music-player-header .info {
+            flex: 1;
+        }
+
+        .music-player-header .info .title {
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .music-player-header .info .artist {
+            color: rgba(255,255,255,0.6);
+            font-size: 12px;
+        }
+
+        .music-playlist {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .music-playlist-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 5px;
+            background: rgba(255,255,255,0.05);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .music-playlist-item:hover {
+            background: rgba(41, 151, 255, 0.2);
+        }
+
+        .music-playlist-item.active {
+            background: rgba(41, 151, 255, 0.3);
+            border-left-color: #2997ff;
+        }
+
+        .music-playlist-item .index {
+            width: 30px;
+            color: rgba(255,255,255,0.5);
+            font-size: 14px;
+        }
+
+        .music-playlist-item .info {
+            flex: 1;
+        }
+
+        .music-playlist-item .info .name {
+            color: #ffffff;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .music-playlist-item .info .artist {
+            color: rgba(255,255,255,0.5);
+            font-size: 12px;
+        }
+
+        .music-playlist-item .duration {
+            color: rgba(255,255,255,0.5);
+            font-size: 12px;
+            margin-right: 10px;
+        }
+
+        .music-playlist-item .play-icon {
+            color: #2997ff;
+            font-size: 16px;
+            opacity: 0;
+        }
+
+        .music-playlist-item.active .play-icon {
+            opacity: 1;
+        }
+
+        .music-player-controls {
+            padding: 15px;
+            border-top: 1px solid rgba(41, 151, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .music-player-controls button {
+            background: rgba(41, 151, 255, 0.2);
+            border: 1px solid #2997ff;
+            color: #ffffff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .music-player-controls button:hover {
+            background: #2997ff;
+            transform: scale(1.1);
+        }
+
+        .music-player-controls button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* 隐藏的网易云iframe */
+        .netease-player {
+            display: none;
         }
 
         /* 滚动公告条 */
@@ -877,7 +1013,7 @@
             color: #ffffff;
         }
 
-        /* 关于我们页面 */
+        /* 关于我们页面 - YouTube视频版本 */
         .about-section {
             padding: 40px 0;
         }
@@ -1224,11 +1360,6 @@
                 right: 10px;
                 bottom: 10px;
             }
-            
-            .music-player-container iframe {
-                width: 300px;
-                height: 400px;
-            }
         }
     </style>
 </head>
@@ -1291,6 +1422,15 @@
                         <span class="tab-icon">📙</span>
                         <span>1K次使用次数点卡</span>
                     </div>
+                     <div class="product-tab" data-product="2·">
+                        <span class="tab-icon">🔝</span>
+                        <span>自定义充值金额</span>
+                    </div>
+                       <div class="product-tab" data-product="2·">
+                        <span class="tab-icon">🎰</span>
+                        <span>赌徒单</span>
+                    </div>
+
                 </div>
 
                 <div class="tab-item" data-target="about">
@@ -1311,8 +1451,8 @@
     <!-- 滚动公告条 -->
     <div class="marquee-container">
         <div class="marquee-content">
-            <span>测试版SansHub绕过卡密系统发布 <i>✦</i> 限时特惠：体验仅需5元起 <i>✦</i> 联系QQ：2984967309获取技术支持 <i>✦</i> 每日第一个购买赠送2次机会 <i>✦</i></span>
-            <span>测试版SansHub绕过卡密系统发布 <i>✦</i> 限时特惠：体验仅需5元起 <i>✦</i> 联系QQ：2984967309获取技术支持 <i>✦</i> 每日第一个购买赠送2次机会 <i>✦</i></span>
+            <span>正式版SansHub绕过卡密系统发布 <i>✦</i>  新的订单玩法上新! <i>✦</i> 联系QQ：2984967309获取技术支持 <i>✦</i> 每日第一个购买赠送2次机会 <i>✦</i></span>
+            <span>正式版SansHub绕过卡密系统发布 <i>✦</i> 新的订单玩法上新! <i>✦</i> 联系QQ：2984967309获取技术支持 <i>✦</i> 每日第一个购买赠送2次机会 <i>✦</i></span>
         </div>
     </div>
 
@@ -1334,17 +1474,17 @@
                 <div class="updates-grid">
                     <div class="update-card">
                         <div class="update-date">2024.03.15</div>
-                        <div class="update-title">v1更新</div>
-                        <div class="update-desc">新增设备验证</div>
+                        <div class="update-title">v2更新</div>
+                        <div class="update-desc">新增兑换码服务订单次数以后将用兑换码提供，对傻子账户封禁30日处罚</div>
                     </div>
                     <div class="update-card">
                         <div class="update-date">2024.03.10</div>
                         <div class="update-title">支付系统上线</div>
-                        <div class="update-desc">支持二维码支付，点击购买可查看对应产品支付页面。</div>
+                        <div class="update-desc">支持二维码支付，点击购买可查看对应产品支付页面，但不包括玩法和零售商品。</div>
                     </div>
                 </div>
 
-                <h2 style="font-size: 32px; margin: 60px 0 20px; color: #2997ff;">📸 日常瞬间</h2>
+                <h2 style="font-size: 32px; margin: 60px 0 20px; color: #2997ff;">照片</h2>
                 <div class="gallery-grid">
                     <div class="gallery-item" style="background-image: url('https://i.postimg.cc/VvJc0Tg6/006.jpg')">
                         <div class="caption">开发者小白</div>
@@ -1392,9 +1532,10 @@
 
                 <!-- 彩蛋 - 鱼游泳动画 -->
                 <div class="easter-egg">
-                    <div class="fish fish-1">😋</div>
-                    <div class="fish fish-2">😀</div>
-                    <div class="fish fish-3">🐷</div>
+                    <div class="fish fish-1">Omg</div>
+                    <div class="fish fish-2">小白牛逼</div>
+                    <div class="fish fish-3">快点买我们商品绝不跑路</div>
+                    <div class="fish fish-3">你知道吗？Sanshub运营脚本但是转行了</div>
                     <div class="bubble" style="left: 10%;"></div>
                     <div class="bubble" style="left: 30%; animation-delay: 1s;"></div>
                     <div class="bubble" style="left: 50%; animation-delay: 0.5s;"></div>
@@ -1558,6 +1699,75 @@
                         <span class="buy-link" data-product="airpods">立即购买 →</span>
                     </div>
                 </div>
+                          <!-- 自定义告知 -->
+                <div class="product-card" id="2" data-product="2">
+                    <div class="card-header">
+                        <span class="card-title">自定义购买次数信息</span>
+                        <span class="card-price">根据需要购买次数定价</span>
+                    </div>
+                    <div class="card-subtitle">待定</div>
+                    <div class="card-desc">零售价0.5一次，10次=5 100次=50逐次计算</div>
+                    <div class="chip-container">
+                        <span class="chip">零售套餐</span>
+                    </div>
+                    
+                    <div class="product-qa">
+                        <div class="product-qa-title">常见问题</div>
+                        <div class="product-qa-item">
+                            <div class="product-qa-question">
+                                <span>如何计算？</span>
+                                <span class="arrow">▶</span>
+                            </div>
+                            <div class="product-qa-answer">单个0.5 你若要买15次则计算器0.5×15结果就是需要的金额</div>
+                        </div>
+                        <div class="product-qa-item">
+                            <div class="product-qa-question">
+                                <span>不跑路吗？</span>
+                                <span class="arrow">▶</span>
+                            </div>
+                            <div class="product-qa-answer">跑个蛋我们群组永远支持</div>
+                        </div>
+                    </div>
+                    
+                    <div class="buy-button">
+                        <span class="buy-link" data-product="airpods">立即购买 →</span>
+                    </div>
+                </div>
+                              <!-- 赌狗单 -->
+                <div class="product-card" id="2" data-product="2">
+                    <div class="card-header">
+                        <span class="card-title">赌狗单，奖池随机价格</span>
+                        <span class="card-price">5元一次</span>
+                    </div>
+                    <div class="card-subtitle">赌徒</div>
+                    <div class="card-desc">每次都会有绕过次数最高100次，隐藏款1000次。适当娱乐请勿上瘾！</div>
+                    <div class="chip-container">
+                        <span class="chip">赌徒单子</span>
+                    </div>
+                    
+                    <div class="product-qa">
+                        <div class="product-qa-title">常见问题</div>
+                        <div class="product-qa-item">
+                            <div class="product-qa-question">
+                                <span>概率是多少？</span>
+                                <span class="arrow">▶</span>
+                            </div>
+                            <div class="product-qa-answer">完全随机化没有概率</div>
+                        </div>
+                        <div class="product-qa-item">
+                            <div class="product-qa-question">
+                                <span>最低获得多少？</span>
+                                <span class="arrow">▶</span>
+                            </div>
+                            <div class="product-qa-answer">1个但常常5次或10次并且非app程序而是我们定制网页抽奖</div>
+                        </div>
+                    </div>
+                    
+                    <div class="buy-button">
+                        <span class="buy-link" data-product="airpods">立即购买 →</span>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -1585,10 +1795,10 @@
                         <img class="avatar" src="https://q.qlogo.cn/headimg_dl?dst_uin=3822304607&spec=640" alt="彩蛋头像" onerror="this.src='https://i.postimg.cc/tC9JSdkz/Image-293894247015959.jpg'">
                     </div>
                     <h3 class="team-name">mlaO</h3>
-                    <div class="team-role">神秘鸡哥</div>
+                    <div class="team-role">鸡哥</div>
                     <div class="team-bio">UwU</div>
                     <div class="team-social" style="margin-top:15px;">
-                        <span style="color:#2997ff;">3822304607</span>
+                        <span style="color:#2997ff;">请输入文本</span>
                     </div>
                 </div>
                 <div class="team-card">
@@ -1613,22 +1823,22 @@
                             <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         </div>
                         <div class="video-info">
-                            <h3>SansHub 开源代码展示</h3>
+                            <h3>SansHub 绕过演示</h3>
                             <p>快速绕过Linkvertise、LootLabs等广告平台，仅需3秒完成验证</p>
                         </div>
                     </div>
                     <div class="video-card">
                         <div class="video-container">
-                            <iframe src="https://www.youtube.com/embed/S0sSVaZst5E" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            <iframe src="https://www.youtube.com/embed/jNQXAC9IVRw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         </div>
                         <div class="video-info">
-                            <h3>留给心怀不轨的傻子</h3>
+                            <h3>卡密使用教程</h3>
                             <p>购买后如何兑换卡密，绑定QQ邮箱，开启绕过服务</p>
                         </div>
                     </div>
                     <div class="video-card">
                         <div class="video-container">
-                            <iframe src="https://www.youtube.com/embed/AbX1g6qvwQY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            <iframe src="https://www.youtube.com/embed/9bZkp7q19f0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         </div>
                         <div class="video-info">
                             <h3>群组互动日常</h3>
@@ -1711,9 +1921,31 @@
         </div>
     </div>
 
-    <!-- 网易云音乐播放器 - 默认隐藏，点击按钮后显示并自动播放 -->
+    <!-- 多音乐顺序播放器 - 使用网易云API -->
     <div class="music-player-container" id="musicPlayer">
-        <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="450" src="//music.163.com/outchain/player?type=1&id=358533583&auto=1&height=430"></iframe>
+        <!-- 隐藏的网易云iframe，用于实际播放 -->
+        <div class="netease-player" id="neteasePlayer"></div>
+        
+        <!-- 播放器界面 -->
+        <div class="music-player-header">
+            <div class="cover">🎵</div>
+            <div class="info">
+                <div class="title" id="currentSongTitle">夏夜</div>
+                <div class="artist" id="currentSongArtist">幻龙音乐</div>
+            </div>
+        </div>
+        
+        <!-- 播放列表 -->
+        <div class="music-playlist" id="playlist">
+            <!-- 动态通过JS生成 -->
+        </div>
+        
+        <!-- 播放控制 -->
+        <div class="music-player-controls">
+            <button id="prevBtn" title="上一首">⏮</button>
+            <button id="playPauseBtn" title="播放/暂停">⏯</button>
+            <button id="nextBtn" title="下一首">⏭</button>
+        </div>
     </div>
 
     <div class="footer-note">
@@ -1753,18 +1985,136 @@
             let isTransitioning = false;
             let isProductsExpanded = false;
 
-            // 音乐播放器控制
+            // ========== 多音乐顺序播放器 ==========
             const musicPlayer = document.getElementById('musicPlayer');
             const musicToggle = document.getElementById('musicToggle');
             const musicIcon = musicToggle.querySelector('.music-icon');
             let isMusicVisible = false; // 默认隐藏
 
+            // 歌曲列表 - 网易云音乐ID
+            const songList = [
+                { id: '358533583', name: '夏夜', artist: '幻龙音乐', duration: '3:45' },
+                { id: '357985', name: '夜曲', artist: '周杰伦', duration: '3:48' },
+                { id: '167937', name: '晴天', artist: '周杰伦', duration: '4:29' },
+                { id: '186016', name: '七里香', artist: '周杰伦', duration: '4:56' },
+                { id: '65536', name: '起风了', artist: '买辣椒也用券', duration: '5:15' }
+            ];
+
+            let currentIndex = 0;
+            let isPlaying = false;
+            let neteaseIframe = null;
+
+            // 初始化播放列表
+            function initPlaylist() {
+                const playlistEl = document.getElementById('playlist');
+                playlistEl.innerHTML = '';
+                
+                songList.forEach((song, index) => {
+                    const item = document.createElement('div');
+                    item.className = `music-playlist-item ${index === currentIndex ? 'active' : ''}`;
+                    item.innerHTML = `
+                        <div class="index">${index + 1}</div>
+                        <div class="info">
+                            <div class="name">${song.name}</div>
+                            <div class="artist">${song.artist}</div>
+                        </div>
+                        <div class="duration">${song.duration}</div>
+                        <div class="play-icon">▶</div>
+                    `;
+                    item.addEventListener('click', () => playSong(index));
+                    playlistEl.appendChild(item);
+                });
+            }
+
+            // 创建网易云iframe
+            function createNeteasePlayer(songId) {
+                const container = document.getElementById('neteasePlayer');
+                container.innerHTML = ''; // 清空之前的iframe
+                
+                const iframe = document.createElement('iframe');
+                iframe.src = `//music.163.com/outchain/player?type=1&id=${songId}&auto=1&height=90`;
+                iframe.width = '0';
+                iframe.height = '0';
+                iframe.style.display = 'none';
+                iframe.frameborder = '0';
+                iframe.allow = 'autoplay';
+                
+                container.appendChild(iframe);
+                neteaseIframe = iframe;
+            }
+
+            // 播放指定索引的歌曲
+            function playSong(index) {
+                if (index < 0 || index >= songList.length) return;
+                
+                currentIndex = index;
+                const song = songList[currentIndex];
+                
+                // 更新当前显示
+                document.getElementById('currentSongTitle').textContent = song.name;
+                document.getElementById('currentSongArtist').textContent = song.artist;
+                
+                // 更新播放列表高亮
+                document.querySelectorAll('.music-playlist-item').forEach((item, i) => {
+                    if (i === currentIndex) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+                
+                // 创建新的网易云播放器（自动播放）
+                createNeteasePlayer(song.id);
+                isPlaying = true;
+            }
+
+            // 播放/暂停切换
+            function togglePlayPause() {
+                if (!neteaseIframe) {
+                    playSong(currentIndex);
+                    return;
+                }
+                
+                // 由于网易云iframe不支持直接暂停，我们通过刷新iframe实现暂停/播放
+                if (isPlaying) {
+                    // "暂停" - 移除iframe
+                    document.getElementById('neteasePlayer').innerHTML = '';
+                    neteaseIframe = null;
+                    isPlaying = false;
+                } else {
+                    // 播放
+                    playSong(currentIndex);
+                }
+            }
+
+            // 上一首
+            function prevSong() {
+                let newIndex = currentIndex - 1;
+                if (newIndex < 0) newIndex = songList.length - 1;
+                playSong(newIndex);
+            }
+
+            // 下一首
+            function nextSong() {
+                let newIndex = currentIndex + 1;
+                if (newIndex >= songList.length) newIndex = 0;
+                playSong(newIndex);
+            }
+
             // 切换音乐播放器显示/隐藏
             function toggleMusic() {
                 if (isMusicVisible) {
                     musicPlayer.classList.remove('visible');
+                    // 隐藏时暂停音乐
+                    document.getElementById('neteasePlayer').innerHTML = '';
+                    neteaseIframe = null;
+                    isPlaying = false;
                 } else {
                     musicPlayer.classList.add('visible');
+                    // 显示时自动播放当前歌曲
+                    if (!neteaseIframe) {
+                        playSong(currentIndex);
+                    }
                 }
                 isMusicVisible = !isMusicVisible;
             }
@@ -1774,6 +2124,15 @@
                 musicToggle.addEventListener('click', toggleMusic);
             }
 
+            // 初始化播放列表
+            initPlaylist();
+
+            // 绑定控制按钮
+            document.getElementById('prevBtn').addEventListener('click', prevSong);
+            document.getElementById('playPauseBtn').addEventListener('click', togglePlayPause);
+            document.getElementById('nextBtn').addEventListener('click', nextSong);
+
+            // ========== 页面切换功能 ==========
             function setActiveBg(pageId) {
                 Object.keys(bgLayers).forEach(key => {
                     bgLayers[key].classList.remove('active');
