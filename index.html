@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>幻龙工作室</title>
     <style>
+        /* === 全局样式 (完整保留) === */
         * {
             margin: 0;
             padding: 0;
@@ -20,7 +21,6 @@
             letter-spacing: -0.022em;
             overflow-x: hidden;
             min-height: 100vh;
-            position: relative;
         }
 
         /* 进入动画遮罩层 */
@@ -33,17 +33,16 @@
             background-color: #ffffff;
             z-index: 10000;
             pointer-events: none;
-            animation: entryFlash 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation: entryFlash 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
 
         @keyframes entryFlash {
             0% { opacity: 1; backdrop-filter: blur(0px); }
-            30% { opacity: 0.8; backdrop-filter: blur(10px); }
-            60% { opacity: 0.3; backdrop-filter: blur(5px); }
+            40% { opacity: 0.7; backdrop-filter: blur(8px); }
             100% { opacity: 0; backdrop-filter: blur(0px); display: none; }
         }
 
-        /* 动态背景图片容器 - 静止 */
+        /* 动态背景图片容器 */
         .page-background {
             position: fixed;
             top: 0;
@@ -65,16 +64,14 @@
             transition: opacity 1s ease;
         }
 
-        .bg-layer.active {
-            opacity: 0.6;
-        }
+        .bg-layer.active { opacity: 0.6; }
 
         #bgHome { background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format&fit=crop'); }
         #bgProducts { background-image: url('https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=2070&auto=format&fit=crop'); }
         #bgAbout { background-image: url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop'); }
         #bgPayment { background-image: url('https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?q=80&w=2070&auto=format&fit=crop'); }
 
-        /* 漂浮小元素容器 */
+        /* 漂浮小元素层 */
         .floating-elements {
             position: fixed;
             top: 0;
@@ -88,83 +85,45 @@
 
         .float-item {
             position: absolute;
-            opacity: 0.3;
+            opacity: 0.25;
             filter: blur(1px);
             animation: floatMove linear infinite;
         }
 
-        .star {
-            color: #ffd700;
-            font-size: 24px;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-        }
-
-        .circle {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: rgba(41, 151, 255, 0.4);
-            box-shadow: 0 0 20px rgba(41, 151, 255, 0.3);
-        }
-
-        .square {
-            width: 25px;
-            height: 25px;
-            background: rgba(255, 100, 100, 0.3);
-            transform: rotate(45deg);
-            box-shadow: 0 0 20px rgba(255, 100, 100, 0.3);
-        }
-
-        .triangle {
-            width: 0;
-            height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-bottom: 25px solid rgba(100, 255, 100, 0.3);
-            filter: drop-shadow(0 0 10px rgba(100, 255, 100, 0.3));
-        }
-
-        .diamond {
-            width: 20px;
-            height: 20px;
-            background: rgba(255, 200, 100, 0.3);
-            transform: rotate(45deg);
-            box-shadow: 0 0 20px rgba(255, 200, 100, 0.3);
-        }
+        .star { color: #ffd700; font-size: 24px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+        .circle { width: 20px; height: 20px; border-radius: 50%; background: rgba(41, 151, 255, 0.3); box-shadow: 0 0 20px rgba(41,151,255,0.3); }
+        .square { width: 25px; height: 25px; background: rgba(255, 100, 100, 0.25); transform: rotate(45deg); box-shadow: 0 0 20px rgba(255,100,100,0.3); }
+        .triangle { width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-bottom: 25px solid rgba(100,255,100,0.25); filter: drop-shadow(0 0 10px rgba(100,255,100,0.3)); }
+        .diamond { width: 20px; height: 20px; background: rgba(255,200,100,0.25); transform: rotate(45deg); box-shadow: 0 0 20px rgba(255,200,100,0.3); }
 
         @keyframes floatMove {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(30px, -30px) rotate(90deg); }
-            50% { transform: translate(60px, 0) rotate(180deg); }
-            75% { transform: translate(30px, 30px) rotate(270deg); }
-            100% { transform: translate(0, 0) rotate(360deg); }
+            0% { transform: translate(0,0) rotate(0deg); }
+            33% { transform: translate(25px,-20px) rotate(120deg); }
+            66% { transform: translate(45px,10px) rotate(240deg); }
+            100% { transform: translate(0,0) rotate(360deg); }
         }
 
-        .float-item:nth-child(1) { top: 10%; left: 5%; animation-duration: 25s; }
-        .float-item:nth-child(2) { top: 20%; left: 85%; animation-duration: 30s; animation-delay: -5s; }
-        .float-item:nth-child(3) { top: 70%; left: 15%; animation-duration: 28s; animation-delay: -10s; }
-        .float-item:nth-child(4) { top: 80%; left: 80%; animation-duration: 32s; animation-delay: -15s; }
-        .float-item:nth-child(5) { top: 30%; left: 40%; animation-duration: 22s; animation-delay: -2s; }
-        .float-item:nth-child(6) { top: 50%; left: 60%; animation-duration: 35s; animation-delay: -8s; }
-        .float-item:nth-child(7) { top: 15%; left: 70%; animation-duration: 27s; animation-delay: -12s; }
-        .float-item:nth-child(8) { top: 85%; left: 25%; animation-duration: 29s; animation-delay: -18s; }
-        .float-item:nth-child(9) { top: 45%; left: 20%; animation-duration: 31s; animation-delay: -7s; }
-        .float-item:nth-child(10) { top: 65%; left: 75%; animation-duration: 26s; animation-delay: -14s; }
-        .float-item:nth-child(11) { top: 25%; left: 55%; animation-duration: 33s; animation-delay: -22s; }
-        .float-item:nth-child(12) { top: 55%; left: 10%; animation-duration: 24s; animation-delay: -3s; }
+        .float-item:nth-child(1) { top: 5%; left: 8%; animation-duration: 28s; }
+        .float-item:nth-child(2) { top: 15%; left: 82%; animation-duration: 32s; animation-delay: -3s; }
+        .float-item:nth-child(3) { top: 70%; left: 12%; animation-duration: 26s; animation-delay: -7s; }
+        .float-item:nth-child(4) { top: 80%; left: 85%; animation-duration: 34s; animation-delay: -11s; }
+        .float-item:nth-child(5) { top: 35%; left: 35%; animation-duration: 30s; animation-delay: -2s; }
+        .float-item:nth-child(6) { top: 55%; left: 65%; animation-duration: 29s; animation-delay: -9s; }
+        .float-item:nth-child(7) { top: 20%; left: 50%; animation-duration: 27s; animation-delay: -15s; }
+        .float-item:nth-child(8) { top: 88%; left: 40%; animation-duration: 33s; animation-delay: -5s; }
+        .float-item:nth-child(9) { top: 45%; left: 90%; animation-duration: 31s; animation-delay: -13s; }
 
-        /* 顶部标签导航 */
+        /* === 顶部导航 === */
         .tab-navigation {
             position: sticky;
             top: 0;
             z-index: 100;
-            background: rgba(20, 20, 25, 0.75);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 8px 0;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            background: rgba(5, 5, 10, 0.85);
+            backdrop-filter: blur(20px) saturate(200%);
+            -webkit-backdrop-filter: blur(20px) saturate(200%);
+            border-bottom: 1px solid rgba(41, 151, 255, 0.35);
+            padding: 6px 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
         }
 
         .nav-wrapper {
@@ -174,456 +133,474 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .custom-logo {
+            width: 40px;
+            height: 40px;
+            background: #2997ff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 600;
+            color: #000;
+            box-shadow: 0 0 15px #2997ff;
+        }
+
+        .studio-name {
+            font-size: 20px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #fff, #aaccff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            white-space: nowrap;
         }
 
         .tab-container {
             display: flex;
             align-items: center;
-            gap: 32px;
+            gap: 24px;
             overflow-x: auto;
             scrollbar-width: none;
-            -ms-overflow-style: none;
             flex-wrap: wrap;
             flex: 1;
+            justify-content: flex-end;
         }
-
-        .tab-container::-webkit-scrollbar {
-            display: none;
-        }
+        .tab-container::-webkit-scrollbar { display: none; }
 
         .tab-item {
-            padding: 10px 0;
-            font-size: 14px;
+            padding: 8px 0;
+            font-size: 15px;
             font-weight: 500;
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.7);
             cursor: pointer;
             border-bottom: 2px solid transparent;
             transition: all 0.2s ease;
             white-space: nowrap;
-            letter-spacing: -0.01em;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
             display: flex;
             align-items: center;
             gap: 6px;
         }
 
-        .tab-item:hover {
-            color: #ffffff;
-            border-bottom-color: rgba(255, 255, 255, 0.4);
-        }
+        .tab-item:hover { color: #ffffff; border-bottom-color: rgba(255,255,255,0.3); }
+        .tab-item.active { color: #ffffff; border-bottom-color: #2997ff; font-weight: 600; text-shadow: 0 0 8px #2997ff; }
 
-        .tab-item.active {
-            color: #ffffff;
-            border-bottom-color: #2997ff;
-            font-weight: 600;
-            text-shadow: 0 0 10px rgba(41,151,255,0.5);
-        }
-
-        /* 产品标签容器 */
-        .product-tabs-container {
+        /* 品质导航 */
+        .quality-nav-container {
             display: none;
-            margin-left: 20px;
-            padding-left: 20px;
-            border-left: 1px solid rgba(255, 255, 255, 0.2);
+            margin-left: 5px;
+            padding-left: 15px;
+            border-left: 1px solid rgba(41,151,255,0.3);
+            gap: 20px;
+            flex-wrap: wrap;
         }
-
-        .product-tabs-container.visible {
-            display: flex;
-            gap: 24px;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateX(-10px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .product-tab {
-            padding: 10px 0;
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.5);
+        .quality-nav-container.visible { display: flex; animation: fadeIn 0.3s ease; }
+        .quality-nav-item {
+            padding: 8px 0;
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.7);
             cursor: pointer;
             border-bottom: 2px solid transparent;
-            transition: all 0.2s ease;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
+            white-space: nowrap;
+        }
+        .quality-nav-item:hover { color: #fff; border-bottom-color: rgba(255,255,255,0.3); }
+        .quality-nav-item.active { color: #fff; border-bottom-color: #2997ff; }
+        .quality-nav-item[data-quality="basic"] .quality-dot { background-color: #2ecc71; box-shadow: 0 0 10px #2ecc71; }
+        .quality-nav-item[data-quality="advanced"] .quality-dot { background-color: #f39c12; box-shadow: 0 0 10px #f39c12; }
+        .quality-nav-item[data-quality="special"] .quality-dot { background-color: #e74c3c; box-shadow: 0 0 10px #e74c3c; }
+        .quality-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 4px;
         }
 
-        .product-tab:hover {
+        /* 购买须知按钮 */
+        .guide-btn {
+            padding: 8px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 215, 0, 0.08);
+            border: 1px solid rgba(255, 215, 0, 0.25);
+            border-radius: 30px 30px 30px 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            backdrop-filter: blur(4px);
+            margin-left: 5px;
+            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.1);
+        }
+
+        .guide-btn:hover {
+            background: rgba(255, 215, 0, 0.15);
+            border-color: rgba(255, 215, 0, 0.6);
             color: #ffffff;
-            border-bottom-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+            border-radius: 8px 30px 30px 30px;
         }
 
-        .product-tab.active {
-            color: #2997ff;
-            border-bottom-color: #2997ff;
-        }
-
-        .tab-icon {
+        .guide-btn i {
             font-size: 16px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+            color: #ffd700;
         }
 
-        /* 音乐控制按钮 */
-        .music-control {
-            margin-left: 20px;
+        .guide-btn.active {
+            background: rgba(255, 215, 0, 0.15);
+            border-color: #ffd700;
+            color: #fff;
+            border-radius: 30px 30px 8px 30px;
+        }
+
+        .music-control .music-btn {
+            background: rgba(41,151,255,0.15);
+            border: 1px solid #2997ff;
+            color: #fff;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 20px;
+            transition: all 0.3s;
             flex-shrink: 0;
         }
-
-        .music-btn {
-            background: rgba(41, 151, 255, 0.15);
-            border: 1px solid #2997ff;
-            color: #ffffff;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 20px;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .music-btn:hover {
-            background: #2997ff;
-            transform: scale(1.1);
-            box-shadow: 0 0 20px rgba(41, 151, 255, 0.5);
-        }
-
-        .music-btn.muted {
-            background: rgba(255, 70, 70, 0.2);
-            border-color: #ff4646;
-            color: #ff9999;
-        }
-
-        .music-btn.muted:hover {
-            background: #ff4646;
-            color: #ffffff;
-        }
-
-        /* 网易云音乐播放器容器 - 多音乐版本 */
-        .music-player-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 999;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            border: 2px solid #2997ff;
-            background: #000;
-            opacity: 0;
-            visibility: hidden;
-            transform: scale(0.9);
-            pointer-events: none;
-            width: 360px;
-            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .music-player-container.visible {
-            opacity: 1;
-            visibility: visible;
-            transform: scale(1);
-            pointer-events: auto;
-        }
-
-        .music-player-header {
-            padding: 15px;
-            border-bottom: 1px solid rgba(41, 151, 255, 0.3);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .music-player-header .cover {
-            width: 50px;
-            height: 50px;
-            background: #2997ff;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-
-        .music-player-header .info {
-            flex: 1;
-        }
-
-        .music-player-header .info .title {
-            color: #ffffff;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .music-player-header .info .artist {
-            color: rgba(255,255,255,0.6);
-            font-size: 12px;
-        }
-
-        .music-playlist {
-            max-height: 300px;
-            overflow-y: auto;
-            padding: 10px;
-        }
-
-        .music-playlist-item {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            margin-bottom: 5px;
-            background: rgba(255,255,255,0.05);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border-left: 3px solid transparent;
-        }
-
-        .music-playlist-item:hover {
-            background: rgba(41, 151, 255, 0.2);
-        }
-
-        .music-playlist-item.active {
-            background: rgba(41, 151, 255, 0.3);
-            border-left-color: #2997ff;
-        }
-
-        .music-playlist-item .index {
-            width: 30px;
-            color: rgba(255,255,255,0.5);
-            font-size: 14px;
-        }
-
-        .music-playlist-item .info {
-            flex: 1;
-        }
-
-        .music-playlist-item .info .name {
-            color: #ffffff;
-            font-size: 14px;
-            margin-bottom: 3px;
-        }
-
-        .music-playlist-item .info .artist {
-            color: rgba(255,255,255,0.5);
-            font-size: 12px;
-        }
-
-        .music-playlist-item .duration {
-            color: rgba(255,255,255,0.5);
-            font-size: 12px;
-            margin-right: 10px;
-        }
-
-        .music-playlist-item .play-icon {
-            color: #2997ff;
-            font-size: 16px;
-            opacity: 0;
-        }
-
-        .music-playlist-item.active .play-icon {
-            opacity: 1;
-        }
-
-        .music-player-controls {
-            padding: 15px;
-            border-top: 1px solid rgba(41, 151, 255, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .music-player-controls button {
-            background: rgba(41, 151, 255, 0.2);
-            border: 1px solid #2997ff;
-            color: #ffffff;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 18px;
-            transition: all 0.3s ease;
-        }
-
-        .music-player-controls button:hover {
-            background: #2997ff;
-            transform: scale(1.1);
-        }
-
-        .music-player-controls button:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-
-        /* 隐藏的网易云iframe */
-        .netease-player {
-            display: none;
-        }
+        .music-btn:hover { background: #2997ff; transform: scale(1.08); box-shadow: 0 0 18px #2997ff; }
 
         /* 滚动公告条 */
         .marquee-container {
             width: 100%;
-            background: rgba(41, 151, 255, 0.15);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(41, 151, 255, 0.3);
-            border-bottom: 1px solid rgba(41, 151, 255, 0.3);
-            padding: 12px 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid #2997ff;
+            border-bottom: 1px solid #2997ff;
+            padding: 10px 0;
             overflow: hidden;
-            position: relative;
             z-index: 90;
-            animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
         }
-
         .marquee-content {
             display: inline-block;
             white-space: nowrap;
-            animation: marquee 25s linear infinite;
+            animation: marquee 28s linear infinite;
             font-size: 16px;
-            color: #ffffff;
-            text-shadow: 0 0 10px rgba(41,151,255,0.5);
+            color: #fff;
+            text-shadow: 0 0 8px #2997ff;
         }
-
-        .marquee-content span {
-            display: inline-block;
-            margin-right: 50px;
-        }
-
-        .marquee-content i {
-            color: #2997ff;
-            font-style: normal;
-            margin: 0 15px;
-        }
-
-        @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
+        .marquee-content span { display: inline-block; margin-right: 45px; }
+        .marquee-content i { color: #2997ff; font-style: normal; margin: 0 10px; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
         /* 页面容器 */
-        .page {
-            display: none;
-            opacity: 0;
-            transition: opacity 0.6s ease;
-            min-height: calc(100vh - 180px);
-        }
+        .page { display: none; opacity: 0; transition: opacity 0.5s ease; min-height: calc(100vh - 170px); }
+        .page.active-page { display: block; opacity: 1; animation: pageFadeIn 0.7s ease forwards; }
+        @keyframes pageFadeIn { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes slideOutLeft { to { opacity: 0; transform: translateX(-60px); } }
+        @keyframes slideOutDown { to { opacity: 0; transform: translateY(60px); } }
+        .page-exit-left { animation: slideOutLeft 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards !important; }
+        .page-exit-down { animation: slideOutDown 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards !important; }
 
-        .page.active-page {
-            display: block;
-            opacity: 1;
-            animation: pageFadeIn 0.8s ease forwards;
-        }
+        .content { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
 
-        @keyframes pageFadeIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes slideOutLeft {
-            to { opacity: 0; transform: translateX(-100px); }
-        }
-
-        @keyframes slideOutDown {
-            to { opacity: 0; transform: translateY(100px); }
-        }
-
-        .page-exit-left {
-            animation: slideOutLeft 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
-        }
-
-        .page-exit-down {
-            animation: slideOutDown 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
-        }
-
-        /* 内容区域 */
-        .content {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        /* ===== 首页样式 ===== */
-        .home-section {
-            padding: 40px 0 60px;
-        }
+        /* ========== 首页 (完整保留) ========== */
+        .home-section { padding: 30px 0 50px; }
 
         .hero-banner {
             text-align: center;
             padding: 60px 20px;
+            background: rgba(20, 20, 30, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(41, 151, 255, 0.2);
+            border-radius: 32px;
             margin-bottom: 40px;
-            background: rgba(30, 30, 35, 0.5);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            animation: scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+            position: relative;
+            overflow: hidden;
         }
 
-        @keyframes scaleIn {
-            0% { opacity: 0; transform: scale(0.9); }
-            100% { opacity: 1; transform: scale(1); }
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(41,151,255,0.08) 0%, transparent 70%);
+            animation: rotate 25s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .hero-banner h1 {
+            font-size: 64px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #aaccff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 16px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px rgba(41,151,255,0.3);
+        }
+
+        .hero-banner p {
+            font-size: 20px;
+            color: rgba(255,255,255,0.9);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
         }
 
         .mission-card {
-            background: rgba(30, 30, 35, 0.6);
-            backdrop-filter: blur(16px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 0;
-            padding: 50px;
+            background: rgba(25, 25, 35, 0.5);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(41, 151, 255, 0.2);
+            border-radius: 28px;
+            padding: 50px 40px;
             margin: 40px 0;
             text-align: center;
-            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+            position: relative;
+            overflow: hidden;
+            box-shadow: none;
+        }
+
+        .mission-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 15%;
+            width: 70%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(41,151,255,0.3), transparent);
+        }
+
+        .mission-card h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #2997ff;
+            text-shadow: 0 0 15px rgba(41,151,255,0.3);
+            font-weight: 500;
+        }
+
+        .mission-card p {
+            font-size: 18px;
+            color: #fff;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.9;
+            line-height: 1.7;
+        }
+
+        /* 链接区域 */
+        .links-section {
+            margin: 50px 0 40px;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .link-card {
+            background: rgba(25, 25, 35, 0.5);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(41, 151, 255, 0.2);
+            border-radius: 24px;
+            padding: 28px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            box-shadow: none;
+        }
+
+        .link-card:hover {
+            border-color: #2997ff;
+            transform: translateY(-6px);
+            background: rgba(35, 35, 45, 0.7);
+        }
+
+        .link-icon {
+            font-size: 42px;
+            margin-bottom: 15px;
+            color: #2997ff;
+        }
+
+        .link-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .link-desc {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.5;
+        }
+
+        .link-badge {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 5px 15px;
+            background: rgba(41,151,255,0.15);
+            border: 1px solid rgba(41,151,255,0.3);
+            border-radius: 40px;
+            font-size: 12px;
+            color: #2997ff;
+        }
+
+        /* 更新日志区域 */
+        .updates-wrapper {
+            margin: 60px 0 40px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(41,151,255,0.2);
+            padding-bottom: 15px;
+        }
+
+        .section-header h2 {
+            font-size: 32px;
+            color: #2997ff;
+            text-shadow: 0 0 10px rgba(41,151,255,0.2);
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .section-header .header-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, #2997ff, transparent);
         }
 
         .updates-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 30px;
-            margin: 50px 0;
+            margin: 0;
         }
 
         .update-card {
-            background: rgba(30, 30, 35, 0.6);
+            background: rgba(25, 25, 35, 0.5);
             backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 30px;
-            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 28px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: none;
         }
 
-        .update-card:nth-child(2) {
-            animation-delay: 0.6s;
+        .update-card:hover {
+            border-color: rgba(41,151,255,0.3);
+            transform: translateY(-4px);
+            background: rgba(30, 30, 40, 0.6);
+        }
+
+        .update-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: #2997ff;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .update-card:hover::before {
+            opacity: 0.5;
+        }
+
+        .update-date {
+            font-size: 14px;
+            color: #2997ff;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .update-date i {
+            font-size: 16px;
+        }
+
+        .update-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .update-desc {
+            font-size: 15px;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.6;
+        }
+
+        /* 照片墙 */
+        .gallery-section {
+            margin: 60px 0 50px;
         }
 
         .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin: 50px 0;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin: 30px 0 0;
         }
 
         .gallery-item {
-            height: 200px;
+            height: 280px;
             background-size: cover;
             background-position: center;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(41, 151, 255, 0.2);
+            border-radius: 24px;
             position: relative;
             overflow: hidden;
-            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
+            transition: all 0.3s ease;
+            box-shadow: none;
         }
 
-        .gallery-item:nth-child(2) {
-            animation-delay: 0.8s;
-        }
-
-        @keyframes fadeUp {
-            0% { opacity: 0; transform: translateY(40px); }
-            100% { opacity: 1; transform: translateY(0); }
+        .gallery-item:hover {
+            border-color: #2997ff;
+            transform: scale(1.02);
         }
 
         .gallery-item .caption {
@@ -631,99 +608,98 @@
             bottom: 0;
             left: 0;
             right: 0;
-            padding: 15px;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(5px);
+            padding: 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
             transform: translateY(100%);
-            transition: transform 0.3s ease;
+            transition: transform 0.4s ease;
+            font-size: 16px;
+            color: #fff;
+            font-weight: 500;
+            backdrop-filter: blur(4px);
         }
 
         .gallery-item:hover .caption {
             transform: translateY(0);
         }
 
-        /* ===== QQ群组展示区域 - 单群横向布局 ===== */
+        /* QQ群组展示区域 */
         .qq-group-section {
-            margin: 60px 0 40px;
-            padding: 40px 20px;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(41, 151, 255, 0.3);
-            border-radius: 0;
-            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.9s both;
-        }
-
-        .qq-group-title {
-            text-align: center;
-            font-size: 36px;
-            color: #2997ff;
-            margin-bottom: 20px;
-            text-shadow: 0 0 20px rgba(41, 151, 255, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .qq-group-title .qq-icon {
-            font-size: 48px;
-            filter: drop-shadow(0 0 10px #2997ff);
-        }
-
-        .qq-group-subtitle {
-            text-align: center;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 18px;
-            margin-bottom: 40px;
-        }
-
-        /* 单群横向卡片容器 */
-        .qq-single-container {
-            display: flex;
-            justify-content: center;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        /* 横向卡片 */
-        .qq-card-single {
-            width: 100%;
-            background: rgba(30, 30, 35, 0.7);
+            margin: 60px 0 50px;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(16px);
-            border: 1px solid rgba(41, 151, 255, 0.3);
-            padding: 35px 40px;
-            transition: all 0.3s ease;
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(41, 151, 255, 0.25);
+            border-radius: 32px;
             position: relative;
             overflow: hidden;
-            display: flex;
-            align-items: center;
-            gap: 40px;
+            box-shadow: none;
         }
 
-        .qq-card-single:hover {
-            transform: translateY(-5px);
-            border-color: #2997ff;
-            box-shadow: 0 0 40px rgba(41, 151, 255, 0.3);
-        }
-
-        .qq-card-single::before {
+        .qq-group-section::before {
             content: '';
             position: absolute;
             top: -50%;
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(41,151,255,0.1) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            pointer-events: none;
+            background: radial-gradient(circle, rgba(41,151,255,0.03) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
         }
 
-        .qq-card-single:hover::before {
-            opacity: 1;
+        .qq-group-title {
+            text-align: center;
+            font-size: 36px;
+            color: #2997ff;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            text-shadow: 0 0 20px rgba(41,151,255,0.2);
+            position: relative;
+            z-index: 1;
+            font-weight: 500;
         }
 
-        /* 左侧信息区域 */
+        .qq-group-subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.9);
+            font-size: 18px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .qq-single-container {
+            display: flex;
+            justify-content: center;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .qq-card-single {
+            width: 100%;
+            background: rgba(30, 30, 40, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(41,151,255,0.3);
+            border-radius: 28px;
+            padding: 35px 40px;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            transition: all 0.3s ease;
+            box-shadow: none;
+        }
+
+        .qq-card-single:hover {
+            border-color: rgba(41,151,255,0.6);
+            transform: translateY(-5px);
+            background: rgba(35, 35, 45, 0.7);
+        }
+
         .qq-info-area {
             flex: 2;
             text-align: left;
@@ -731,35 +707,33 @@
 
         .qq-card-icon {
             font-size: 48px;
-            margin-bottom: 15px;
             color: #2997ff;
-            filter: drop-shadow(0 0 10px rgba(41,151,255,0.5));
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 10px rgba(41,151,255,0.3));
         }
 
         .qq-card-name {
             font-size: 28px;
-            color: #ffffff;
+            color: #fff;
             margin-bottom: 8px;
-            font-weight: 600;
+            font-weight: 500;
         }
 
         .qq-card-number {
             font-size: 32px;
             color: #2997ff;
-            font-weight: 700;
+            font-weight: 600;
             margin-bottom: 15px;
             letter-spacing: 2px;
-            text-shadow: 0 0 15px rgba(41,151,255,0.5);
+            text-shadow: 0 0 10px rgba(41,151,255,0.2);
         }
 
         .qq-card-desc {
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255,255,255,0.8);
             font-size: 16px;
             line-height: 1.7;
-            margin-bottom: 5px;
         }
 
-        /* 右侧二维码和按钮区域 */
         .qq-qr-area {
             flex: 1;
             display: flex;
@@ -769,286 +743,553 @@
         }
 
         .qq-card-qr {
-            width: 120px;
-            height: 120px;
-            background: #ffffff;
+            width: 130px;
+            height: 130px;
+            background: #fff;
             padding: 8px;
-            border: 2px solid #2997ff;
+            border: 2px solid rgba(41,151,255,0.5);
+            border-radius: 20px;
             transition: transform 0.3s ease;
+            overflow: hidden;
         }
 
         .qq-card-qr img {
             width: 100%;
             height: 100%;
             display: block;
+            object-fit: contain;
+            border-radius: 12px;
         }
 
         .qq-card-qr:hover {
             transform: scale(1.1);
+            border-color: #2997ff;
         }
 
         .qq-card-button {
             display: inline-block;
-            padding: 12px 25px;
-            background: rgba(41, 151, 255, 0.2);
-            border: 1px solid #2997ff;
+            padding: 12px 30px;
+            background: rgba(41,151,255,0.15);
+            border: 1px solid rgba(41,151,255,0.4);
+            border-radius: 40px;
             color: #ffffff;
             text-decoration: none;
             font-size: 16px;
             transition: all 0.3s ease;
-            cursor: pointer;
-            font-weight: 500;
-            width: 100%;
             text-align: center;
+            width: 100%;
+            backdrop-filter: blur(4px);
         }
 
         .qq-card-button:hover {
-            background: #2997ff;
-            color: #ffffff;
+            background: rgba(41,151,255,0.3);
+            border-color: #2997ff;
+            color: #fff;
         }
 
-        /* 彩蛋区域 - 鱼游泳动画 */
+        /* 彩蛋鱼 */
         .easter-egg {
-            margin: 80px 0 40px;
+            margin: 60px 0 40px;
             padding: 30px;
-            background: rgba(20, 30, 40, 0.5);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(10, 20, 30, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(41, 151, 255, 0.15);
+            border-radius: 32px;
             height: 200px;
-            overflow: hidden;
             position: relative;
-            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 1s both;
+            overflow: hidden;
+            box-shadow: none;
         }
 
         .fish {
             position: absolute;
-            font-size: 40px;
-            filter: drop-shadow(0 0 10px rgba(41,151,255,0.5));
-            animation: swim 15s linear infinite;
+            font-size: 42px;
+            filter: drop-shadow(0 0 12px rgba(41,151,255,0.3));
+            animation: swim 18s linear infinite;
+            white-space: nowrap;
+            opacity: 0.9;
         }
 
-        .fish-1 { top: 30%; animation-delay: 0s; }
-        .fish-2 { top: 60%; animation-delay: 3s; font-size: 30px; }
-        .fish-3 { top: 20%; animation-delay: 7s; font-size: 50px; }
+        .fish-1 { top: 20%; animation-delay: 0s; }
+        .fish-2 { top: 45%; animation-delay: 4s; font-size: 36px; }
+        .fish-3 { top: 70%; animation-delay: 8s; font-size: 38px; }
+        .fish-4 { top: 30%; animation-delay: 12s; font-size: 32px; opacity: 0.7; }
 
         @keyframes swim {
-            0% { transform: translateX(-100px) scaleX(1); }
+            0% { transform: translateX(-200px) scaleX(1); }
             49% { transform: translateX(calc(100vw + 100px)) scaleX(1); }
             50% { transform: translateX(calc(100vw + 100px)) scaleX(-1); }
-            99% { transform: translateX(-100px) scaleX(-1); }
-            100% { transform: translateX(-100px) scaleX(1); }
+            99% { transform: translateX(-200px) scaleX(-1); }
+            100% { transform: translateX(-200px) scaleX(1); }
         }
 
         .bubble {
             position: absolute;
             bottom: 0;
-            width: 5px;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.4);
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
             border-radius: 50%;
-            animation: bubble 3s ease-in infinite;
+            animation: bubble 4s ease-in infinite;
         }
+
+        .bubble:nth-child(2) { left: 15%; animation-delay: 0.5s; }
+        .bubble:nth-child(3) { left: 35%; animation-delay: 1.2s; }
+        .bubble:nth-child(4) { left: 55%; animation-delay: 2s; }
+        .bubble:nth-child(5) { left: 75%; animation-delay: 2.8s; }
+        .bubble:nth-child(6) { left: 90%; animation-delay: 3.5s; }
 
         @keyframes bubble {
             0% { transform: translateY(0); opacity: 0.8; }
-            100% { transform: translateY(-150px); opacity: 0; }
+            100% { transform: translateY(-180px); opacity: 0; }
         }
 
-        /* 产品卡片 */
-        .cards-grid {
+        /* ========== 产品卡片区域 (24个商品完整保留) ========== */
+        .products-header {
+            text-align: center;
+            padding: 35px 0 15px;
+        }
+        .products-header h1 {
+            font-size: 44px;
+            background: linear-gradient(145deg, #fff, #aaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .products-header p { color: #aaa; }
+
+        .category-section {
+            margin-bottom: 60px;
+            scroll-margin-top: 100px;
+        }
+
+        .category-title {
+            font-size: 28px;
+            margin: 30px 0 20px;
+            padding-left: 15px;
+            border-left: 6px solid;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 30px;
-            margin: 30px 0 60px;
+            gap: 10px;
+            font-weight: 500;
+        }
+        .category-title span { font-size: 32px; }
+        .category-basic .category-title { border-left-color: #2ecc71; color: #2ecc71; }
+        .category-advanced .category-title { border-left-color: #f39c12; color: #f39c12; }
+        .category-special .category-title { border-left-color: #e74c3c; color: #e74c3c; }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 1200px) {
+            .category-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 900px) {
+            .category-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .category-grid { grid-template-columns: 1fr; }
         }
 
         .product-card {
-            width: 100%;
-            max-width: 900px;
-            background: rgba(30, 30, 35, 0.6);
+            background: rgba(28, 28, 34, 0.7);
             backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 28px 32px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 18px 16px;
             transition: all 0.3s ease;
-            animation: cardSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            box-shadow: none;
+            height: 100%;
+            position: relative;
+            overflow: visible;
         }
 
-        .product-card:nth-child(1) { animation-delay: 0.1s; }
-        .product-card:nth-child(2) { animation-delay: 0.2s; }
-        .product-card:nth-child(3) { animation-delay: 0.3s; }
-        .product-card:nth-child(4) { animation-delay: 0.4s; }
-
-        @keyframes cardSlideIn {
-            0% { opacity: 0; transform: translateX(-100px); }
-            100% { opacity: 1; transform: translateX(0); }
+        .flat-tag {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 16px;
+            z-index: 10;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            letter-spacing: 0.3px;
+            backdrop-filter: blur(4px);
         }
+
+        .flat-tag.basic { background: rgba(46, 204, 113, 0.85); }
+        .flat-tag.popular { background: rgba(41, 151, 255, 0.85); }
+        .flat-tag.hot { background: rgba(243, 156, 18, 0.85); }
+        .flat-tag.sale { background: rgba(231, 76, 60, 0.85); }
+        .flat-tag.premium { background: rgba(155, 89, 182, 0.85); }
+        .flat-tag.flex { background: rgba(46, 204, 113, 0.85); }
+        .flat-tag.special { background: rgba(230, 126, 34, 0.85); }
+        .flat-tag.mystery { background: rgba(52, 152, 219, 0.85); }
+        .flat-tag.value { background: rgba(39, 174, 96, 0.85); }
+        .flat-tag.pro { background: rgba(142, 68, 173, 0.85); }
+        .flat-tag.ultimate { background: rgba(192, 57, 43, 0.85); }
+
+        .category-basic .product-card { border-left: 3px solid #2ecc71; }
+        .category-advanced .product-card { border-left: 3px solid #f39c12; }
+        .category-special .product-card { border-left: 3px solid #e74c3c; }
 
         .product-card:hover {
-            background: rgba(40, 40, 48, 0.7);
-            border-color: rgba(255, 255, 255, 0.25);
-        }
-
-        .product-card.active {
-            border: 2px solid #2997ff;
-            box-shadow: 0 0 30px rgba(41,151,255,0.3);
+            transform: translateY(-4px);
+            background: rgba(35, 35, 42, 0.8);
         }
 
         .card-header {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 10px;
+            padding-right: 15px;
         }
-
-        .card-title {
-            font-size: 26px;
-            font-weight: 600;
-            color: #ffffff;
+        .card-title { 
+            font-size: 18px; 
+            font-weight: 600; 
+            color: #fff; 
+            line-height: 1.3;
         }
-
+        
+        .price-container {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .original-price {
+            font-size: 13px;
+            color: rgba(255,255,255,0.4);
+            text-decoration: line-through;
+        }
         .card-price {
-            font-size: 24px;
+            font-size: 20px;
             color: #2997ff;
-            font-weight: 600;
+            font-weight: 700;
         }
-
-        .card-subtitle {
-            font-size: 16px;
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 16px;
+        .per-unit {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
         }
-
-        .card-desc {
-            font-size: 15px;
-            color: rgba(255, 255, 255, 0.85);
-            margin-bottom: 16px;
+        
+        .card-subtitle { 
+            font-size: 13px; 
+            color: rgba(255,255,255,0.5); 
+            margin-bottom: 8px; 
         }
-
-        .chip-container {
-            margin-bottom: 20px;
+        .card-desc { 
+            font-size: 13px; 
+            color: #ddd; 
+            margin-bottom: 10px; 
         }
-
+        
+        .chip-container { margin: 8px 0 10px; }
         .chip {
             display: inline-block;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 4px 12px;
-            font-size: 12px;
-            margin-right: 8px;
-            margin-bottom: 8px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 3px 8px;
+            font-size: 10px;
+            margin-right: 4px;
+            margin-bottom: 4px;
+            border-radius: 40px;
         }
 
         .product-qa {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            margin-top: 8px;
+            border-top: 1px dashed rgba(41,151,255,0.2);
+            padding-top: 6px;
         }
-
-        .product-qa-title {
-            font-size: 16px;
-            color: #2997ff;
-            margin-bottom: 12px;
-            font-weight: 500;
-        }
-
+        .product-qa-title { color: #2997ff; font-size: 12px; font-weight: 500; margin-bottom: 4px; }
         .product-qa-item {
-            margin-bottom: 10px;
-            background: rgba(0, 0, 0, 0.2);
+            margin-bottom: 3px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            overflow: hidden;
         }
-
         .product-qa-question {
-            padding: 10px 15px;
+            padding: 5px 8px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            color: #ffffff;
-            font-size: 14px;
+            color: #fff;
+            font-size: 11px;
             cursor: pointer;
-            background: rgba(255,255,255,0.03);
+            background: rgba(41,151,255,0.03);
         }
-
-        .product-qa-question:hover {
-            background: rgba(255,255,255,0.08);
-        }
-
         .product-qa-answer {
             max-height: 0;
-            padding: 0 15px;
+            padding: 0 8px;
             overflow: hidden;
-            background: rgba(0, 0, 0, 0.3);
-            color: rgba(255,255,255,0.8);
-            font-size: 13px;
+            background: rgba(0,0,0,0.3);
+            color: #ccc;
+            font-size: 10px;
             transition: max-height 0.3s ease, padding 0.3s ease;
         }
-
         .product-qa-item.expanded .product-qa-answer {
-            max-height: 100px;
-            padding: 12px 15px;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            max-height: 50px;
+            padding: 4px 8px;
+            border-top: 1px solid #333;
+        }
+        .arrow { transition: transform 0.2s; }
+        .expanded .arrow { transform: rotate(90deg); color: #2997ff; }
+
+        .custom-input-area {
+            margin: 12px 0 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        .product-qa-item.expanded .arrow {
-            transform: rotate(90deg);
-            color: #2997ff;
+        .custom-input-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .custom-input-row input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(41, 151, 255, 0.3);
+            border-radius: 30px;
+            padding: 8px 12px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .custom-input-row input:focus {
+            border-color: #2997ff;
+            box-shadow: 0 0 10px rgba(41,151,255,0.3);
+        }
+
+        .custom-price-display {
+            text-align: right;
+            font-size: 14px;
+            color: #ffd700;
+            background: rgba(255, 215, 0, 0.1);
+            padding: 6px 12px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
         }
 
         .buy-button {
-            margin-top: 20px;
+            margin-top: 12px;
             text-align: right;
+            opacity: 0.7;
+            transition: opacity 0.3s;
         }
-
+        .product-card:hover .buy-button { opacity: 1; }
         .buy-link {
             color: #2997ff;
-            font-size: 16px;
+            font-size: 12px;
             cursor: pointer;
-            padding: 8px 20px;
-            background: rgba(41,151,255,0.1);
-            border: 1px solid #2997ff;
+            padding: 5px 12px;
+            background: rgba(41,151,255,0.08);
+            border: 1px solid rgba(41,151,255,0.3);
             display: inline-block;
+            border-radius: 40px;
+            transition: 0.3s;
+        }
+        .buy-link:hover { background: rgba(41,151,255,0.2); color: #fff; border-color: #2997ff; }
+
+        /* 聚焦模式 */
+        .category-section.focus-mode .product-card {
+            transition: all 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+            opacity: 0;
+            transform: scale(0.9);
+            pointer-events: none;
+        }
+        .category-section.focus-mode .product-card.focused {
+            opacity: 1;
+            transform: scale(1.05);
+            pointer-events: auto;
+            margin: 20px auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            border-color: currentColor;
+            z-index: 100;
+            width: 100%;
+            max-width: 800px;
+            grid-column: 1 / -1;
         }
 
-        .buy-link:hover {
-            background: #2997ff;
-            color: #ffffff;
+        .focus-close-btn {
+            display: none;
+            position: fixed;
+            top: 120px;
+            right: 30px;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid rgba(41,151,255,0.5);
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            font-size: 24px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 200;
+            backdrop-filter: blur(8px);
+            box-shadow: none;
         }
+        .focus-close-btn.visible { display: flex; }
 
-        /* 关于我们页面 - YouTube视频版本 */
+        /* ========== 关于我们页面 (移除客服QQ展示，保留其他所有强化设计) ========== */
         .about-section {
-            padding: 40px 0;
+            padding: 40px 0 60px;
         }
 
+        .about-hero {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .about-hero h1 {
+            font-size: 64px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #2997ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 16px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px rgba(41,151,255,0.3);
+        }
+
+        .about-hero p {
+            font-size: 20px;
+            color: rgba(255,255,255,0.7);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .about-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #2997ff, transparent);
+        }
+
+        /* 数据统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin: 50px 0;
+        }
+
+        .stat-card {
+            background: rgba(25, 25, 35, 0.5);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(41, 151, 255, 0.2);
+            border-radius: 28px;
+            padding: 30px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            border-color: #2997ff;
+            box-shadow: 0 10px 30px rgba(41,151,255,0.2);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #2997ff, transparent);
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: #2997ff;
+            margin-bottom: 8px;
+            text-shadow: 0 0 20px rgba(41,151,255,0.5);
+        }
+
+        .stat-label {
+            font-size: 16px;
+            color: rgba(255,255,255,0.7);
+            letter-spacing: 1px;
+        }
+
+        /* 团队网格 */
         .team-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 30px;
-            margin: 40px 0;
+            margin: 50px 0;
         }
 
         .team-card {
-            background: rgba(30, 30, 35, 0.7);
+            background: rgba(28, 28, 34, 0.7);
             backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(41, 151, 255, 0.2);
+            border-radius: 28px;
             padding: 30px 20px;
             text-align: center;
-            animation: scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .team-card:nth-child(1) { animation-delay: 0.2s; }
-        .team-card:nth-child(2) { animation-delay: 0.4s; }
-        .team-card:nth-child(3) { animation-delay: 0.6s; }
-
         .team-card:hover {
+            transform: translateY(-8px);
             border-color: #2997ff;
+            box-shadow: 0 15px 35px rgba(41,151,255,0.25);
+        }
+
+        .team-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #2997ff, #ffd700, #2997ff, transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .team-card:hover::before {
+            transform: translateX(100%);
         }
 
         .avatar-container {
-            width: 120px;
-            height: 120px;
+            width: 130px;
+            height: 130px;
             margin: 0 auto 20px;
-            border: 3px solid #2997ff;
+            border: 4px solid rgba(41, 151, 255, 0.5);
+            border-radius: 50%;
             overflow: hidden;
-            border-radius: 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .team-card:hover .avatar-container {
+            border-color: #2997ff;
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(41,151,255,0.4);
         }
 
         .avatar {
@@ -1057,36 +1298,269 @@
             object-fit: cover;
         }
 
-        /* 视频展示区域 - YouTube */
-        .video-showcase {
-            margin-top: 60px;
-            padding: 40px 20px;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
+        .team-name {
+            font-size: 24px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        .team-role {
+            font-size: 16px;
+            color: #2997ff;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .team-bio {
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 20px;
+            line-height: 1.6;
+            padding: 0 10px;
+        }
+
+        .team-social {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .social-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(41, 151, 255, 0.1);
             border: 1px solid rgba(41, 151, 255, 0.3);
-            animation: fadeUp 0.6s ease 0.8s both;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2997ff;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .social-icon:hover {
+            background: #2997ff;
+            color: #000;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(41,151,255,0.4);
+        }
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .skill-tag {
+            background: rgba(41, 151, 255, 0.08);
+            border: 1px solid rgba(41, 151, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 11px;
+            color: #2997ff;
+        }
+
+        /* 里程碑时间线 */
+        .milestone-section {
+            margin: 70px 0;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, #2997ff, #ffd700, #2997ff, transparent);
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-content {
+            width: 45%;
+            background: rgba(28, 28, 34, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(41, 151, 255, 0.2);
+            border-radius: 24px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-content:hover {
+            border-color: #2997ff;
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(41,151,255,0.2);
+        }
+
+        .timeline-date {
+            font-size: 18px;
+            color: #2997ff;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .timeline-title {
+            font-size: 22px;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .timeline-desc {
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.6;
+        }
+
+        .timeline-dot {
+            width: 16px;
+            height: 16px;
+            background: #2997ff;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 20px #2997ff;
+        }
+
+        /* 联系方式区域 - 已移除客服QQ展示，只保留左侧联系方式 */
+        .contact-section {
+            margin: 70px 0 50px;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr;  /* 改为单列，因为移除了二维码 */
+            gap: 30px;
+        }
+
+        .contact-info {
+            background: rgba(28, 28, 34, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(41, 151, 255, 0.2);
+            border-radius: 28px;
+            padding: 35px;
+        }
+
+        .contact-info h3 {
+            font-size: 24px;
+            color: #fff;
+            margin-bottom: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .contact-info h3::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: #2997ff;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .contact-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(41, 151, 255, 0.1);
+            border: 1px solid rgba(41, 151, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #2997ff;
+        }
+
+        .contact-text h4 {
+            font-size: 16px;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .contact-text p {
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .contact-text p a {
+            color: #2997ff;
+            text-decoration: none;
+        }
+
+        /* 视频展示区域 */
+        .video-showcase {
+            margin: 60px 0;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(41, 151, 255, 0.25);
+            border-radius: 36px;
         }
 
         .video-title {
             text-align: center;
             font-size: 32px;
             color: #2997ff;
-            margin-bottom: 30px;
-            text-shadow: 0 0 20px rgba(41, 151, 255, 0.5);
+            margin-bottom: 40px;
+            font-weight: 500;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .video-title::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #2997ff, #ffd700, #2997ff, transparent);
         }
 
         .video-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 30px;
-            max-width: 1100px;
-            margin: 0 auto;
         }
 
         .video-card {
-            background: rgba(30, 30, 35, 0.7);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(41, 151, 255, 0.3);
+            background: rgba(28, 28, 34, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(41, 151, 255, 0.2);
+            border-radius: 24px;
             overflow: hidden;
             transition: all 0.3s ease;
         }
@@ -1094,13 +1568,13 @@
         .video-card:hover {
             transform: translateY(-10px);
             border-color: #2997ff;
-            box-shadow: 0 0 40px rgba(41, 151, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(41,151,255,0.3);
         }
 
         .video-container {
             position: relative;
             width: 100%;
-            padding-bottom: 56.25%; /* 16:9 宽高比 */
+            padding-bottom: 56.25%;
             background: #000;
         }
 
@@ -1110,7 +1584,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            border: none;
+            border: 0;
         }
 
         .video-info {
@@ -1118,397 +1592,253 @@
         }
 
         .video-info h3 {
-            font-size: 20px;
-            color: #ffffff;
+            font-size: 18px;
+            color: #fff;
             margin-bottom: 8px;
         }
 
         .video-info p {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-            line-height: 1.6;
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.5;
         }
 
-        /* 支付页面 */
-        .payment-section {
-            padding: 30px 0 60px;
+        /* 购买须知页面 */
+        .guide-section {
+            padding: 60px 0;
             min-height: calc(100vh - 200px);
-            display: flex;
-            flex-direction: column;
-            position: relative;
         }
 
-        .payment-card {
-            max-width: 700px;
+        .guide-card {
+            max-width: 900px;
             margin: 0 auto;
-            background: rgba(30, 30, 35, 0.7);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 40px 40px 30px;
-            text-align: center;
-            position: relative;
-            z-index: 10;
-            animation: scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+            background: rgba(25, 25, 35, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 215, 0, 0.25);
+            border-radius: 40px 40px 40px 16px;
+            padding: 50px;
+            box-shadow: none;
         }
 
-        .payment-product-name {
-            font-size: 32px;
-            color: #ffffff;
-            margin-bottom: 10px;
-        }
-
-        .payment-product-price {
-            font-size: 48px;
-            color: #2997ff;
+        .guide-title {
+            font-size: 42px;
             font-weight: 600;
+            color: #ffd700;
             margin-bottom: 30px;
-        }
-
-        .qr-wrapper {
-            position: relative;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            margin: 20px 0;
-            z-index: 20;
+            gap: 15px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+            padding-bottom: 20px;
         }
 
-        .qr-code {
-            width: 280px;
-            height: 280px;
-            background: #ffffff;
-            padding: 15px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 30;
-            border: 2px solid #2997ff;
-            box-shadow: 0 0 20px rgba(41,151,255,0.3);
-            cursor: default;
-            animation: pulseIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
-        }
+        .guide-title i { font-size: 48px; }
 
-        @keyframes pulseIn {
-            0% { opacity: 0; transform: scale(0.8); }
-            50% { transform: scale(1.05); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-
-        .qr-code img {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        .qr-hint {
-            color: #86868b;
-            font-size: 14px;
-            margin-top: 12px;
-            position: relative;
-            z-index: 30;
-            animation: fadeUp 0.6s ease 0.6s both;
-        }
-
-        .disclaimer {
-            margin-top: 30px;
-            padding: 20px;
-            background: rgba(255, 70, 70, 0.1);
-            border-left: 4px solid #ff4646;
-            text-align: left;
-            position: relative;
-            z-index: 20;
-            animation: fadeUp 0.6s ease 0.7s both;
-        }
-
-        .disclaimer-title {
-            color: #ff9999;
+        .guide-content {
+            color: rgba(255,255,255,0.9);
             font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .disclaimer-content {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 15px;
             line-height: 1.8;
         }
 
-        .qq-info {
-            background: rgba(41, 151, 255, 0.1);
-            padding: 15px;
-            margin: 15px 0;
-            border: 1px solid #2997ff;
-            display: inline-block;
-        }
-
-        .payment-qa-section {
-            max-width: 700px;
-            margin: 30px auto 0;
-            padding: 30px;
-            background: rgba(20, 20, 25, 0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            z-index: 15;
-            animation: fadeUp 0.6s ease 0.8s both;
-        }
-
-        .payment-qa-title {
-            font-size: 22px;
-            color: #2997ff;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .payment-qa-item {
-            margin-bottom: 12px;
+        .guide-item {
             background: rgba(0, 0, 0, 0.2);
+            border-radius: 30px 30px 30px 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 215, 0, 0.15);
         }
 
-        .payment-qa-question {
-            padding: 12px 18px;
+        .guide-item h3 {
+            color: #ffd700;
+            font-size: 24px;
+            margin-bottom: 15px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            color: #ffffff;
-            font-size: 15px;
-            cursor: pointer;
-            background: rgba(255,255,255,0.03);
+            gap: 10px;
         }
 
-        .payment-qa-answer {
-            max-height: 0;
-            padding: 0 18px;
-            overflow: hidden;
-            background: rgba(0, 0, 0, 0.3);
+        .guide-item p {
             color: rgba(255,255,255,0.8);
-            font-size: 14px;
-            transition: max-height 0.3s ease, padding 0.3s ease;
-        }
-
-        .payment-qa-item.expanded .payment-qa-answer {
-            max-height: 150px;
-            padding: 12px 18px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .back-to-products {
-            margin-top: 30px;
-            color: #2997ff;
-            cursor: pointer;
             font-size: 16px;
-            display: inline-block;
-            padding: 10px 25px;
-            border: 1px solid #2997ff;
-            position: relative;
-            z-index: 20;
-            animation: fadeUp 0.6s ease 0.9s both;
+            margin-bottom: 10px;
         }
 
-        .back-to-products:hover {
-            background: #2997ff;
-            color: #ffffff;
+        .guide-note {
+            background: rgba(255, 215, 0, 0.05);
+            border-left: 4px solid #ffd700;
+            padding: 20px;
+            border-radius: 20px 20px 20px 8px;
+            margin-top: 30px;
         }
 
-        .footer-note {
-            text-align: center;
-            padding: 30px 0;
-            color: #86868b;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            position: relative;
-            z-index: 10;
-            animation: fadeUp 0.6s ease 1s both;
+        /* 支付页面 */
+        .payment-section { padding: 30px 0 60px; }
+        .payment-card { max-width: 700px; margin: 0 auto; background: rgba(25,25,35,0.7); backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,0.1); border-radius: 32px; padding: 35px; text-align: center; box-shadow: none; }
+        .payment-product-name { font-size: 30px; color: #fff; margin-bottom: 6px; }
+        .payment-product-price { font-size: 44px; color: #2997ff; font-weight: 600; margin-bottom: 20px; }
+        .qr-code { width: 260px; height: 260px; background: #fff; padding: 12px; margin: 0 auto; border: 2px solid rgba(41,151,255,0.3); border-radius: 28px; }
+        .qr-code img { width: 100%; height: 100%; object-fit: contain; border-radius: 18px; }
+        .disclaimer { margin-top: 20px; padding: 18px; background: rgba(255,70,70,0.05); border-left: 4px solid #ff5e5e; border-radius: 16px; text-align: left; }
+        .back-to-products { margin-top: 20px; color: #2997ff; cursor: pointer; display: inline-block; padding: 8px 24px; border: 1px solid rgba(41,151,255,0.3); border-radius: 40px; transition: 0.3s; }
+        .back-to-products:hover { background: rgba(41,151,255,0.1); border-color: #2997ff; }
+        .payment-qa-section { max-width: 700px; margin: 30px auto 0; padding: 25px; background: rgba(18,18,22,0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); border-radius: 28px; }
+
+        .footer-note { text-align: center; padding: 25px 0; color: #777; border-top: 1px solid rgba(255,255,255,0.05); }
+
+        /* 音乐播放器 */
+        .music-player-container {
+            position: fixed; bottom: 20px; right: 20px; z-index: 999; width: 340px; background: rgba(17,17,17,0.9); backdrop-filter: blur(16px); border: 1px solid rgba(41,151,255,0.3); border-radius: 28px; overflow: hidden; opacity: 0; visibility: hidden; transform: scale(0.9); transition: 0.3s; box-shadow: none;
+        }
+        .music-player-container.visible { opacity: 1; visibility: visible; transform: scale(1); }
+        .music-player-header { padding: 15px; border-bottom: 1px solid rgba(41,151,255,0.2); display: flex; gap: 12px; background: rgba(26,26,26,0.6); }
+        .music-player-header .cover { width: 48px; height: 48px; background: rgba(41,151,255,0.2); border: 1px solid rgba(41,151,255,0.3); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .music-playlist { max-height: 260px; overflow-y: auto; padding: 8px; }
+        .music-playlist-item { display: flex; align-items: center; padding: 8px; margin-bottom: 4px; background: rgba(255,255,255,0.02); cursor: pointer; border-left: 3px solid transparent; border-radius: 12px; }
+        .music-playlist-item.active { background: rgba(41,151,255,0.15); border-left-color: #2997ff; }
+        .music-player-controls { padding: 15px; display: flex; justify-content: center; gap: 20px; border-top: 1px solid rgba(41,151,255,0.2); }
+        .music-player-controls button { background: rgba(41,151,255,0.1); border: 1px solid rgba(41,151,255,0.3); color: #fff; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 18px; transition: 0.2s; }
+        .music-player-controls button:hover { background: rgba(41,151,255,0.2); border-color: #2997ff; }
+
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .team-grid { grid-template-columns: repeat(2, 1fr); }
+            .video-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
-        /* 响应式调整 */
         @media (max-width: 768px) {
-            .qq-card-single {
-                flex-direction: column;
-                text-align: center;
-                gap: 20px;
-            }
-            
-            .qq-info-area {
-                text-align: center;
-            }
-            
-            .qq-qr-area {
-                width: 100%;
-            }
-            
-            .qq-card-button {
-                width: 100%;
-            }
-
-            .video-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .nav-wrapper {
-                flex-wrap: wrap;
-            }
-
-            .music-control {
-                margin-left: 0;
-                margin-top: 5px;
-            }
-
-            .music-player-container {
-                width: 300px;
-                right: 10px;
-                bottom: 10px;
-            }
+            .stats-grid { grid-template-columns: 1fr; }
+            .team-grid { grid-template-columns: 1fr; }
+            .video-grid { grid-template-columns: 1fr; }
+            .contact-grid { grid-template-columns: 1fr; }
+            .timeline-item { flex-direction: column !important; gap: 20px; }
+            .timeline-content { width: 100%; }
+            .timeline-dot { display: none; }
         }
     </style>
 </head>
 <body>
-    <!-- 进入动画遮罩层 -->
     <div class="entry-overlay"></div>
 
-    <!-- 动态背景层 - 静止 -->
     <div class="page-background">
-        <div class="bg-layer" id="bgHome"></div>
+        <div class="bg-layer active" id="bgHome"></div>
         <div class="bg-layer" id="bgProducts"></div>
         <div class="bg-layer" id="bgAbout"></div>
         <div class="bg-layer" id="bgPayment"></div>
     </div>
 
-    <!-- 漂浮小元素层 -->
     <div class="floating-elements">
-        <div class="float-item star">★</div>
-        <div class="float-item star">✧</div>
-        <div class="float-item star">✦</div>
-        <div class="float-item star">☆</div>
-        <div class="float-item circle"></div>
-        <div class="float-item circle"></div>
-        <div class="float-item circle"></div>
-        <div class="float-item square"></div>
-        <div class="float-item square"></div>
-        <div class="float-item triangle"></div>
-        <div class="float-item diamond"></div>
-        <div class="float-item circle" style="width: 10px; height: 10px;"></div>
-        <div class="float-item circle" style="width: 15px; height: 15px; background: rgba(255, 150, 150, 0.3);"></div>
+        <div class="float-item star">★</div><div class="float-item star">✧</div><div class="float-item star">✦</div>
+        <div class="float-item circle"></div><div class="float-item circle"></div><div class="float-item square"></div>
+        <div class="float-item triangle"></div><div class="float-item diamond"></div><div class="float-item circle" style="width:12px;height:12px;"></div>
     </div>
 
-    <!-- 顶部标签导航 - 带音乐按钮 -->
+    <!-- 导航 -->
     <div class="tab-navigation">
         <div class="nav-wrapper">
+            <div class="logo-area">
+                <div class="custom-logo">🐉</div>
+                <span class="studio-name">幻龙工作室</span>
+            </div>
             <div class="tab-container">
-                <div class="tab-item active" data-target="home">
-                    <span class="tab-icon">🏠</span>
-                    <span>首页</span>
+                <div class="tab-item active" data-target="home"><span>🏠</span><span>首页</span></div>
+                <div class="tab-item" data-target="products" id="productsMainTab"><span>📃</span><span>产品</span></div>
+                <div class="quality-nav-container" id="qualityNavContainer">
+                    <div class="quality-nav-item" data-quality="basic"><span class="quality-dot"></span>基础品质</div>
+                    <div class="quality-nav-item" data-quality="advanced"><span class="quality-dot"></span>进阶品质</div>
+                    <div class="quality-nav-item" data-quality="special"><span class="quality-dot"></span>特殊品质</div>
                 </div>
-                <div class="tab-item" data-target="products" id="productsMainTab">
-                    <span class="tab-icon">📃</span>
-                    <span>产品</span>
-                </div>
-                
-                <div class="product-tabs-container" id="productTabsContainer">
-                    <div class="product-tab" data-product="iphone">
-                        <span class="tab-icon">📗</span>
-                        <span>体验版5次点卡</span>
-                    </div>
-                    <div class="product-tab" data-product="macbook">
-                        <span class="tab-icon">📘</span>
-                        <span>10次卡密点卡</span>
-                    </div>
-                    <div class="product-tab" data-product="ipad">
-                        <span class="tab-icon">📕</span>
-                        <span>100次卡密点卡</span>
-                    </div>
-                    <div class="product-tab" data-product="airpods">
-                        <span class="tab-icon">📙</span>
-                        <span>1K次使用次数点卡</span>
-                    </div>
-                     <div class="product-tab" data-product="2·">
-                        <span class="tab-icon">🔝</span>
-                        <span>自定义充值金额</span>
-                    </div>
-                       <div class="product-tab" data-product="2·">
-                        <span class="tab-icon">🎰</span>
-                        <span>赌徒单</span>
-                    </div>
-
-                </div>
-
-                <div class="tab-item" data-target="about">
-                    <span class="tab-icon">👥</span>
-                    <span>关于我们</span>
+                <div class="tab-item" data-target="about"><span>👥</span><span>关于我们</span></div>
+                <div class="guide-btn" id="guideBtn" data-target="guide">
+                    <i>📋</i>
+                    <span>购买须知</span>
                 </div>
             </div>
-            
-            <!-- 音乐控制按钮 -->
-            <div class="music-control">
-                <div class="music-btn" id="musicToggle" title="开启/关闭音乐播放器">
-                    <span class="music-icon">🎵</span>
-                </div>
-            </div>
+            <div class="music-control"><div class="music-btn" id="musicToggle">🎵</div></div>
         </div>
     </div>
 
-    <!-- 滚动公告条 -->
     <div class="marquee-container">
         <div class="marquee-content">
-            <span>正式版SansHub绕过卡密系统发布 <i>✦</i>  新的订单玩法上新! <i>✦</i> 联系QQ：2984967309获取技术支持 <i>✦</i> 每日第一个购买赠送2次机会 <i>✦</i></span>
-            <span>正式版SansHub绕过卡密系统发布 <i>✦</i> 新的订单玩法上新! <i>✦</i> 联系QQ：2984967309获取技术支持 <i>✦</i> 每日第一个购买赠送2次机会 <i>✦</i></span>
+            <span>🔥 全新定价体系上线！最高3000次套餐 ✦ 联系QQ：2984967309 ✦ 每日首购赠送2次机会 ✦ 买得越多越划算！</span>
+            <span>🔥 全新定价体系上线！最高3000次套餐 ✦ 联系QQ：2984967309 ✦ 每日首购赠送2次机会 ✦ 买得越多越划算！</span>
         </div>
     </div>
 
-    <!-- 首页页面 -->
+    <!-- ========== 首页 (完整保留) ========== -->
     <div id="homePage" class="page active-page">
         <div class="home-section">
             <div class="hero-banner">
                 <h1>SnasHub</h1>
-                <p>体验最佳流畅绕过功能</p>
+                <p>体验最佳流畅绕过功能 · 极速响应 · 稳定可靠</p>
             </div>
-
             <div class="content">
                 <div class="mission-card">
                     <h2>我们的品质要求</h2>
-                    <p>创作出最佳脚本页面和最佳绕过技术</p>
+                    <p>创作出最佳脚本页面和最佳绕过技术，为每一位用户提供极致体验</p>
                 </div>
 
-                <h2 style="font-size: 32px; margin: 40px 0 20px; color: #2997ff;">📋 更新日志</h2>
-                <div class="updates-grid">
-                    <div class="update-card">
-                        <div class="update-date">2024.03.15</div>
-                        <div class="update-title">v2更新</div>
-                        <div class="update-desc">新增兑换码服务订单次数以后将用兑换码提供，对傻子账户封禁30日处罚</div>
+                <div class="links-section">
+                    <div class="section-header">
+                        <h2>🔗 常用链接</h2>
+                        <div class="header-line"></div>
                     </div>
-                    <div class="update-card">
-                        <div class="update-date">2024.03.10</div>
-                        <div class="update-title">支付系统上线</div>
-                        <div class="update-desc">支持二维码支付，点击购买可查看对应产品支付页面，但不包括玩法和零售商品。</div>
-                    </div>
-                </div>
-
-                <h2 style="font-size: 32px; margin: 60px 0 20px; color: #2997ff;">照片</h2>
-                <div class="gallery-grid">
-                    <div class="gallery-item" style="background-image: url('https://i.postimg.cc/VvJc0Tg6/006.jpg')">
-                        <div class="caption">开发者小白</div>
-                    </div>
-                    <div class="gallery-item" style="background-image: url('https://i.postimg.cc/1XnL3FRB/QQ-1758802114714.png')">
-                        <div class="caption">幻龙工作室游戏画面</div>
+                    <div class="links-grid">
+                        <a href="#" class="link-card">
+                            <div class="link-icon">☁</div>
+                            <div class="link-title">使用网页</div>
+                            <div class="link-desc">http://sanshub.cloud/</div>
+                            <span class="link-badge">实际上我懒得写了Bush</span>
+                        </a>
                     </div>
                 </div>
 
-                <!-- QQ群组展示区域 - 单群横向布局 -->
+                <div class="updates-wrapper">
+                    <div class="section-header">
+                        <h2>📋 更新日志</h2>
+                        <div class="header-line"></div>
+                    </div>
+                    <div class="updates-grid">
+                        <div class="update-card">
+                            <div class="update-date"><i>📅</i> 2024.03.15</div>
+                            <div class="update-title">v2 版本更新</div>
+                            <div class="update-desc">新增兑换码服务，更新转码网易云音乐（目前来看免费）。</div>
+                        </div>
+                        <div class="update-card">
+                            <div class="update-date"><i>📅</i> 2024.03.10</div>
+                            <div class="update-title">支付系统上线</div>
+                            <div class="update-desc">支持二维码支付，点击购买可查看对应产品支付页面，不包括玩法和零售商品。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gallery-section">
+                    <div class="section-header">
+                        <h2>📸 照片墙</h2>
+                        <div class="header-line"></div>
+                    </div>
+                    <div class="gallery-grid">
+                        <div class="gallery-item" style="background-image: url('https://i.postimg.cc/VvJc0Tg6/006.jpg')">
+                            <div class="caption">开发者小白</div>
+                        </div>
+                        <div class="gallery-item" style="background-image: url('https://i.postimg.cc/1XnL3FRB/QQ-1758802114714.png')">
+                            <div class="caption">幻龙工作室</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="qq-group-section">
                     <div class="qq-group-title">
-                        <span class="qq-icon">💬</span>
+                        <span>💬</span>
                         <span>幻龙工作室 · 官方QQ群</span>
-                        <span class="qq-icon">💬</span>
+                        <span>💬</span>
                     </div>
                     <div class="qq-group-subtitle">
-                        加入群聊，获取资讯、技术支持与玩家交流
+                        加入群聊，获取最新资讯、技术支持与玩家交流
                     </div>
-
-                    <!-- 单群横向卡片 -->
                     <div class="qq-single-container">
                         <div class="qq-card-single">
-                            <!-- 左侧信息区域 -->
                             <div class="qq-info-area">
                                 <div class="qq-card-icon">👥</div>
                                 <div class="qq-card-name">幻龙脚本主群</div>
@@ -1518,8 +1848,6 @@
                                     版本更新通知 · 管理员24小时在线
                                 </div>
                             </div>
-                            
-                            <!-- 右侧二维码和按钮区域 -->
                             <div class="qq-qr-area">
                                 <div class="qq-card-qr">
                                     <img src="https://i.postimg.cc/prw9jX5d/ec68e88d5c0a0a88f400985f4a238629.png" alt="群二维码">
@@ -1530,297 +1858,786 @@
                     </div>
                 </div>
 
-                <!-- 彩蛋 - 鱼游泳动画 -->
                 <div class="easter-egg">
-                    <div class="fish fish-1">Omg</div>
-                    <div class="fish fish-2">小白牛逼</div>
-                    <div class="fish fish-3">快点买我们商品绝不跑路</div>
-                    <div class="fish fish-3">你知道吗？Sanshub运营脚本但是转行了</div>
-                    <div class="bubble" style="left: 10%;"></div>
-                    <div class="bubble" style="left: 30%; animation-delay: 1s;"></div>
-                    <div class="bubble" style="left: 50%; animation-delay: 0.5s;"></div>
+                    <div class="fish fish-1">🐟</div>
+                    <div class="fish fish-2">🐠 </div>
+                    <div class="fish fish-3">🐡 </div>
+                    <div class="fish fish-4">🦑 </div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 产品页面 -->
+    <!-- ========== 产品页 (24个商品完整保留) ========== -->
     <div id="productsPage" class="page">
         <div class="content">
-            <div class="hero-text" style="text-align:center; padding:40px 0 20px;">
-                <h1 style="font-size:48px;">目前开放卡密充值次数</h1>
-                <p style="color:#86868b;">点击产品标签查看更多细节</p>
+            <div class="products-header">
+                <h1>卡密充值次数 · 全新定价</h1>
+                <p>点击卡片聚焦查看详情 · 多达20+种套餐可选</p>
             </div>
 
-            <div class="cards-grid" id="productsGrid">
-                <!-- 体验版 幻龙脚本 -->
-                <div class="product-card" id="iphone-card" data-product="iphone">
-                    <div class="card-header">
-                        <span class="card-title">体验版 5次卡密绕过</span>
-                        <span class="card-price">¥3</span>
-                    </div>
-                    <div class="card-subtitle">体验版 · 卡密绕过</div>
-                    <div class="card-desc">懒得写</div>
-                    <div class="chip-container">
-                        <span class="chip">新手适合</span>
-                        <span class="chip">便宜</span>
-                        <span class="chip">绕过忍者卡密</span>
-                    </div>
-                    
-                    <div class="product-qa">
-                        <div class="product-qa-title">常见问题</div>
-                        <div class="product-qa-item">
-                            <div class="product-qa-question">
-                                <span>如何绕过？</span>
-                                <span class="arrow">▶</span>
+            <!-- 基础品质 (8个卡片) -->
+            <div class="category-section category-basic" id="category-basic">
+                <div class="category-title"><span>🛡️</span> 基础品质 · 日常之选</div>
+                <div class="category-grid">
+                    <!-- 5次 -->
+                    <div class="product-card" data-product="basic5">
+                        <div class="flat-tag basic">入门</div>
+                        <div class="card-header">
+                            <span class="card-title">体验版 5次</span>
+                            <div class="price-container">
+                                <span class="card-price">¥5</span>
+                                <span class="per-unit">(¥1.00/次)</span>
                             </div>
-                            <div class="product-qa-answer">去问豆包或者元宝</div>
                         </div>
-                        <div class="product-qa-item">
-                            <div class="product-qa-question">
-                                <span>支持哪些？</span>
-                                <span class="arrow">▶</span>
-                            </div>
-                            <div class="product-qa-answer">支持基本LootLabs，WorkLink，Linkvertise，只要是市面出现的都允许绕过</div>
+                        <div class="card-subtitle">新手体验</div>
+                        <div class="card-desc">5次绕过次数，快速体验</div>
+                        <div class="chip-container">
+                            <span class="chip">新手</span>
+                            <span class="chip">快速</span>
                         </div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>支持哪些？</span><span class="arrow">▶</span></div><div class="product-qa-answer">LootLabs, WorkLink等</div></div>
+                        </div>
+                        <div class="buy-button"><span class="buy-link" data-product="basic5">立即购买</span></div>
                     </div>
-                    
-                    <div class="buy-button">
-                        <span class="buy-link" data-product="iphone">立即购买 →</span>
+                    <!-- 10次 -->
+                    <div class="product-card" data-product="basic10">
+                        <div class="flat-tag basic">标准</div>
+                        <div class="card-header">
+                            <span class="card-title">标准版 10次</span>
+                            <div class="price-container">
+                                <span class="card-price">¥9</span>
+                                <span class="per-unit">(¥0.90/次)</span>
+                            </div>
+                        </div>
+                        <div class="card-subtitle">日常通用</div>
+                        <div class="card-desc">10次绕过，性价比之选</div>
+                        <div class="chip-container">
+                            <span class="chip">通用</span>
+                            <span class="chip">热销</span>
+                        </div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>可用账户？</span><span class="arrow">▶</span></div><div class="product-qa-answer">支持1个账户绑定</div></div>
+                        </div>
+                        <div class="buy-button"><span class="buy-link" data-product="basic10">立即购买</span></div>
+                    </div>
+                    <!-- 20次 -->
+                    <div class="product-card" data-product="basic20">
+                        <div class="flat-tag value">超值</div>
+                        <div class="card-header">
+                            <span class="card-title">畅享版 20次</span>
+                            <div class="price-container">
+                                <span class="card-price">¥16</span>
+                                <span class="per-unit">(¥0.80/次)</span>
+                            </div>
+                        </div>
+                        <div class="card-subtitle">轻度玩家</div>
+                        <div class="card-desc">20次绕过，轻度使用足够</div>
+                        <div class="chip-container">
+                            <span class="chip">实惠</span>
+                            <span class="chip">推荐</span>
+                        </div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>有效期？</span><span class="arrow">▶</span></div><div class="product-qa-answer">永久有效，不限时</div></div>
+                        </div>
+                        <div class="buy-button"><span class="buy-link" data-product="basic20">立即购买</span></div>
+                    </div>
+                    <!-- 30次 -->
+                    <div class="product-card" data-product="basic30">
+                        <div class="flat-tag value">经济</div>
+                        <div class="card-header">
+                            <span class="card-title">经济版 30次</span>
+                            <div class="price-container">
+                                <span class="card-price">¥22</span>
+                                <span class="per-unit">(¥0.73/次)</span>
+                            </div>
+                        </div>
+                        <div class="card-subtitle">轻度常用</div>
+                        <div class="card-desc">30次绕过，适合日常使用</div>
+                        <div class="chip-container">
+                            <span class="chip">经济</span>
+                            <span class="chip">实用</span>
+                        </div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>支持？</span><span class="arrow">▶</span></div><div class="product-qa-answer">全平台支持</div></div>
+                        </div>
+                        <div class="buy-button"><span class="buy-link" data-product="basic30">立即购买</span></div>
+                    </div>
+                    <!-- 50次 -->
+                    <div class="product-card" data-product="basic50">
+                        <div class="flat-tag value">实惠</div>
+                        <div class="card-header">
+                            <span class="card-title">实惠版 50次</span>
+                            <div class="price-container">
+                                <span class="card-price">¥34</span>
+                                <span class="per-unit">(¥0.68/次)</span>
+                            </div>
+                        </div>
+                        <div class="card-subtitle">中度使用</div>
+                        <div class="card-desc">50次绕过，更划算的选择</div>
+                        <div class="chip-container">
+                            <span class="chip">实惠</span>
+                            <span class="chip">畅销</span>
+                        </div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>优势？</span><span class="arrow">▶</span></div><div class="product-qa-answer">性价比突出</div></div>
+                        </div>
+                        <div class="buy-button"><span class="buy-link" data-product="basic50">立即购买</span></div>
+                    </div>
+                    <!-- 80次 -->
+                    <div class="product-card" data-product="basic80">
+                        <div class="flat-tag value">超值</div>
+                        <div class="card-header">
+                            <span class="card-title">超值版 80次</span>
+                            <div class="price-container">
+                                <span class="original-price">¥80</span>
+                                <span class="card-price">¥50</span>
+                                <span class="per-unit">(¥0.63/次)</span>
+                            </div>
+                        </div>
+                        <div class="card-subtitle">立省¥30</div>
+                        <div class="card-desc">80次绕过，超值特惠</div>
+                        <div class="chip-container">
+                            <span class="chip">特惠</span>
+                            <span class="chip">热销</span>
+                        </div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>活动？</span><span class="arrow">▶</span></div><div class="product-qa-answer">限时特惠</div></div>
+                        </div>
+                        <div class="buy-button"><span class="buy-link" data-product="basic80">立即购买</span></div>
+                    </div>
+                    <!-- 100次 -->
+                    <div class="product-card" data-product="basic100">
+                        <div class="flat-tag hot">畅销</div>
+                        <div class="card-header">
+                            <span class="card-title">畅销版 100次</span>
+                            <div class="price-container">
+                                <span class="original-price">¥100</span>
+                                <span class="card-price">¥60</span>
+                                <span class="per-unit">(¥0.60/次)</span>
+                            </div>
+                        </div>
+                        <div class="card-subtitle">立省¥40</div>
+                        <div class="card-desc">100次绕过，最受欢迎</div>
+                        <div class="chip-container">
+                            <span class="chip">畅销</span>
+                            <span class="chip">最火</span>
+                        </div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>为什么畅销？</span><span class="arrow">▶</span></div><div class="product-qa-answer">性价比最高</div></div>
+                        </div>
+                        <div class="buy-button"><span class="buy-link" data-product="basic100">立即购买</span></div>
+                    </div>
+                    <!-- 150次 -->
+                    <div class="product-card" data-product="basic150">
+                        <div class="flat-tag hot">超值</div>
+                        <div class="card-header">
+                            <span class="card-title">超值版 150次</span>
+                            <div class="price-container">
+                                <span class="original-price">¥150</span>
+                                <span class="card-price">¥82</span>
+                                <span class="per-unit">(¥0.55/次)</span>
+                            </div>
+                        </div>
+                        <div class="card-subtitle">立省¥68</div>
+                        <div class="card-desc">150次绕过，深度玩家首选</div>
+                        <div class="chip-container">
+                            <span class="chip">超值</span>
+                            <span class="chip">推荐</span>
+                        </div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>优势？</span><span class="arrow">▶</span></div><div class="product-qa-answer">长期使用划算</div></div>
+                        </div>
+                        <div class="buy-button"><span class="buy-link" data-product="basic150">立即购买</span></div>
                     </div>
                 </div>
+            </div>
 
-                <!-- 常规款 幻龙脚本 -->
-                <div class="product-card" id="macbook-card" data-product="macbook">
-                    <div class="card-header">
-                        <span class="card-title">常规款 10次绕过次数</span>
-                        <span class="card-price">¥5</span>
-                    </div>
-                    <div class="card-subtitle">SansHub · 开发创作</div>
-                    <div class="card-desc">懒得写</div>
-                    <div class="chip-container">
-                        <span class="chip">通用支持</span>
-                    </div>
-                    
-                    <div class="product-qa">
-                        <div class="product-qa-title">常见问题</div>
-                        <div class="product-qa-item">
-                            <div class="product-qa-question">
-                                <span>可以使用几个账户？</span>
-                                <span class="arrow">▶</span>
+            <!-- 进阶品质 (8个卡片) -->
+            <div class="category-section category-advanced" id="category-advanced">
+                <div class="category-title"><span>⚡</span> 进阶品质 · 专业之选</div>
+                <div class="category-grid">
+                    <!-- 200次 -->
+                    <div class="product-card" data-product="adv200">
+                        <div class="flat-tag pro">专业</div>
+                        <div class="card-header">
+                            <span class="card-title">专业版 200次</span>
+                            <div class="price-container">
+                                <span class="original-price">¥200</span>
+                                <span class="card-price">¥100</span>
+                                <span class="per-unit">(¥0.50/次)</span>
                             </div>
-                            <div class="product-qa-answer">支持最多1个账户</div>
                         </div>
-                        <div class="product-qa-item">
-                            <div class="product-qa-question">
-                                <span>允许升级吗？</span>
-                                <span class="arrow">▶</span>
-                            </div>
-                            <div class="product-qa-answer">这是购买次数非剑客的会员时长</div>
+                        <div class="card-subtitle">立省¥100</div>
+                        <div class="card-desc">200次绕过，专业级选择</div>
+                        <div class="chip-container">
+                            <span class="chip">专业</span>
+                            <span class="chip">5折</span>
                         </div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>包含？</span><span class="arrow">▶</span></div><div class="product-qa-answer">优先通道</div></div>
+                        </div>
+                        <div class="buy-button"><span class="buy-link" data-product="adv200">立即购买</span></div>
                     </div>
-                    
-                    <div class="buy-button">
-                        <span class="buy-link" data-product="macbook">立即购买 →</span>
+                    <!-- 300次 -->
+                    <div class="product-card" data-product="adv300">
+                        <div class="flat-tag pro">进阶</div>
+                        <div class="card-header">
+                            <span class="card-title">进阶版 300次</span>
+                            <div class="price-container">
+                                <span class="original-price">¥300</span>
+                                <span class="card-price">¥140</span>
+                                <span class="per-unit">(¥0.47/次)</span>
+                            </div>
+                        </div>
+                        <div class="card-subtitle">立省¥160</div>
+                        <div class="card-desc">300次绕过，高效稳定</div>
+                        <div class="chip-container">
+                            <span class="chip">进阶</span>
+                            <span class="chip">热销</span>
+                        </div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>速度？</span><span class="arrow">▶</span></div><div class="product-qa-answer">专属通道</div></div>
+                        </div>
+                        <div class="buy-button"><span class="buy-link" data-product="adv300">立即购买</span></div>
+                    </div>
+                    <!-- 400次 -->
+                    <div class="product-card" data-product="adv400">
+                        <div class="flat-tag pro">高效</div>
+                        <div class="card-header">
+                            <span class="card-title">高效版 400次</span>
+                            <div class="price-container">
+                                <span class="original-price">¥400</span>
+                                <span class="card-price">¥180</span>
+                                <span class="per-unit">(¥0.45/次)</span>
+                            </div>
+                        </div>
+                        <div class="card-subtitle">立省¥220</div>
+                        <div class="card-desc">400次绕过，高频用户首选</div>
+                        <div class="chip-container">
+                            <span class="chip">高效</span>
+                            <span class="chip">推荐</span>
+                        </div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>适合？</span><span class="arrow">▶</span></div><div class="product-qa-answer">重度用户</div></div>
+                        </div>
+                        <div class="buy-button"><span class="buy-link" data-product="adv400">立即购买</span></div>
+                    </div>
+                    <!-- 500次 -->
+                    <div class="product-card" data-product="adv500">
+                        <div class="flat-tag sale">超值</div>
+                        <div class="card-header">
+                            <span class="card-title">超值版 500次</span>
+                            <div class="price-container">
+                                <span class="original-price">¥500</span>
+                                <span class="card-price">¥210</span>
+                                <span class="per-unit">(¥0.42/次)</span>
+                            </div>
+                        </div>
+                        <div class="card-subtitle">立省¥290</div>
+                        <div class="card-desc">500次绕过，超值特惠</div>
+                        <div class="chip-container">
+                            <span class="chip">超值</span>
+                            <span class="chip">热销</span>
+                        </div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>优势？</span><span class="arrow">▶</span></div><div class="product-qa-answer">单价更低</div></div>
+                        </div>
+                        <div class="buy-button"><span class="buy-link" data-product="adv500">立即购买</span></div>
+                    </div>
+                    <!-- 600次 -->
+                    <div class="product-card" data-product="adv600">
+                        <div class="flat-tag sale">特惠</div>
+                        <div class="card-header">
+                            <span class="card-title">特惠版 600次</span>
+                            <div class="price-container">
+                                <span class="original-price">¥600</span>
+                                <span class="card-price">¥240</span>
+                                <span class="per-unit">(¥0.40/次)</span>
+                            </div>
+                        </div>
+                        <div class="card-subtitle">立省¥360</div>
+                        <div class="card-desc">600次绕过，超长续航</div>
+                        <div class="chip-container">
+                            <span class="chip">特惠</span>
+                            <span class="chip">畅销</span>
+                        </div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>包含？</span><span class="arrow">▶</span></div><div class="product-qa-answer">优先客服</div></div>
+                        </div>
+                        <div class="buy-button"><span class="buy-link" data-product="adv600">立即购买</span></div>
+                    </div>
+                    <!-- 800次 -->
+                    <div class="product-card" data-product="adv800">
+                        <div class="flat-tag premium">尊享</div>
+                        <div class="card-header">
+                            <span class="card-title">尊享版 800次</span>
+                            <div class="price-container">
+                                <span class="original-price">¥800</span>
+                                <span class="card-price">¥300</span>
+                                <span class="per-unit">(¥0.38/次)</span>
+                            </div>
+                        </div>
+                        <div class="card-subtitle">立省¥500</div>
+                        <div class="card-desc">800次绕过，尊享体验</div>
+                        <div class="chip-container">
+                            <span class="chip">尊享</span>
+                            <span class="chip">赠管理</span>
+                        </div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>赠品？</span><span class="arrow">▶</span></div><div class="product-qa-answer">群管理名额</div></div>
+                        </div>
+                        <div class="buy-button"><span class="buy-link" data-product="adv800">立即购买</span></div>
+                    </div>
+                    <!-- 1000次 -->
+                    <div class="product-card" data-product="adv1000">
+                        <div class="flat-tag premium">旗舰</div>
+                        <div class="card-header">
+                            <span class="card-title">旗舰版 1000次</span>
+                            <div class="price-container">
+                                <span class="original-price">¥1000</span>
+                                <span class="card-price">¥350</span>
+                                <span class="per-unit">(¥0.35/次)</span>
+                            </div>
+                        </div>
+                        <div class="card-subtitle">立省¥650</div>
+                        <div class="card-desc">1000次绕过，旗舰之选</div>
+                        <div class="chip-container">
+                            <span class="chip">旗舰</span>
+                            <span class="chip">优先</span>
+                        </div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>特权？</span><span class="arrow">▶</span></div><div class="product-qa-answer">专属客服+管理</div></div>
+                        </div>
+                        <div class="buy-button"><span class="buy-link" data-product="adv1000">立即购买</span></div>
+                    </div>
+                    <!-- 1500次 -->
+                    <div class="product-card" data-product="adv1500">
+                        <div class="flat-tag ultimate">终极</div>
+                        <div class="card-header">
+                            <span class="card-title">终极版 1500次</span>
+                            <div class="price-container">
+                                <span class="original-price">¥1500</span>
+                                <span class="card-price">¥480</span>
+                                <span class="per-unit">(¥0.32/次)</span>
+                            </div>
+                        </div>
+                        <div class="card-subtitle">立省¥1020</div>
+                        <div class="card-desc">1500次绕过，终极体验</div>
+                        <div class="chip-container">
+                            <span class="chip">终极</span>
+                            <span class="chip">超值</span>
+                        </div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>推荐？</span><span class="arrow">▶</span></div><div class="product-qa-answer">长期使用首选</div></div>
+                        </div>
+                        <div class="buy-button"><span class="buy-link" data-product="adv1500">立即购买</span></div>
                     </div>
                 </div>
+            </div>
 
-                <!-- 高级版 500次绕过机会 -->
-                <div class="product-card" id="ipad-card" data-product="ipad">
-                    <div class="card-header">
-                        <span class="card-title">性价比 70+30[赠送]次卡密</span>
-                        <span class="card-price">¥25起</span>
-                    </div>
-                    <div class="card-subtitle">SansHub支持</div>
-                    <div class="card-desc">依旧懒得写</div>
-                    <div class="chip-container">
-                        <span class="chip">link全通用</span>
-                        <span class="chip">好用</span>
-                        <span class="chip">响应最快</span>
-                    </div>
-                    
-                    <div class="product-qa">
-                        <div class="product-qa-title">常见问题</div>
-                        <div class="product-qa-item">
-                            <div class="product-qa-question">
-                                <span>支持些什么？？</span>
-                                <span class="arrow">▶</span>
+            <!-- 特殊品质 (8个卡片) -->
+            <div class="category-section category-special" id="category-special">
+                <div class="category-title"><span>🎲</span> 特殊品质 · 尊享之选</div>
+                <div class="category-grid">
+                    <!-- 自定义 -->
+                    <div class="product-card" id="custom-card" data-product="custom">
+                        <div class="flat-tag flex">灵活</div>
+                        <div class="card-header">
+                            <span class="card-title">自定义次数</span>
+                            <div class="price-container">
+                                <span class="card-price">¥0.6/次起</span>
                             </div>
-                            <div class="product-qa-answer">支持上述所有绕过</div>
                         </div>
-                        <div class="product-qa-item">
-                            <div class="product-qa-question">
-                                <span>有验证吗？</span>
-                                <span class="arrow">▶</span>
+                        <div class="card-subtitle">自由输入 · 多买优惠</div>
+                        <div class="card-desc">输入次数，自动计算金额 (满100次单价降至¥0.5)</div>
+                        <div class="chip-container">
+                            <span class="chip">灵活</span>
+                            <span class="chip">实时计价</span>
+                        </div>
+                        
+                        <div class="custom-input-area">
+                            <div class="custom-input-row">
+                                <input type="number" id="customQuantity" min="1" value="10" placeholder="输入次数">
+                                <span style="color:#2997ff;">次</span>
                             </div>
-                            <div class="product-qa-answer">根据你qq邮箱用户添加次数绑定锁死</div>
+                            <div class="custom-price-display" id="customPriceDisplay">
+                                总金额: <span id="customPriceValue">¥6.00</span>
+                            </div>
+                            <div class="custom-price-display" style="font-size:12px;">
+                                单价: <span id="unitPrice">¥0.60</span>/次
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="buy-button">
-                        <span class="buy-link" data-product="ipad">立即购买 →</span>
-                    </div>
-                </div>
 
-                <!-- 高级版 + 附赠SansHub绕过卡密服务 -->
-                <div class="product-card" id="airpods-card" data-product="airpods">
-                    <div class="card-header">
-                        <span class="card-title">人上人版 1000次卡密绕过</span>
-                        <span class="card-price">¥120</span>
-                    </div>
-                    <div class="card-subtitle">顶配</div>
-                    <div class="card-desc">最牛逼克拉斯的赠送群管理员名额</div>
-                    <div class="chip-container">
-                        <span class="chip">绕过linkvertise</span>
-                        <span class="chip">绕过LootLabs</span>
-                        <span class="chip">绕过WorkLink</span>
-                        <span class="chip">允许解忍者卡密</span>
-                    </div>
-                    
-                    <div class="product-qa">
-                        <div class="product-qa-title">常见问题</div>
-                        <div class="product-qa-item">
-                            <div class="product-qa-question">
-                                <span>包含内容有什么？</span>
-                                <span class="arrow">▶</span>
-                            </div>
-                            <div class="product-qa-answer">具备主动绕过Roblox脚本作者喜欢的广告服务</div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>如何计算？</span><span class="arrow">▶</span></div><div class="product-qa-answer">1-99次 ¥0.6/次，100次以上 ¥0.5/次</div></div>
                         </div>
-                        <div class="product-qa-item">
-                            <div class="product-qa-question">
-                                <span>不跑路吗？</span>
-                                <span class="arrow">▶</span>
-                            </div>
-                            <div class="product-qa-answer">跑个蛋我们群组永远支持</div>
+                        <div class="buy-button">
+                            <span class="buy-link" id="customBuyBtn" data-product="custom">立即购买</span>
                         </div>
                     </div>
-                    
-                    <div class="buy-button">
-                        <span class="buy-link" data-product="airpods">立即购买 →</span>
-                    </div>
-                </div>
-                          <!-- 自定义告知 -->
-                <div class="product-card" id="2" data-product="2">
-                    <div class="card-header">
-                        <span class="card-title">自定义购买次数信息</span>
-                        <span class="card-price">根据需要购买次数定价</span>
-                    </div>
-                    <div class="card-subtitle">待定</div>
-                    <div class="card-desc">零售价0.5一次，10次=5 100次=50逐次计算</div>
-                    <div class="chip-container">
-                        <span class="chip">零售套餐</span>
-                    </div>
-                    
-                    <div class="product-qa">
-                        <div class="product-qa-title">常见问题</div>
-                        <div class="product-qa-item">
-                            <div class="product-qa-question">
-                                <span>如何计算？</span>
-                                <span class="arrow">▶</span>
-                            </div>
-                            <div class="product-qa-answer">单个0.5 你若要买15次则计算器0.5×15结果就是需要的金额</div>
-                        </div>
-                        <div class="product-qa-item">
-                            <div class="product-qa-question">
-                                <span>不跑路吗？</span>
-                                <span class="arrow">▶</span>
-                            </div>
-                            <div class="product-qa-answer">跑个蛋我们群组永远支持</div>
-                        </div>
-                    </div>
-                    
-                    <div class="buy-button">
-                        <span class="buy-link" data-product="airpods">立即购买 →</span>
-                    </div>
-                </div>
-                              <!-- 赌狗单 -->
-                <div class="product-card" id="2" data-product="2">
-                    <div class="card-header">
-                        <span class="card-title">赌狗单，奖池随机价格</span>
-                        <span class="card-price">5元一次</span>
-                    </div>
-                    <div class="card-subtitle">赌徒</div>
-                    <div class="card-desc">每次都会有绕过次数最高100次，隐藏款1000次。适当娱乐请勿上瘾！</div>
-                    <div class="chip-container">
-                        <span class="chip">赌徒单子</span>
-                    </div>
-                    
-                    <div class="product-qa">
-                        <div class="product-qa-title">常见问题</div>
-                        <div class="product-qa-item">
-                            <div class="product-qa-question">
-                                <span>概率是多少？</span>
-                                <span class="arrow">▶</span>
-                            </div>
-                            <div class="product-qa-answer">完全随机化没有概率</div>
-                        </div>
-                        <div class="product-qa-item">
-                            <div class="product-qa-question">
-                                <span>最低获得多少？</span>
-                                <span class="arrow">▶</span>
-                            </div>
-                            <div class="product-qa-answer">1个但常常5次或10次并且非app程序而是我们定制网页抽奖</div>
-                        </div>
-                    </div>
-                    
-                    <div class="buy-button">
-                        <span class="buy-link" data-product="airpods">立即购买 →</span>
-                    </div>
-                </div>
 
+                    <!-- 赌狗单 -->
+                    <div class="product-card" data-product="gamble">
+                        <div class="flat-tag special">刺激</div>
+                        <div class="card-header">
+                            <span class="card-title">赌狗单</span>
+                            <span class="card-price">¥8/次</span>
+                        </div>
+                        <div class="card-subtitle">随机奖池 10-500次</div>
+                        <div class="card-desc">最高500次，隐藏款1000次</div>
+                        <div class="chip-container">
+                            <span class="chip">随机</span>
+                            <span class="chip">刺激</span>
+                        </div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>最低？</span><span class="arrow">▶</span></div><div class="product-qa-answer">10次，平均80次</div></div>
+                        </div>
+                        <div class="buy-button"><span class="buy-link" data-product="gamble">试试手气</span></div>
+                    </div>
+
+                    <!-- 2000次 -->
+                    <div class="product-card" data-product="special2000">
+                        <div class="flat-tag ultimate">至尊</div>
+                        <div class="card-header">
+                            <span class="card-title">至尊版 2000次</span>
+                            <div class="price-container">
+                                <span class="original-price">¥2000</span>
+                                <span class="card-price">¥600</span>
+                                <span class="per-unit">(¥0.30/次)</span>
+                            </div>
+                        </div>
+                        <div class="card-subtitle">立省¥1400</div>
+                        <div class="card-desc">2000次绕过，至尊享受</div>
+                        <div class="chip-container">
+                            <span class="chip">至尊</span>
+                            <span class="chip">永久</span>
+                        </div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>包含？</span><span class="arrow">▶</span></div><div class="product-qa-answer">所有特权+管理</div></div>
+                        </div>
+                        <div class="buy-button"><span class="buy-link" data-product="special2000">立即购买</span></div>
+                    </div>
+
+                    <!-- 2500次 -->
+                    <div class="product-card" data-product="special2500">
+                        <div class="flat-tag ultimate">传说</div>
+                        <div class="card-header">
+                            <span class="card-title">传说版 2500次</span>
+                            <div class="price-container">
+                                <span class="original-price">¥2500</span>
+                                <span class="card-price">¥700</span>
+                                <span class="per-unit">(¥0.28/次)</span>
+                            </div>
+                        </div>
+                        <div class="card-subtitle">立省¥1800</div>
+                        <div class="card-desc">2500次绕过，传说品质</div>
+                        <div class="chip-container">
+                            <span class="chip">传说</span>
+                            <span class="chip">稀有</span>
+                        </div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>特权？</span><span class="arrow">▶</span></div><div class="product-qa-answer">顶级特权</div></div>
+                        </div>
+                        <div class="buy-button"><span class="buy-link" data-product="special2500">立即购买</span></div>
+                    </div>
+
+                    <!-- 3000次 -->
+                    <div class="product-card" data-product="special3000">
+                        <div class="flat-tag ultimate">巅峰</div>
+                        <div class="card-header">
+                            <span class="card-title">巅峰版 3000次</span>
+                            <div class="price-container">
+                                <span class="original-price">¥3000</span>
+                                <span class="card-price">¥780</span>
+                                <span class="per-unit">(¥0.26/次)</span>
+                            </div>
+                        </div>
+                        <div class="card-subtitle">立省¥2220</div>
+                        <div class="card-desc">3000次绕过，巅峰之选</div>
+                        <div class="chip-container">
+                            <span class="chip">巅峰</span>
+                            <span class="chip">限量</span>
+                        </div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>包含？</span><span class="arrow">▶</span></div><div class="product-qa-answer">永久VIP+管理</div></div>
+                        </div>
+                        <div class="buy-button"><span class="buy-link" data-product="special3000">立即购买</span></div>
+                    </div>
+
+                    <!-- 神秘礼包 -->
+                    <div class="product-card" data-product="mystery">
+                        <div class="flat-tag mystery">神秘</div>
+                        <div class="card-header">
+                            <span class="card-title">神秘礼包</span>
+                            <span class="card-price">¥20</span>
+                        </div>
+                        <div class="card-subtitle">随机惊喜 20-8000次</div>
+                        <div class="card-desc">随机获得20-800次，惊喜不断</div>
+                        <div class="chip-container">
+                            <span class="chip">随机</span>
+                            <span class="chip">惊喜</span>
+                        </div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>范围？</span><span class="arrow">▶</span></div><div class="product-qa-answer">20-800次随机</div></div>
+                        </div>
+                        <div class="buy-button"><span class="buy-link" data-product="mystery">开启惊喜</span></div>
+                    </div>
+
+                    <!-- 双倍卡 -->
+                    <div class="product-card" data-product="double">
+                        <div class="flat-tag special">双倍</div>
+                        <div class="card-header">
+                            <span class="card-title">双倍卡</span>
+                            <span class="card-price">¥88</span>
+                        </div>
+                        <div class="card-subtitle">随机获得双倍次数</div>
+                        <div class="card-desc">购买后随机获得100-600次</div>
+                        <div class="chip-container">
+                            <span class="chip">双倍</span>
+                            <span class="chip">惊喜</span>
+                        </div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>概率？</span><span class="arrow">▶</span></div><div class="product-qa-answer">平均300次</div></div>
+                        </div>
+                        <div class="buy-button"><span class="buy-link" data-product="double">立即购买</span></div>
+                    </div>
+
+                    <!-- 幸运大转盘 -->
+                    <div class="product-card" data-product="lucky">
+                        <div class="flat-tag special">幸运</div>
+                        <div class="card-header">
+                            <span class="card-title">幸运大转盘</span>
+                            <span class="card-price">¥5</span>
+                        </div>
+                        <div class="card-subtitle">0-200次随机</div>
+                        <div class="card-desc">试试你的运气</div>
+                        <div class="chip-container">
+                            <span class="chip">幸运</span>
+                            <span class="chip">随机</span>
+                        </div>
+                        <div class="product-qa"><div class="product-qa-title">常见问题</div>
+                            <div class="product-qa-item"><div class="product-qa-question"><span>范围？</span><span class="arrow">▶</span></div><div class="product-qa-answer">50-200次</div></div>
+                        </div>
+                        <div class="buy-button"><span class="buy-link" data-product="lucky">试试手气</span></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- 关于我们页面 - YouTube视频版本 -->
+    <!-- 测试 -->
     <div id="aboutPage" class="page">
-        <div class="content">
-            <h2 style="font-size:48px; text-align:center; margin:40px 0 20px; background: linear-gradient(145deg, #ffffff, #a0a0a8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">关于我们</h2>
-            <p style="text-align:center; color:#86868b; margin-bottom:60px;">Meet the team</p>
+        <div class="content about-section">
+            <div class="about-hero">
+                <h1>关于幻龙工作室</h1>
+                <p>三个傻逼制作的最佳绕过</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">250+</div>
+                    <div class="stat-label">活跃用户</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">3年+</div>
+                    <div class="stat-label">行业经验</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">430+</div>
+                    <div class="stat-label">成功绕过</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">技术支持</div>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2>👥 核心团队</h2>
+                <div class="header-line"></div>
+            </div>
             
             <div class="team-grid">
+                <!-- 小白 -->
                 <div class="team-card">
                     <div class="avatar-container">
-                        <img class="avatar" src="https://q.qlogo.cn/headimg_dl?dst_uin=2984967309&spec=640" alt="小白头像" onerror="this.src='https://i.postimg.cc/tC9JSdkz/Image-293894247015959.jpg'">
+                        <img class="avatar" src="https://q.qlogo.cn/headimg_dl?dst_uin=2984967309&spec=640" alt="小白" onerror="this.src='https://via.placeholder.com/130x130/2997ff/ffffff?text=XB'">
                     </div>
                     <h3 class="team-name">小白</h3>
-                    <div class="team-role">合作者 & 网站开发者</div>
-                    <div class="team-bio">拥有2年roblox脚本经验。</div>
-                    <div class="team-social" style="margin-top:15px;">
-                        <span style="color:#2997ff;">QQ: 付款界面查看</span>
+                    <div class="team-role">本网站作者 & 辅助开发者</div>
+                    <div class="team-bio">拥有3年Roblox脚本开发经验，精通多种绕过技术，负责核心架构设计。</div>
+                    <div class="skills-container">
+                        <span class="skill-tag">JavaScript</span>
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">逆向工程</span>
+                        <span class="skill-tag">全栈</span>
+                    </div>
+                    <div class="team-social">
+                        <div class="social-icon">🐦</div>
+                        <div class="social-icon">📧</div>
+                        <div class="social-icon">💬</div>
                     </div>
                 </div>
+                
+                <!-- mlaO -->
                 <div class="team-card">
                     <div class="avatar-container">
-                        <img class="avatar" src="https://q.qlogo.cn/headimg_dl?dst_uin=3822304607&spec=640" alt="彩蛋头像" onerror="this.src='https://i.postimg.cc/tC9JSdkz/Image-293894247015959.jpg'">
+                        <img class="avatar" src="https://q.qlogo.cn/headimg_dl?dst_uin=3822304607&spec=640" alt="mlaO" onerror="this.src='https://via.placeholder.com/130x130/f39c12/ffffff?text=ML'">
                     </div>
                     <h3 class="team-name">mlaO</h3>
-                    <div class="team-role">鸡哥</div>
-                    <div class="team-bio">UwU</div>
-                    <div class="team-social" style="margin-top:15px;">
-                        <span style="color:#2997ff;">请输入文本</span>
+                    <div class="team-role">技术专家 · 鸡哥</div>
+                    <div class="team-bio">全栈开发工程师，擅长前端交互与用户体验优化。</div>
+                    <div class="skills-container">
+                        <span class="skill-tag">React</span>
+                        <span class="skill-tag">Vue</span>
+                        <span class="skill-tag">UI/UX</span>
+                        <span class="skill-tag">Node.js</span>
+                    </div>
+                    <div class="team-social">
+                        <div class="social-icon">🐦</div>
+                        <div class="social-icon">📧</div>
+                        <div class="social-icon">💬</div>
                     </div>
                 </div>
+                
+                <!-- 小小鱼 -->
                 <div class="team-card">
                     <div class="avatar-container">
-                        <img class="avatar" src="https://q.qlogo.cn/headimg_dl?dst_uin=1208931506&spec=640" alt="小小鱼头像" onerror="this.src='https://i.postimg.cc/tC9JSdkz/Image-293894247015959.jpg'">
+                        <img class="avatar" src="https://q.qlogo.cn/headimg_dl?dst_uin=1208931506&spec=640" alt="小小鱼" onerror="this.src='https://via.placeholder.com/130x130/2ecc71/ffffff?text=XXY'">
                     </div>
                     <h3 class="team-name">小小鱼</h3>
-                    <div class="team-role">技术总监 & 负责人</div>
-                    <div class="team-bio">全栈开发专家，负责核心架构。</div>
-                    <div class="team-social" style="margin-top:15px;">
-                        <span style="color:#2997ff;">QQ: 秘密</span>
+                    <div class="team-role">绕过网站支持者 & 架构师</div>
+                    <div class="team-bio">全栈开发专家，负责系统架构、安全防护和性能优化</div>
+                    <div class="skills-container">
+                        <span class="skill-tag">架构设计</span>
+                        <span class="skill-tag">安全</span>
+                        <span class="skill-tag">数据库</span>
+                        <span class="skill-tag">DevOps</span>
+                    </div>
+                    <div class="team-social">
+                        <div class="social-icon">🐦</div>
+                        <div class="social-icon">📧</div>
+                        <div class="social-icon">💬</div>
                     </div>
                 </div>
             </div>
 
-            <!-- 视频展示区域 - YouTube视频 -->
+            <!-- 里程碑时间线 -->
+            <div class="milestone-section">
+                <div class="section-header">
+                    <h2>📅 发展里程碑</h2>
+                    <div class="header-line"></div>
+                </div>
+                
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-date">2023.06</div>
+                            <div class="timeline-title">幻龙工作室成立</div>
+                            <div class="timeline-desc">由三位核心成员共同创立，专注于Roblox脚本绕过技术研发。</div>
+                        </div>
+                        <div class="timeline-dot"></div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-date">2023.09</div>
+                            <div class="timeline-title">首个稳定版本发布</div>
+                            <div class="timeline-desc">SansHub v1.0上线，支持主流广告平台绕过，用户突破50人。</div>
+                        </div>
+                        <div class="timeline-dot"></div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-date">2024.01</div>
+                            <div class="timeline-title">用户量突破200</div>
+                            <div class="timeline-desc">持续优化体验，新增自定义次数和赌狗单玩法，社区活跃度大幅提升。</div>
+                        </div>
+                        <div class="timeline-dot"></div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-date">2024.03</div>
+                            <div class="timeline-title">支付系统 & v2版本上线</div>
+                            <div class="timeline-desc">新增兑换码服务，优化订单系统，用户量突破250。</div>
+                        </div>
+                        <div class="timeline-dot"></div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-date">2024.06</div>
+                            <div class="timeline-title">全新定价体系发布</div>
+                            <div class="timeline-desc">20+种套餐，最高3000次，满足不同用户需求，持续引领行业。</div>
+                        </div>
+                        <div class="timeline-dot"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 联系方式区域 -->
+            <div class="contact-section">
+                <div class="section-header">
+                    <h2>📞 联系我们</h2>
+                    <div class="header-line"></div>
+                </div>
+                
+                <div class="contact-grid">
+                    <div class="contact-info">
+                        <h3>联系方式</h3>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">📧</div>
+                            <div class="contact-text">
+                                <h4>电子邮箱</h4>
+                                <p><a href="mailto:contact@huanlong.com">2984967309@qq.com</a></p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">💬</div>
+                            <div class="contact-text">
+                                <h4>官方QQ</h4>
+                                <p>2984967309 (24小时在线)</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">📱</div>
+                            <div class="contact-text">
+                                <h4>官方QQ群</h4>
+                                <p>1053432647</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">🌐</div>
+                            <div class="contact-text">
+                                <h4>官方网站</h4>
+                                <p>http://sanshub.cloud/</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 视频展示区域 -->
             <div class="video-showcase">
                 <h3 class="video-title">🎬 产品演示视频</h3>
                 <div class="video-grid">
                     <div class="video-card">
                         <div class="video-container">
-                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
                         </div>
                         <div class="video-info">
                             <h3>SansHub 绕过演示</h3>
@@ -1829,7 +2646,7 @@
                     </div>
                     <div class="video-card">
                         <div class="video-container">
-                            <iframe src="https://www.youtube.com/embed/jNQXAC9IVRw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            <iframe src="https://www.youtube.com/embed/jNQXAC9IVRw" allowfullscreen></iframe>
                         </div>
                         <div class="video-info">
                             <h3>卡密使用教程</h3>
@@ -1838,7 +2655,7 @@
                     </div>
                     <div class="video-card">
                         <div class="video-container">
-                            <iframe src="https://www.youtube.com/embed/9bZkp7q19f0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            <iframe src="https://www.youtube.com/embed/9bZkp7q19f0" allowfullscreen></iframe>
                         </div>
                         <div class="video-info">
                             <h3>群组互动日常</h3>
@@ -1850,449 +2667,291 @@
         </div>
     </div>
 
-    <!-- 支付页面 -->
+    <!-- 购买须知页面 -->
+    <div id="guidePage" class="page">
+        <div class="content guide-section">
+            <div class="guide-card">
+                <div class="guide-title">
+                    <i>📋</i>
+                    <span>购买须知</span>
+                </div>
+                <div class="guide-content">
+                    <div class="guide-item">
+                        <h3><span>🔹</span> 支付说明</h3>
+                        <p>• 本店仅支持微信扫码支付，付款时请务必备注您的QQ邮箱号。</p>
+                        <p>• 支付成功后请截图保存订单号，以便后续查询。</p>
+                        <p>• 订单处理时间：工作日18:00-22:00，节假日正常处理。</p>
+                    </div>
+                    <div class="guide-item">
+                        <h3><span>🔹</span> 客服联系</h3>
+                        <p>• 管理员QQ：<strong style="color:#ffd700;">2984967309</strong> (24小时在线)</p>
+                        <p>• 添加QQ时请备注：订单号+产品名称，以便快速通过。</p>
+                        <p>• 咨询时请提供付款截图，我们将尽快为您处理。</p>
+                    </div>
+                    <div class="guide-item">
+                        <h3><span>🔹</span> 售后政策</h3>
+                        <p>• 虚拟商品一经售出，概不退款，请仔细确认后购买。</p>
+                        <p>• 如遇卡密问题或使用故障，请及时联系客服处理。</p>
+                        <p>• 本店保留最终解释权。</p>
+                    </div>
+                    <div class="guide-note">
+                        <p style="color:#ffd700; font-weight:500;">⚠️ 重要提示</p>
+                        <p>购买即表示您已阅读并同意以上条款。为了保障您的权益，请务必仔细阅读购买须知。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 支付页 -->
     <div id="paymentPage" class="page">
         <div class="content payment-section">
             <div class="payment-card">
-                <div class="payment-product-name" id="paymentProductName">体验版 幻龙脚本</div>
-                <div class="payment-product-price" id="paymentProductPrice">¥5起</div>
-                
-                <div class="qr-wrapper">
-                    <div class="qr-code" id="qrCode">
-                        <img src="https://i.postimg.cc/3xF2dJw6/mmexport1772021478184.jpg" alt="QR Code">
-                    </div>
-                    <span class="qr-hint">使用微信扫码支付</span>
-                </div>
-                
-                <div class="disclaimer">
-                    <div class="disclaimer-title">
-                        <span>⚠️ 免责声明</span>
-                    </div>
-                    <div class="disclaimer-content">
-                        <p>• 付款请备注你注册qq邮箱号</p>
-                        <p>• 管理员QQ：<strong style="color:#2997ff; font-size:18px;">2984967309</strong> (24小时在线)</p>
-                        <p>• 添加QQ时请备注：订单号+产品名称</p>
-                        <p>• 订单处理时间：工作日18:00-22:00，节假日正常处理</p>
-                        <div class="qq-info">
-                            📱 扫码后请截图保存订单号<br>
-                            💬 QQ咨询时请提供付款截图
-                        </div>
-                    </div>
-                </div>
-                
+                <div class="payment-product-name" id="paymentProductName">自定义购买</div>
+                <div class="payment-product-price" id="paymentProductPrice">¥0.00</div>
+                <div class="qr-wrapper"><div class="qr-code"><img src="https://i.postimg.cc/3xF2dJw6/mmexport1772021478184.jpg" alt="QR"></div><div class="qr-hint">微信扫码支付</div></div>
+                <div class="disclaimer"><div class="disclaimer-title"><span>⚠️ 免责声明</span></div><div class="disclaimer-content"><p>• 付款备注QQ邮箱号</p><p>• 管理员QQ：<strong style="color:#2997ff;">2984967309</strong> (24小时)</p><p>• 添加QQ备注订单号+产品名</p><div class="qq-info">📱 扫码后截图保存订单号</div></div></div>
                 <div class="back-to-products" id="backToProducts">← 返回产品列表</div>
             </div>
-
             <div class="payment-qa-section">
                 <div class="payment-qa-title">付款常见问题</div>
-                
-                <div class="payment-qa-item">
-                    <div class="payment-qa-question">
-                        <span>付款后多久可以拿到？</span>
-                        <span class="arrow">▶</span>
-                    </div>
-                    <div class="payment-qa-answer">按照免责声明步骤约10分钟内相应</div>
-                </div>
-                
-                <div class="payment-qa-item">
-                    <div class="payment-qa-question">
-                        <span>如何查询订单状态？</span>
-                        <span class="arrow">▶</span>
-                    </div>
-                    <div class="payment-qa-answer">添加管理员QQ 2984967309，提供订单号即可查询实时状态。</div>
-                </div>
-                
-                <div class="payment-qa-item">
-                    <div class="payment-qa-question">
-                        <span>支持哪些支付方式？</span>
-                        <span class="arrow">▶</span>
-                    </div>
-                    <div class="payment-qa-answer">本页面仅支持微信扫码支付，暂不支持其他方式。</div>
-                </div>
-                
-                <div class="payment-qa-item">
-                    <div class="payment-qa-question">
-                        <span>可以申请退款吗？</span>
-                        <span class="arrow">▶</span>
-                    </div>
-                    <div class="payment-qa-answer">当作捐款处理。</div>
-                </div>
+                <div class="payment-qa-item"><div class="payment-qa-question"><span>付款后多久拿到？</span><span>▶</span></div><div class="payment-qa-answer">约10分钟内响应</div></div>
+                <div class="payment-qa-item"><div class="payment-qa-question"><span>如何查询订单？</span><span>▶</span></div><div class="payment-qa-answer">添加QQ 2984967309提供订单号</div></div>
+                <div class="payment-qa-item"><div class="payment-qa-question"><span>支持退款吗？</span><span>▶</span></div><div class="payment-qa-answer">当作捐款处理</div></div>
             </div>
         </div>
     </div>
 
-    <!-- 多音乐顺序播放器 - 使用网易云API -->
+    <!-- 音乐播放器 -->
     <div class="music-player-container" id="musicPlayer">
-        <!-- 隐藏的网易云iframe，用于实际播放 -->
         <div class="netease-player" id="neteasePlayer"></div>
-        
-        <!-- 播放器界面 -->
-        <div class="music-player-header">
-            <div class="cover">🎵</div>
-            <div class="info">
-                <div class="title" id="currentSongTitle">夏夜</div>
-                <div class="artist" id="currentSongArtist">幻龙音乐</div>
-            </div>
-        </div>
-        
-        <!-- 播放列表 -->
-        <div class="music-playlist" id="playlist">
-            <!-- 动态通过JS生成 -->
-        </div>
-        
-        <!-- 播放控制 -->
-        <div class="music-player-controls">
-            <button id="prevBtn" title="上一首">⏮</button>
-            <button id="playPauseBtn" title="播放/暂停">⏯</button>
-            <button id="nextBtn" title="下一首">⏭</button>
-        </div>
+        <div class="music-player-header"><div class="cover">🎵</div><div class="info"><div class="title" id="currentSongTitle">夏夜</div><div class="artist" id="currentSongArtist">幻龙音乐</div></div></div>
+        <div class="music-playlist" id="playlist"></div>
+        <div class="music-player-controls"><button id="prevBtn">⏮</button><button id="playPauseBtn">⏯</button><button id="nextBtn">⏭</button></div>
     </div>
 
-    <div class="footer-note">
-        * 我不喜欢剑客的人机行为搞vip形式
-    </div>
+    <div class="footer-note">* 我不喜欢剑客的人机行为搞vip形式</div>
+    <div class="focus-close-btn" id="focusCloseBtn">✕</div>
 
     <script>
-        (function() {
-            const tabs = document.querySelectorAll('.tab-item');
-            const productTabsContainer = document.getElementById('productTabsContainer');
-            const productsMainTab = document.getElementById('productsMainTab');
-            const productTabs = document.querySelectorAll('.product-tab');
+    (function(){
+        // 页面切换逻辑
+        const tabs = document.querySelectorAll('.tab-item');
+        const qualityNavContainer = document.getElementById('qualityNavContainer');
+        const productsMainTab = document.getElementById('productsMainTab');
+        const qualityNavItems = document.querySelectorAll('.quality-nav-item');
+        const guideBtn = document.getElementById('guideBtn');
+        const pages = { 
+            home:document.getElementById('homePage'), 
+            products:document.getElementById('productsPage'), 
+            about:document.getElementById('aboutPage'), 
+            payment:document.getElementById('paymentPage'),
+            guide:document.getElementById('guidePage')
+        };
+        const bgLayers = { home:document.getElementById('bgHome'), products:document.getElementById('bgProducts'), about:document.getElementById('bgAbout'), payment:document.getElementById('bgPayment') };
+        const backToProducts = document.getElementById('backToProducts');
+
+        let currentPage = 'home';
+        let isTransitioning = false;
+
+        function setActiveBg(pageId) { 
+            Object.keys(bgLayers).forEach(k=>bgLayers[k].classList.remove('active')); 
+            if(bgLayers[pageId]) bgLayers[pageId].classList.add('active'); 
+        }
+        
+        function toggleQualityNav(show) { 
+            if(show) { 
+                qualityNavContainer.classList.add('visible'); 
+                productsMainTab.classList.add('active'); 
+            } else { 
+                qualityNavContainer.classList.remove('visible'); 
+                if(currentPage !== 'products') productsMainTab.classList.remove('active'); 
+            }
+        }
+
+        function switchPage(targetPageId, exitAnim='left') {
+            if(isTransitioning || currentPage===targetPageId) return;
+            isTransitioning = true;
+            const currentEl = pages[currentPage];
+            const targetEl = pages[targetPageId];
+            if(!currentEl || !targetEl) return;
             
-            const pages = {
-                home: document.getElementById('homePage'),
-                products: document.getElementById('productsPage'),
-                about: document.getElementById('aboutPage'),
-                payment: document.getElementById('paymentPage')
-            };
+            currentEl.classList.add(exitAnim==='left'?'page-exit-left':'page-exit-down');
             
-            const bgLayers = {
-                home: document.getElementById('bgHome'),
-                products: document.getElementById('bgProducts'),
-                about: document.getElementById('bgAbout'),
-                payment: document.getElementById('bgPayment')
-            };
+            tabs.forEach(tab => { 
+                tab.classList.toggle('active', tab.getAttribute('data-target')===targetPageId); 
+            });
             
-            const buyLinks = document.querySelectorAll('.buy-link');
-            const backToProducts = document.getElementById('backToProducts');
-            const paymentProductName = document.getElementById('paymentProductName');
-            const paymentProductPrice = document.getElementById('paymentProductPrice');
+            if (guideBtn) {
+                guideBtn.classList.toggle('active', targetPageId === 'guide');
+            }
             
-            const qaItems = document.querySelectorAll('.product-qa-item');
-            const paymentQaItems = document.querySelectorAll('.payment-qa-item');
+            if(targetPageId==='products') toggleQualityNav(true); else toggleQualityNav(false);
             
-            let currentPage = 'home';
-            let isTransitioning = false;
-            let isProductsExpanded = false;
+            setTimeout(() => {
+                currentEl.classList.remove('active-page','page-exit-left','page-exit-down');
+                targetEl.classList.add('active-page');
+                setActiveBg(targetPageId === 'guide' ? 'home' : targetPageId);
+                currentPage = targetPageId;
+                window.scrollTo({top:0, behavior:'smooth'});
+                setTimeout(() => { isTransitioning = false; }, 100);
+            }, 380);
+        }
 
-            // ========== 多音乐顺序播放器 ==========
-            const musicPlayer = document.getElementById('musicPlayer');
-            const musicToggle = document.getElementById('musicToggle');
-            const musicIcon = musicToggle.querySelector('.music-icon');
-            let isMusicVisible = false; // 默认隐藏
+        tabs.forEach(tab => { 
+            tab.addEventListener('click', function(){ 
+                if(isTransitioning) return; 
+                const tid = this.getAttribute('data-target'); 
+                if(tid==='products' && currentPage!=='products') switchPage('products', currentPage==='payment'?'down':'left'); 
+                else if(tid!=='products') switchPage(tid, 'left'); 
+            }); 
+        });
 
-            // 歌曲列表 - 网易云音乐ID
-            const songList = [
-                { id: '2745805150', name: '夏夜', artist: '幻龙音乐', duration: '3:45' },
-                { id: '357985', name: '夜曲', artist: '周杰伦', duration: '3:48' },
-                { id: '167937', name: '晴天', artist: '周杰伦', duration: '4:29' },
-                { id: '186016', name: '七里香', artist: '周杰伦', duration: '4:56' },
-                { id: '65536', name: '起风了', artist: '买辣椒也用券', duration: '5:15' }
-            ];
+        guideBtn.addEventListener('click', function() {
+            if(isTransitioning) return;
+            switchPage('guide', 'left');
+        });
 
-            let currentIndex = 0;
-            let isPlaying = false;
-            let neteaseIframe = null;
-
-            // 初始化播放列表
-            function initPlaylist() {
-                const playlistEl = document.getElementById('playlist');
-                playlistEl.innerHTML = '';
-                
-                songList.forEach((song, index) => {
-                    const item = document.createElement('div');
-                    item.className = `music-playlist-item ${index === currentIndex ? 'active' : ''}`;
-                    item.innerHTML = `
-                        <div class="index">${index + 1}</div>
-                        <div class="info">
-                            <div class="name">${song.name}</div>
-                            <div class="artist">${song.artist}</div>
-                        </div>
-                        <div class="duration">${song.duration}</div>
-                        <div class="play-icon">▶</div>
-                    `;
-                    item.addEventListener('click', () => playSong(index));
-                    playlistEl.appendChild(item);
-                });
-            }
-
-            // 创建网易云iframe
-            function createNeteasePlayer(songId) {
-                const container = document.getElementById('neteasePlayer');
-                container.innerHTML = ''; // 清空之前的iframe
-                
-                const iframe = document.createElement('iframe');
-                iframe.src = `//music.163.com/outchain/player?type=1&id=${songId}&auto=1&height=90`;
-                iframe.width = '0';
-                iframe.height = '0';
-                iframe.style.display = 'none';
-                iframe.frameborder = '0';
-                iframe.allow = 'autoplay';
-                
-                container.appendChild(iframe);
-                neteaseIframe = iframe;
-            }
-
-            // 播放指定索引的歌曲
-            function playSong(index) {
-                if (index < 0 || index >= songList.length) return;
-                
-                currentIndex = index;
-                const song = songList[currentIndex];
-                
-                // 更新当前显示
-                document.getElementById('currentSongTitle').textContent = song.name;
-                document.getElementById('currentSongArtist').textContent = song.artist;
-                
-                // 更新播放列表高亮
-                document.querySelectorAll('.music-playlist-item').forEach((item, i) => {
-                    if (i === currentIndex) {
-                        item.classList.add('active');
-                    } else {
-                        item.classList.remove('active');
-                    }
-                });
-                
-                // 创建新的网易云播放器（自动播放）
-                createNeteasePlayer(song.id);
-                isPlaying = true;
-            }
-
-            // 播放/暂停切换
-            function togglePlayPause() {
-                if (!neteaseIframe) {
-                    playSong(currentIndex);
-                    return;
-                }
-                
-                // 由于网易云iframe不支持直接暂停，我们通过刷新iframe实现暂停/播放
-                if (isPlaying) {
-                    // "暂停" - 移除iframe
-                    document.getElementById('neteasePlayer').innerHTML = '';
-                    neteaseIframe = null;
-                    isPlaying = false;
-                } else {
-                    // 播放
-                    playSong(currentIndex);
-                }
-            }
-
-            // 上一首
-            function prevSong() {
-                let newIndex = currentIndex - 1;
-                if (newIndex < 0) newIndex = songList.length - 1;
-                playSong(newIndex);
-            }
-
-            // 下一首
-            function nextSong() {
-                let newIndex = currentIndex + 1;
-                if (newIndex >= songList.length) newIndex = 0;
-                playSong(newIndex);
-            }
-
-            // 切换音乐播放器显示/隐藏
-            function toggleMusic() {
-                if (isMusicVisible) {
-                    musicPlayer.classList.remove('visible');
-                    // 隐藏时暂停音乐
-                    document.getElementById('neteasePlayer').innerHTML = '';
-                    neteaseIframe = null;
-                    isPlaying = false;
-                } else {
-                    musicPlayer.classList.add('visible');
-                    // 显示时自动播放当前歌曲
-                    if (!neteaseIframe) {
-                        playSong(currentIndex);
-                    }
-                }
-                isMusicVisible = !isMusicVisible;
-            }
-
-            // 音乐按钮点击事件
-            if (musicToggle) {
-                musicToggle.addEventListener('click', toggleMusic);
-            }
-
-            // 初始化播放列表
-            initPlaylist();
-
-            // 绑定控制按钮
-            document.getElementById('prevBtn').addEventListener('click', prevSong);
-            document.getElementById('playPauseBtn').addEventListener('click', togglePlayPause);
-            document.getElementById('nextBtn').addEventListener('click', nextSong);
-
-            // ========== 页面切换功能 ==========
-            function setActiveBg(pageId) {
-                Object.keys(bgLayers).forEach(key => {
-                    bgLayers[key].classList.remove('active');
-                });
-                if (bgLayers[pageId]) {
-                    bgLayers[pageId].classList.add('active');
-                }
-            }
-
-            function toggleProductTabs(expand) {
-                if (expand) {
-                    productTabsContainer.classList.add('visible');
-                    productsMainTab.classList.add('active');
-                    isProductsExpanded = true;
-                } else {
-                    productTabsContainer.classList.remove('visible');
-                    if (currentPage !== 'products') {
-                        productsMainTab.classList.remove('active');
-                    }
-                    isProductsExpanded = false;
-                }
-            }
-
-            function scrollToTop() {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-
-            function switchPage(targetPageId, exitAnimation = 'left') {
-                if (isTransitioning || currentPage === targetPageId) return;
-                
-                isTransitioning = true;
-                
-                const currentPageEl = pages[currentPage];
-                const targetPageEl = pages[targetPageId];
-                
-                if (!currentPageEl || !targetPageEl) {
-                    isTransitioning = false;
-                    return;
-                }
-
-                currentPageEl.classList.add(exitAnimation === 'left' ? 'page-exit-left' : 'page-exit-down');
-
-                tabs.forEach(tab => {
-                    const target = tab.getAttribute('data-target');
-                    if (target === targetPageId) {
-                        tab.classList.add('active');
-                    } else {
-                        tab.classList.remove('active');
-                    }
-                });
-
-                if (targetPageId === 'products') {
-                    toggleProductTabs(true);
-                } else {
-                    toggleProductTabs(false);
-                }
-
-                setTimeout(() => {
-                    currentPageEl.classList.remove('active-page', 'page-exit-left', 'page-exit-down');
-                    targetPageEl.classList.add('active-page');
-                    
-                    setActiveBg(targetPageId);
-                    
-                    currentPage = targetPageId;
-                    
-                    scrollToTop();
-                    
+        qualityNavItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const quality = this.getAttribute('data-quality');
+                if(currentPage !== 'products') {
+                    switchPage('products', 'left');
                     setTimeout(() => {
-                        isTransitioning = false;
-                    }, 100);
-                }, 450);
-            }
+                        document.getElementById(`category-${quality}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 400);
+                } else {
+                    document.getElementById(`category-${quality}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
 
-            function scrollToProduct(productId) {
-                const productCard = document.getElementById(`${productId}-card`);
-                if (productCard) {
-                    productCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    document.querySelectorAll('.product-card').forEach(c => c.classList.remove('active'));
-                    productCard.classList.add('active');
+        if(backToProducts) backToProducts.addEventListener('click', ()=> switchPage('products','down'));
+
+        // 自定义输入框计算逻辑
+        const customInput = document.getElementById('customQuantity');
+        const customPriceSpan = document.getElementById('customPriceValue');
+        const unitPriceSpan = document.getElementById('unitPrice');
+        const customBuyBtn = document.getElementById('customBuyBtn');
+        
+        if (customInput && customPriceSpan) {
+            function updateCustomPrice() {
+                let qty = parseInt(customInput.value);
+                if (isNaN(qty) || qty < 1) qty = 1;
+                customInput.value = qty;
+                let unitPrice = qty >= 100 ? 0.5 : 0.6;
+                const total = (qty * unitPrice).toFixed(2);
+                customPriceSpan.textContent = `¥${total}`;
+                if (unitPriceSpan) {
+                    unitPriceSpan.textContent = `¥${unitPrice.toFixed(2)}`;
                 }
             }
-
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    if (isTransitioning) return;
-                    
-                    const targetId = this.getAttribute('data-target');
-                    
-                    if (targetId === 'products') {
-                        if (currentPage !== 'products') {
-                            switchPage('products', currentPage === 'payment' ? 'down' : 'left');
-                        } else {
-                            toggleProductTabs(!isProductsExpanded);
-                        }
-                    } else {
-                        switchPage(targetId, currentPage === 'payment' ? 'down' : 'left');
-                    }
-                });
-            });
-
-            productTabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const productId = this.getAttribute('data-product');
-                    
-                    if (currentPage !== 'products') {
-                        switchPage('products', 'left');
-                        setTimeout(() => {
-                            scrollToProduct(productId);
-                        }, 600);
-                    } else {
-                        scrollToProduct(productId);
-                    }
-                });
-            });
-
-            buyLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
+            
+            customInput.addEventListener('input', updateCustomPrice);
+            customInput.addEventListener('blur', updateCustomPrice);
+            updateCustomPrice();
+            
+            if (customBuyBtn) {
+                customBuyBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
                     
-                    const productId = this.getAttribute('data-product');
-                    const productCard = document.getElementById(`${productId}-card`);
+                    let qty = parseInt(customInput.value) || 1;
+                    let unitPrice = qty >= 100 ? 0.5 : 0.6;
+                    const total = (qty * unitPrice).toFixed(2);
                     
-                    if (productCard) {
-                        const title = productCard.querySelector('.card-title').textContent;
-                        const price = productCard.querySelector('.card-price').textContent;
-                        
-                        paymentProductName.textContent = title;
-                        paymentProductPrice.textContent = price;
-                    }
+                    document.getElementById('paymentProductName').textContent = `自定义 ${qty}次`;
+                    document.getElementById('paymentProductPrice').textContent = `¥${total}`;
                     
                     switchPage('payment', 'left');
                 });
-            });
+            }
+        }
 
-            backToProducts.addEventListener('click', function() {
-                switchPage('products', 'down');
-            });
-
-            qaItems.forEach(item => {
-                const question = item.querySelector('.product-qa-question');
-                question.addEventListener('click', function() {
-                    item.classList.toggle('expanded');
-                });
-            });
-
-            paymentQaItems.forEach(item => {
-                const question = item.querySelector('.payment-qa-question');
-                question.addEventListener('click', function() {
-                    item.classList.toggle('expanded');
-                });
-            });
-
-            setActiveBg('home');
-            pages.home.classList.add('active-page');
+        // 其他购买链接
+        document.querySelectorAll('.buy-link').forEach(link => { 
+            if (link.id === 'customBuyBtn') return;
             
-            setTimeout(() => {
-                document.getElementById('iphone-card').classList.add('active');
-            }, 100);
-        })();
+            link.addEventListener('click', function(e){ 
+                e.preventDefault(); 
+                e.stopPropagation(); 
+                const pid = this.getAttribute('data-product'); 
+                let card = null;
+                document.querySelectorAll('.product-card').forEach(c => {
+                    if (c.getAttribute('data-product') === pid) {
+                        card = c;
+                    }
+                });
+                
+                if(card){ 
+                    const title = card.querySelector('.card-title')?.textContent || '商品'; 
+                    const priceElement = card.querySelector('.card-price');
+                    const price = priceElement ? priceElement.textContent : '¥?';
+                    document.getElementById('paymentProductName').textContent = title; 
+                    document.getElementById('paymentProductPrice').textContent = price; 
+                }
+                switchPage('payment','left'); 
+            }); 
+        });
+
+        // QA折叠
+        document.querySelectorAll('.product-qa-item .product-qa-question, .payment-qa-item .payment-qa-question').forEach(q => { 
+            q.addEventListener('click', function(e){ 
+                e.stopPropagation(); 
+                this.parentElement.classList.toggle('expanded'); 
+            }); 
+        });
+
+        setActiveBg('home');
+
+        // 聚焦卡片
+        const closeBtn = document.getElementById('focusCloseBtn');
+        const categorySections = document.querySelectorAll('.category-section');
+        const cards = document.querySelectorAll('.product-card');
+        let focusedCard = null;
+
+        function exitFocusMode() {
+            categorySections.forEach(section => section.classList.remove('focus-mode'));
+            cards.forEach(c => c.classList.remove('focused'));
+            closeBtn.classList.remove('visible');
+            focusedCard = null;
+        }
+
+        function focusCard(card) {
+            if (focusedCard === card) { exitFocusMode(); return; }
+            exitFocusMode();
+            const parentSection = card.closest('.category-section');
+            if (parentSection) parentSection.classList.add('focus-mode');
+            card.classList.add('focused');
+            closeBtn.classList.add('visible');
+            focusedCard = card;
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        cards.forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (e.target.closest('.buy-link') || e.target.closest('.product-qa-question') || e.target.closest('input')) return;
+                focusCard(this);
+            });
+        });
+
+        closeBtn.addEventListener('click', exitFocusMode);
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') exitFocusMode(); });
+
+        // 音乐播放器
+        const musicPlayer = document.getElementById('musicPlayer');
+        const musicToggle = document.getElementById('musicToggle');
+        let isMusicVisible = false;
+
+        musicToggle.addEventListener('click', ()=>{
+            if(isMusicVisible) { 
+                musicPlayer.classList.remove('visible'); 
+            } else { 
+                musicPlayer.classList.add('visible'); 
+            }
+            isMusicVisible = !isMusicVisible;
+        });
+    })();
     </script>
 </body>
 </html>
