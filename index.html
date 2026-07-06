@@ -3,325 +3,537 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SansHub网页</title>
+    <title>粉龙的大转盘</title>
     <style>
-        :root {
-            --bg: #030303;
-            --surface: #0a0a0a;
-            --primary: #ffffff;
-            --accent: #d4af37;
-            --secondary: #666;
-            --border: #1a1a1a;
-            --anim-speed: 0.7s;
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b0c10; color: #e2e8f0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
+        .container { display: flex; max-width: 1200px; width: 100%; gap: 25px; flex-wrap: wrap; margin: auto 0; z-index: 1; }
+        
+        .panel { background: #13141c; border: 1px solid #222430; border-radius: 12px; padding: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.8); }
+        .left-panel { flex: 1; min-width: 320px; display: flex; flex-direction: column; }
+        .right-panel { flex: 2; min-width: 500px; display: flex; flex-direction: column; gap: 20px; justify-content: center; }
+        @media (max-width: 850px) { .container { flex-direction: column; } }
+
+        h2 { font-size: 1.1rem; margin-bottom: 15px; color: #f1c40f; border-left: 4px solid #f1c40f; padding-left: 8px; text-transform: uppercase; letter-spacing: 1px; }
+        .form-group { margin-bottom: 20px; }
+        
+        /* 初始模式选择舞台 */
+        .mode-selection-stage { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; background: #1a1c26; padding: 20px; border-radius: 8px; border: 1px dashed #3a3f58; }
+        
+        .btn { display: block; width: 100%; background: linear-gradient(135deg, #f1c40f, #d35400); color: #000; border: none; padding: 14px; border-radius: 6px; cursor: pointer; font-weight: 800; font-size: 0.95rem; text-transform: uppercase; box-shadow: 0 4px 15px rgba(241, 196, 15, 0.15); transition: all 0.2s; text-align: center; }
+        .btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(241, 196, 15, 0.35); }
+        .btn:disabled { background: #1e212b; color: #4e5768; cursor: not-allowed; transform: none; box-shadow: none; }
+        
+        .btn-guest { background: linear-gradient(135deg, #2ecc71, #27ae60); color: #fff; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.2); }
+        .btn-guest:hover { box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4); }
+        .btn-admin { background: linear-gradient(135deg, #9b59b6, #8e44ad); color: #fff; box-shadow: 0 4px 15px rgba(155, 89, 182, 0.2); }
+        .btn-admin:hover { box-shadow: 0 6px 20px rgba(155, 89, 182, 0.4); }
+        
+        /* 刷新按钮样式 */
+        .btn-refresh { background: linear-gradient(135deg, #34495e, #2c3e50); color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.2); margin-top: 10px; padding: 10px; font-size: 0.85rem; }
+        .btn-refresh:hover { background: linear-gradient(135deg, #455a64, #34495e); }
+
+        .btn-triple { background: linear-gradient(135deg, #2980b9, #1f4068); color: white; box-shadow: 0 4px 15px rgba(41, 128, 185, 0.15); margin-bottom: 0; }
+        .btn-triple:hover { box-shadow: 0 6px 20px rgba(41, 128, 185, 0.35); }
+        .btn-group { display: flex; gap: 10px; margin-bottom: 15px; }
+
+        input[type="password"] { width: 100%; padding: 12px 16px; background: #06070a; border: 1px solid #232736; border-radius: 6px; color: #fff; outline: none; font-size: 1rem; }
+        input[type="password"]:focus { border-color: #f1c40f; }
+
+        .main-game-content { display: none; } 
+
+        .prize-box { background: #06070a; border-radius: 8px; padding: 15px; margin-bottom: 15px; border: 1px solid #1a1c26; display: none; }
+        .stats { font-size: 0.8rem; color: #7f8c8d; margin-bottom: 10px; display: flex; flex-direction: column; gap: 4px; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 6px; max-height: 180px; overflow-y: auto; }
+        .grid-item { padding: 6px; text-align: center; border-radius: 4px; font-size: 0.72rem; font-weight: bold; border: 1px solid transparent; }
+        
+        .item-A { background: rgba(231, 76, 60, 0.15); color: #ff4757; border-color: #e74c3c; }
+        .item-B { background: rgba(241, 196, 15, 0.15); color: #ffa502; border-color: #f1c40f; }
+        .item-C { background: rgba(155, 89, 182, 0.15); color: #e056fd; border-color: #9b59b6; }
+        .item-empty { background: #191b24; color: #57606f; border-color: #2f3542; }
+
+        .history-list { max-height: 120px; overflow-y: auto; background: #06070a; padding: 12px; border-radius: 8px; font-size: 0.82rem; border: 1px solid #1a1c26; }
+        .history-item { padding: 6px 0; border-bottom: 1px dashed #1a1c26; color: #a4b0be; }
+        
+        .txt-A { color: #ff4757; font-weight: bold; }
+        .txt-B { color: #ffa502; font-weight: bold; }
+        .txt-C { color: #e056fd; font-weight: bold; }
+
+        /* ================= 滚动轴核心配置 ================= */
+        .case-roulette-container { display: flex; flex-direction: column; gap: 15px; background: #06070a; padding: 20px 10px; border-radius: 8px; border: 1px solid #1a1c26; }
+        .roulette-row { position: relative; width: 100%; height: 110px; background: #10121a; overflow: hidden; border: 2px solid #222430; border-radius: 4px; display: none; }
+        .roulette-row.active { display: block; }
+        
+        .pointer-line { position: absolute; top: 0; left: 50%; width: 4px; height: 100%; background: #f1c40f; transform: translateX(-50%); z-index: 10; box-shadow: 0 0 15px #f1c40f; }
+        .roulette-track { display: flex; position: absolute; left: 0; top: 0; height: 100%; width: max-content; transform: translate3d(0, 0, 0); }
+        
+        .card-item { width: 110px; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: bold; text-align: center; border-right: 2px solid #06070a; position: relative; padding: 5px; flex-shrink: 0; transition: all 0.3s; }
+        .card-item::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 4px; }
+        
+        .card-A { background: linear-gradient(to bottom, #2c1a1d, #44181d); color: #ff4757; } .card-A::after { background: #ff4757; }
+        .card-B { background: linear-gradient(to bottom, #2c251a, #443418); color: #ffa502; } .card-B::after { background: #ffa502; }
+        .card-C { background: linear-gradient(to bottom, #231a2c, #331844); color: #e056fd; } .card-C::after { background: #e056fd; }
+        .card-empty { background: linear-gradient(to bottom, #141722, #1b1e2b); color: #57606f; } .card-empty::after { background: #57606f; }
+        .card-icon { font-size: 1.4rem; margin-bottom: 6px; }
+        .card-item.winner-highlight { transform: scale(1.05); z-index: 5; filter: brightness(1.5); box-shadow: inset 0 0 15px rgba(255,255,255,0.4); border: 1px solid currentColor !important; }
+
+        /* ================= 全屏撕裂舞台 ================= */
+        .tear-stage { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1000; display: none; overflow: hidden; background: #000; }
+        .tear-bottom-url-bg { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1; }
+        .tear-winner-info { z-index: 2; text-align: center; background: rgba(0,0,0,0.6); padding: 20px 50px; border-radius: 4px; border-left: 5px solid currentColor; backdrop-filter: blur(5px); transform: translateY(50px); opacity: 0; transition: all 0.5s 0.4s ease-out; }
+        .tear-stage.ripped .tear-winner-info { transform: translateY(0); opacity: 1; }
+        .tear-winner-info h1 { font-size: 3rem; font-weight: 900; letter-spacing: 2px; margin-bottom: 5px; }
+        .tear-winner-info p { font-size: 1.2rem; color: #fff; letter-spacing: 8px; text-transform: uppercase; font-weight: bold; }
+
+        .tear-paper-top, .tear-paper-bottom { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #2d144d 0%, #150727 100%); z-index: 5; transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1); }
+        .tear-paper-top { clip-path: polygon(0 0, 100% 0, 100% 20%, 0 80%); }
+        .tear-paper-bottom { clip-path: polygon(0 80%, 100% 20%, 100% 100%, 0 100%); }
+
+        .tear-stage.ripped .tear-paper-top { transform: translate(-80%, -80%); }
+        .tear-stage.ripped .tear-paper-bottom { transform: translate(80%, 80%); }
+
+        .tear-laser-line { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 6; pointer-events: none; background: linear-gradient(28deg, rgba(255,255,255,0) 48%, #e056fd 50%, #fff 51%, rgba(255,255,255,0) 53%); transition: all 0.5s ease-out; transform: scale(1); opacity: 1; }
+        .tear-stage.ripped .tear-laser-line { transform: scale(1.5); opacity: 0; }
+        .tear-click-next-tip { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 10; color: rgba(255,255,255,0.7); font-weight: bold; letter-spacing: 2px; font-size: 0.9rem; background: rgba(224, 86, 253, 0.2); border: 1px solid #e056fd; padding: 10px 30px; border-radius: 30px; pointer-events: none; animation: blink 1.5s infinite; display: none; }
+        .tear-stage.ripped .tear-click-next-tip { display: block; }
+
+        /* ================= PUBG 最终综合结算大屏 ================= */
+        .pubg-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(3, 3, 5, 0.95); z-index: 999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
+        .pubg-overlay.show { opacity: 1; pointer-events: auto; }
+        .pubg-arrow-left, .pubg-arrow-right { position: absolute; width: 200px; height: 60px; font-size: 2.5rem; color: rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.1, 1.2, 0.1, 1); opacity: 0; font-style: italic; font-weight: 900; letter-spacing: -5px; }
+        .pubg-arrow-left { left: -300px; } .pubg-arrow-right { right: -300px; }
+        .pubg-overlay.animate-arrows .pubg-arrow-left { left: 50%; transform: translateX(-280px); opacity: 1; color: #f1c40f; text-shadow: 0 0 20px #f1c40f; }
+        .pubg-overlay.animate-arrows .pubg-arrow-right { right: 50%; transform: translateX(280px); opacity: 1; color: #f1c40f; text-shadow: 0 0 20px #f1c40f; }
+
+        .pubg-banner { width: 100%; height: 200px; background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(16,17,24,0.98) 15%, rgba(16,17,24,0.98) 85%, rgba(0,0,0,0) 100%); border-top: 2px solid #2c3144; border-bottom: 2px solid #2c3144; display: flex; flex-direction: column; align-items: center; justify-content: center; transform: scaleY(0); opacity: 0; transition: all 0.35s cubic-bezier(0.34, 1.4, 0.64, 1); position: relative; overflow: hidden; }
+        .pubg-overlay.show-banner .pubg-banner { transform: scaleY(1); opacity: 1; }
+        .pubg-overlay.show-banner .pubg-banner::before { animation: pubg-shine 2.5s infinite linear; }
+
+        .pubg-title { font-size: 0.85rem; color: #8f96a3; font-weight: bold; letter-spacing: 6px; text-transform: uppercase; margin-bottom: 12px; opacity: 0; transform: translateY(-10px); transition: all 0.3s 0.2s; }
+        .pubg-overlay.show-banner .pubg-title { opacity: 1; transform: translateY(0); }
+
+        .pubg-list { display: flex; gap: 35px; justify-content: center; align-items: center; width: 100%; }
+        .pubg-prize-item { display: flex; flex-direction: column; align-items: center; position: relative; padding: 10px 25px; border-radius: 6px; }
+        
+        .pubg-prize-item.glow-A { animation: pubg-pulse-A 1.8s infinite ease-in-out, pubg-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.2) both; }
+        .pubg-prize-item.glow-B { animation: pubg-pulse-B 1.8s infinite ease-in-out, pubg-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.2) both; }
+        .pubg-prize-item.glow-C { animation: pubg-pulse-C 1.8s infinite ease-in-out, pubg-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.2) both; }
+        .pubg-prize-item.glow-empty { animation: pubg-pop 0.4s ease both; opacity: 0.6; }
+
+        @keyframes pubg-pop { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes pubg-pulse-A {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 71, 87, 0.2); background: rgba(255, 71, 87, 0.04); border: 1px solid rgba(255, 71, 87, 0.3); }
+            50% { box-shadow: 0 0 45px rgba(255, 71, 87, 0.7); background: rgba(255, 71, 87, 0.12); border: 1px solid rgba(255, 71, 87, 0.6); }
+        }
+        @keyframes pubg-pulse-B {
+            0%, 100% { box-shadow: 0 0 20px rgba(241, 196, 15, 0.2); background: rgba(241, 196, 15, 0.04); border: 1px solid rgba(241, 196, 15, 0.3); }
+            50% { box-shadow: 0 0 45px rgba(241, 196, 15, 0.7); background: rgba(241, 196, 15, 0.12); border: 1px solid rgba(241, 196, 15, 0.6); }
+        }
+        @keyframes pubg-pulse-C {
+            0%, 100% { box-shadow: 0 0 20px rgba(155, 89, 182, 0.2); background: rgba(155, 89, 182, 0.04); border: 1px solid rgba(155, 89, 182, 0.3); }
+            50% { box-shadow: 0 0 45px rgba(155, 89, 182, 0.7); background: rgba(155, 89, 182, 0.12); border: 1px solid rgba(155, 89, 182, 0.6); }
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Inter", "Segoe UI", sans-serif; }
-        body { background: var(--bg); color: var(--primary); overflow: hidden; height: 100vh; }
-
-        /* 背景粒子 */
-        #particle-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; pointer-events: none; opacity: 0.3; }
-
-        /* 导航 */
-        nav { position: fixed; top: 0; width: 100%; padding: 40px 6%; display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
-        .logo { font-weight: 900; letter-spacing: 5px; border-left: 3px solid var(--accent); padding-left: 15px; cursor: pointer; }
-        .nav-links span { font-size: 0.7rem; color: var(--secondary); cursor: pointer; margin-left: 35px; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; }
-        .nav-links span:hover { color: var(--primary); }
-
-        /* 音乐状态指示器 */
-        .audio-visualizer { font-size: 0.6rem; color: var(--accent); letter-spacing: 2px; display: flex; align-items: center; gap: 10px; }
-        .bar { width: 2px; height: 10px; background: var(--accent); animation: pulse 1s infinite ease-in-out; }
-        @keyframes pulse { 0%, 100% { height: 4px; } 50% { height: 12px; } }
-
-        /* 转场动画 */
-        @keyframes pageIn { 0% { opacity: 0; transform: translateY(15px); filter: blur(10px); } 100% { opacity: 1; transform: translateY(0); filter: blur(0px); } }
-        @keyframes pageOut { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.03); filter: blur(15px); } }
-        .ani-enter { animation: pageIn var(--anim-speed) cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .ani-exit { animation: pageOut var(--anim-speed) cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-
-        .page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; padding: 140px 8% 60px 8%; display: none; overflow-y: auto; z-index: 10; opacity: 0; }
-        .page.active { display: block; z-index: 100; opacity: 1; }
-
-        /* 首页底部外链区 */
-        .external-links { position: absolute; bottom: 60px; left: 8%; display: flex; gap: 30px; border-top: 1px solid var(--border); padding-top: 25px; width: 84%; }
-        .link-item { color: var(--secondary); text-decoration: none; font-size: 0.7rem; letter-spacing: 2px; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
-        .link-item:hover { color: var(--accent); transform: translateX(5px); }
-        .link-item::before { content: '→'; font-size: 0.8rem; }
-
-        /* 开发者页排版 */
-        .dev-wrapper { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 350px 1fr; gap: 80px; }
-        .dev-photo { width: 100%; aspect-ratio: 1/1; border: 1px solid var(--border); padding: 12px; background: var(--surface); }
-        .dev-photo img { width: 100%; height: 100%; object-fit: cover; }
-        .dev-content h1 { font-size: 5rem; font-weight: 900; line-height: 0.9; margin: 20px 0 40px 0; }
-        .dev-bio { font-size: 0.95rem; color: var(--secondary); line-height: 2; border-left: 2px solid var(--accent); padding-left: 30px; margin-bottom: 50px; }
-
-        /* 商店 Bento */
-        .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 220px; gap: 20px; margin-top: 40px; }
-        .product-card { background: var(--surface); border: 1px solid var(--border); padding: 35px; display: flex; flex-direction: column; justify-content: space-between; transition: 0.4s; }
-        .product-card:hover { border-color: var(--accent); background: rgba(255,255,255,0.02); }
-        .card-large { grid-column: span 2; grid-row: span 2; }
-
-        .btn-main { background: var(--accent); color: #000; border: none; padding: 18px 45px; font-size: 0.8rem; font-weight: 900; text-transform: uppercase; cursor: pointer; letter-spacing: 2px; transition: 0.4s; }
-        .btn-main:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(212,175,55,0.25); }
+        .pubg-item-tag { position: absolute; top: -8px; font-size: 0.65rem; padding: 1px 6px; border-radius: 3px; font-weight: 900; background: #000; color: #fff; border: 1px solid currentColor; }
+        .tag-A { color: #ff4757; } .tag-B { color: #ffa502; } .tag-C { color: #e056fd; }
+        .pubg-item-icon { font-size: 2.2rem; margin-top: 4px; }
+        .pubg-item-name { font-size: 1.3rem; font-weight: 900; color: #fff; margin-top: 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.9); }
         
-        .box-panel { max-width: 900px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); }
-        .legal-body { height: 300px; overflow-y: auto; padding: 40px; background: #000; font-size: 0.85rem; line-height: 2; color: #666; }
+        .name-A { color: #ff4757; text-shadow: 0 0 15px rgba(255,71,87,0.5); }
+        .name-B { color: #ffa502; text-shadow: 0 0 15px rgba(241,196,15,0.5); }
+        .name-C { color: #e056fd; text-shadow: 0 0 15px rgba(155,89,182,0.5); }
+        .name-empty { color: #57606f; }
+        .pubg-close-tip { margin-top: 40px; color: #4e5768; font-size: 0.8rem; letter-spacing: 2px; animation: blink 1.8s infinite; opacity: 0; transition: opacity 0.3s 0.6s; cursor: pointer; background: rgba(255,255,255,0.02); padding: 8px 24px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.06); }
+        .pubg-overlay.show-banner .pubg-close-tip { opacity: 1; }
+        @keyframes blink { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
     </style>
 </head>
 <body>
 
-<canvas id="particle-canvas"></canvas>
+<div class="container">
+    <!-- 左侧控制面板 -->
+    <div class="left-panel panel">
+        <!-- 第一选择舞台 -->
+        <div id="modeSelectBlock" class="mode-selection-stage">
+            <h2>第一步：请选择进入模式</h2>
+            <button class="btn btn-guest" onclick="selectGuestMode()">进入：普通抽奖模式</button>
+            <button class="btn btn-admin" onclick="selectAdminMode()">进入：官方管理模式</button>
+        </div>
 
-<audio id="bg-audio" loop>
-    <source src="https://raw.githubusercontent.com/awa123mixue/Sound/raw/refs/heads/main/NICO.mp3" type="audio/mpeg">
-</audio>
-
-<nav>
-    <div class="logo" onclick="switchPage('home')">SansHub商城</div>
-    <div class="audio-visualizer">
-        <div class="bar" style="animation-delay: 0.1s"></div>
-        <div class="bar" style="animation-delay: 0.3s"></div>
-        <div class="bar" style="animation-delay: 0.2s"></div>
-        <span id="music-status">看你妈呢</span>
-    </div>
-    <div class="nav-links">
-        <span onclick="switchPage('home')">Index</span>
-        <span onclick="switchPage('shop')">Modules</span>
-        <span onclick="switchPage('dev')">Archive</span>
-    </div>
-</nav>
-
-<div class="page-container">
-    <div id="home" class="page active">
-        <div style="min-height: 50vh; display: flex; flex-direction: column; justify-content: center;">
-            <h1 style="font-size: clamp(4rem, 9vw, 6.5rem); font-weight: 900; letter-spacing: -2px;">SansHub<br>商城网页.</h1>
-            <p style="color: var(--secondary); max-width: 550px; line-height: 2; margin-top: 40px;">
-                简单的商城规划没有过多复杂UI花里胡哨。
-            </p>
-            <div style="margin-top: 50px;">
-                <button class="btn-main" onclick="switchPage('shop')">前往商店</button>
+        <!-- 密码验证区域 -->
+        <div id="adminArea" style="display: none;">
+            <h2>官方人员验证：</h2>
+            <div style="background: #1a1c26; border: 1px dashed #3a3f58; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <input type="password" id="adminPassword" placeholder="输入官方管理员密码解锁轮盘" oninput="verifyAdminPassword()">
             </div>
         </div>
 
-        <div class="external-links" id="ext-links-target"></div>
-    </div>
+        <!-- 奖池显示区域（管理模式可见） -->
+        <h2 id="prizePoolTitle" style="display: none;">奖池库存与概率：</h2>
+        <div class="prize-box" id="prizeBoxContainer">
+            <div class="stats" id="statsArea"></div>
+            <div class="grid-container" id="gridContainer"></div>
+            <!-- 新增：管理员专属刷新重置功能 -->
+            <button class="btn btn-refresh" id="btnRefreshPool" onclick="resetPrizePool()">🔄 刷新/重置初始奖池</button>
+        </div>
 
-    <div id="shop" class="page">
-        <h2 style="font-size: 3rem; text-transform: uppercase; font-weight: 900;">商城</h2>
-        <div class="bento-grid" id="shop-list"></div>
-    </div>
-
-    <div id="dev" class="page">
-        <div class="dev-wrapper">
-            <div class="dev-photo"><img id="dev-img" src="" alt="Avatar"></div>
-            <div class="dev-content">
-                <h4>DATA_ARCHIVE</h4>
-                <h1 id="dev-name">---</h1>
-                <div class="dev-bio">
-                    <p style="color: #fff; font-size: 1.2rem; margin-bottom: 10px;">SansHub外包网页作者</p>
-                    <p>轻量化UI很好看对吧？</p>
-                    <p style="margin-top: 20px;">CONTACT_QQ: <span id="dev-qq" style="color: var(--accent); font-weight: 900;">---</span></p>
-                </div>
-                <div style="display: flex; gap: 15px;" id="dev-tags"></div>
-            </div>
+        <!-- 历史记录区域 -->
+        <div id="historyBlock" class="main-game-content" style="margin-top: auto;">
+            <h2>滚动记录</h2>
+            <div class="history-list" id="historyList">暂无抽取历史纪录</div>
         </div>
     </div>
 
-    <div id="agreement" class="page">
-        <div class="box-panel">
-            <div style="padding: 30px; border-bottom: 1px solid var(--border); text-align: center; letter-spacing: 5px;">免责协议</div>
-            <div class="legal-body" id="legal-body">
-                <p>1. 支付形式：备注自己QQ或主动找网页开发者QQ提供充值服务</p>
-                <p>❗: 警告提示，若您没有主动寻找管理员查询订单而是管理员主动联系你导致您支付作废，需要补交2.5元人工费</p>
-                <p>2. 免责：您获得的注册和次数所有者归属SansHub，您只是作为使用者使用</p>
-                <p>3. 默认为您成年身份：您同意注意事项也代表您是有知情能力的人我们不会支持未成年人退款服务</p>
-                <p>4. 网站维护关闭：网站因为定期维护和升级固件可能出现节点断开行为请不要担心可能因服务器升级而导致请您敬请关注群组消息</p>
-                <p>5. 唯一授权网站：官方网址：http://sanshub.cloud/ 商城网址：https://awa123mixue.github.io/SansHub/ 任何关于Sanshub属于虚假消息，请勿当真</p>
-                <p>              --------> 协议确认完毕后请下滑最底部完成确认               </p>
-                <div style="height: 400px;"></div>
-                <p style="color: var(--accent); text-align: center;">[ 我已阅读 ]</p>
-            </div>
-            <div style="padding: 40px; text-align: center;">
-                <label style="color: #444; font-size: 0.8rem; cursor: pointer;" id="agree-label">
-                    <input type="checkbox" id="agree-check" disabled> 我已知情条款内容
-                </label>
-                <br><br>
-                <button id="next-to-pay" class="btn-main" disabled onclick="switchPage('pay')">前往结算</button>
-            </div>
+    <!-- 右侧轮盘面板 -->
+    <div class="right-panel panel main-game-content" id="rightWheelPanel">
+        <h2>滚动系统</h2>
+        
+        <div class="btn-group">
+            <button class="btn" id="btnSingle" onclick="launchDraw(1)">抽取一次</button>
+            <button class="btn btn-triple" id="btnTriple" onclick="launchDraw(3)">绝世三连</button>
         </div>
-    </div>
 
-    <div id="pay" class="page">
-        <div class="box-panel" style="display: grid; grid-template-columns: 1fr 350px;">
-            <div style="padding: 60px;">
-                <p style="color: var(--secondary); font-size: 0.7rem;">CONFIRM_PURCHASE</p>
-                <h2 id="order-item-name" style="margin: 10px 0 40px 0; font-size: 2rem;">---</h2>
-                <h1 id="order-price" style="color: var(--accent); font-size: 4.5rem;">¥0.00</h1>
-            </div>
-            <div style="padding: 50px; background: rgba(255,255,255,0.01); border-left: 1px solid var(--border); text-align: center;">
-                <div id="pay-methods">
-                    <button class="btn-main" style="width:100%; background:#1677ff; color:#fff;" onclick="startPay('支付宝')">支付宝付款</button>
-                    <button class="btn-main" style="width:100%; background:#07c160; color:#fff; margin-top:15px;" onclick="startPay('微信')">微信付款</button>
-                </div>
-                <div id="qr-display" style="display:none;">
-                    <div style="background:#fff; padding:10px;"><img id="qr-img" src="" style="width:100%;"></div>
-                    <button class="btn-main" style="width:100%; margin-top:20px; background:#000; color:#fff;" onclick="switchPage('shop')">支付完成</button>
-                </div>
-            </div>
+        <div class="case-roulette-container">
+            <div class="roulette-row active" id="row0"><div class="pointer-line"></div><div class="roulette-track" id="track0"></div></div>
+            <div class="roulette-row" id="row1"><div class="pointer-line"></div><div class="roulette-track" id="track1"></div></div>
+            <div class="roulette-row" id="row2"><div class="pointer-line"></div><div class="roulette-track" id="track2"></div></div>
         </div>
     </div>
 </div>
 
+<!-- 全屏撕裂互动舞台 -->
+<div class="tear-stage" id="tearStage" onclick="handleTearStageClick()">
+    <div class="tear-bottom-url-bg" id="tearBgImage">
+        <div class="tear-winner-info" id="tearInfoCard">
+            <p id="tearItemRarity">恭喜获得</p>
+            <h1 id="tearItemName">Test</h1>
+        </div>
+    </div>
+    <div class="tear-paper-top"></div>
+    <div class="tear-laser-line"></div>
+    <div class="tear-paper-bottom"></div>
+    <div class="tear-click-next-tip" id="tearNextTip">点击屏幕继续</div>
+</div>
+
+<!-- PUBG 最终结算总大屏 -->
+<div class="pubg-overlay" id="pubgOverlay" onclick="closePubgOverlay()">
+    <div class="pubg-arrow-left">>>>></div>
+    <div class="pubg-arrow-right"><<<<</div>
+    <div class="pubg-banner">
+        <div class="pubg-title">本次抽奖清单 ITEMS WON</div>
+        <div class="pubg-list" id="pubgPrizeList"></div>
+    </div>
+    <div class="pubg-close-tip">点击任意空白区域收下奖励并返回</div>
+</div>
+
 <script>
-    // 1. 外部链接配置表
-    const externalLinks = [
-        { label: " 官方网址 ", url: "http://sanshub.cloud/" },
-        { label: " 幻龙官方网址", url: "https://www.roblox.com/communities/32799249" },
+    const bgImages = {
+        "A": "https://i.postimg.cc/qBFNxYjn/QQ20260706-215100.png",
+        "B": "https://i.postimg.cc/SQHWxJ0g/QQ20260706-214934.png",
+        "C": "https://i.postimg.cc/KzwgjsWR/QQ20260706-214805.png"
+    };
+
+    const CORRECT_PASSWORD = "admin"; 
+    let isGuestMode = false;
+    let isRunning = false;
+    const itemWidth = 110; 
+    const totalItemsInTrack = 80; 
+
+    let specialTearQueue = [];
+    let currentTearIndex = 0;
+    let cachedFinalWinners = []; 
+
+    // 固定的奖池母模板，用于管理员刷新重置
+    const INITIAL_PRIZES_TEMPLATE = [
+        { type: "A", name: "周卡", weight: 1 },
+        { type: "A", name: "扩容名额次数*1", weight: 1 },
+        { type: "B", name: "日卡", weight: 8 },
+        { type: "C", name: "12小时体验卡", weight: 15 },
+        { type: "C", name: "5小时体验卡", weight: 15 },
+        { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 },
+        { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 },
+        { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 },
+        { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 },
+        { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 },
+        { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 },
+        { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 },
+        { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 },
+        { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 },
+        { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 },
+        { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 },
+        { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 }
     ];
 
-    // 2. 音乐配置 (GitHub 链接)
-    const audioConfig = {
-        // 请替换为你的 GitHub Raw 链接
-        url: "https://raw.githubusercontent.com/awa123mixue/Sound/raw/refs/heads/main/NICO.mp3",
-        volume: 0.4
-    };
+    // 当前实际运行使用的动态奖池
+    let prizes = [];
 
-    // 3. 开发者配置
-    const devData = {
-        name: "阿白",
-        qq: "2984967309",
-        avatar: "https://q1.qlogo.cn/g?b=qq&nk=2984967309&s=640",
-        tags: ["ROBLOX", "LUAU", "SYSTEMS"]
-    };
-
-    // 4. 商品配置
-    const products = [
-        { name: "用户激活码", desc: "激活账户数据使用", price: 15.00, tag: "必选", isLarge: true },
-        { name: "额外50次数", desc: "日限不够实用？试试额外次数", price: 5.00, tag: "额外", isLarge: false },
-        { name: "论坛金币*100", desc: "可以兑换激活码等其他次数，不过建议买上面的", price: 1.00, tag: "Chat", isLarge: false }
-    ];
-
-    // --- 核心逻辑控制 ---
-
-    // 音乐播放控制
-    const audio = document.getElementById('bg-audio');
-    audio.src = audioConfig.url;
-    audio.volume = audioConfig.volume;
-
-    function activateAudio() {
-        if(audio.paused) {
-            audio.play().then(() => {
-                document.getElementById('music-status').innerText = "SYSTEM_HUM_ACTIVE";
-                document.querySelectorAll('.bar').forEach(b => b.style.animationPlayState = 'running');
-            }).catch(e => console.log("等待交互播放音乐"));
-        }
+    function init() {
+        resetPrizePool(); // 初始载入奖池数据
+        for(let i=0; i<3; i++) preBuildDOMTrack(i);
     }
 
-    // 全局点击监听，用于首次激活音频
-    document.addEventListener('click', activateAudio, { once: true });
-
-    // 粒子背景
-    const canvas = document.getElementById('particle-canvas');
-    const ctx = canvas.getContext('2d');
-    let pts = [];
-    function initPts() {
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        pts = [];
-        for(let i=0; i<70; i++) pts.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:(Math.random()-0.5)*0.3, vy:(Math.random()-0.5)*0.3, size:Math.random()*2});
-    }
-    function drawPts() {
-        ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = "rgba(212,175,55,0.4)"; ctx.strokeStyle = "rgba(212,175,55,0.1)";
-        pts.forEach((p,i)=>{
-            p.x+=p.vx; p.y+=p.vy;
-            if(p.x<0||p.x>canvas.width) p.vx*=-1; if(p.y<0||p.y>canvas.height) p.vy*=-1;
-            ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
-            for(let j=i+1; j<pts.length; j++){
-                let dx=p.x-pts[j].x, dy=p.y-pts[j].y, d=Math.sqrt(dx*dx+dy*dy);
-                if(d<160){ ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke(); }
-            }
-        });
-        requestAnimationFrame(drawPts);
+    // 管理员：一键刷新/重置初始奖池核心函数
+    function resetPrizePool() {
+        if (isRunning) return;
+        prizes = JSON.parse(JSON.stringify(INITIAL_PRIZES_TEMPLATE)); // 深拷贝重置
+        updateSnapshot();
     }
 
-    // 页面引擎
-    let isTrans = false;
-    function switchPage(tid) {
-        if (isTrans) return;
-        const cur = document.querySelector('.page.active');
-        const target = document.getElementById(tid);
-        if (cur.id === tid) return;
-        isTrans = true;
-        cur.classList.add('ani-exit');
-        setTimeout(() => {
-            cur.classList.remove('active', 'ani-exit');
-            cur.style.display = 'none';
-            target.style.display = 'block';
-            target.classList.add('active', 'ani-enter');
-            setTimeout(() => { target.classList.remove('ani-enter'); isTrans = false; }, 700);
-        }, 650);
-    }
-
-    function setup() {
-        // 开发者
-        document.getElementById('dev-name').innerText = devData.name;
-        document.getElementById('dev-qq').innerText = devData.qq;
-        document.getElementById('dev-img').src = devData.avatar;
-        document.getElementById('dev-tags').innerHTML = devData.tags.map(t => `<span style="border:1px solid var(--border); padding:5px 15px; font-size:0.7rem;">${t}</span>`).join('');
-
-        // 商店
-        document.getElementById('shop-list').innerHTML = products.map(p => `
-            <div class="product-card ${p.isLarge ? 'card-large' : ''}">
-                <div><span style="font-size:0.6rem; color:var(--accent);">${p.tag}</span><h3 style="margin:10px 0;">${p.name}</h3><p style="color:var(--secondary); font-size:0.8rem;">${p.desc}</p></div>
-                <div style="display:flex; justify-content:space-between; align-items:flex-end;">
-                    <div style="font-size:2rem; font-weight:900;">¥${p.price.toFixed(2)}</div>
-                    <button class="btn-main" style="padding:12px 25px; font-size:0.7rem;" onclick="event.stopPropagation(); initOrder('${p.name}', ${p.price})">购买</button>
-                </div>
-            </div>
-        `).join('');
-
-        // 外链渲染
-        document.getElementById('ext-links-target').innerHTML = externalLinks.map(l => `
-            <a href="${l.url}" target="_blank" class="link-item">${l.label}</a>
-        `).join('');
-    }
-
-    // 支付流... (逻辑同前)
-    function initOrder(name, price) {
-        document.getElementById('order-item-name').innerText = name;
-        document.getElementById('order-price').innerText = '¥' + price.toFixed(2);
-        document.getElementById('legal-body').scrollTop = 0;
-        document.getElementById('agree-check').disabled = true;
-        document.getElementById('next-to-pay').disabled = true;
-        switchPage('agreement');
-    }
-
-    document.getElementById('legal-body').onscroll = function() {
-        if(this.scrollHeight - this.scrollTop <= this.clientHeight + 10) {
-            document.getElementById('agree-check').disabled = false;
-        }
-    };
-    document.getElementById('agree-check').onchange = function(){ document.getElementById('next-to-pay').disabled = !this.checked; };
-
-    function startPay(type) {
-        const qrImg = document.getElementById('qr-img');
+    function selectGuestMode() {
+        isGuestMode = true;
         
-        // --- 在下面这里更换你的二维码图片地址 ---
-        if(type === '支付宝') {
-            qrImg.src = "https://i.postimg.cc/jSQvQRGd/Screenshot-2026-04-12-21-57-38-825-com-eg-android.jpg"; 
-        } else if(type === '微信') {
-            qrImg.src = "https://i.postimg.cc/X7qQKKxR/Screenshot-2026-04-12-21-53-38-311-com-tencent-mm.jpg";
-        }
-        // ------------------------------------
-
-        // 执行切换显示逻辑
-        document.getElementById('pay-methods').style.display = 'none';
-        document.getElementById('qr-display').style.display = 'block';
+        // 彻底切断退路：从内存和 DOM 树中永远销毁管理相关的所有区块
+        document.getElementById('adminArea').remove();
+        document.getElementById('prizeBoxContainer').remove();
+        document.getElementById('prizePoolTitle').remove();
+        document.getElementById('historyBlock').remove();
+        document.getElementById('modeSelectBlock').remove(); 
+        
+        // 显示纯净抽奖轮盘
+        document.getElementById('rightWheelPanel').style.display = 'flex';
     }
 
-    window.onload = () => {
-        initPts(); drawPts(); setup();
-        document.getElementById('home').classList.add('ani-enter');
-    };
-    window.onresize = initPts;
+    function selectAdminMode() {
+        isGuestMode = false;
+        document.getElementById('modeSelectBlock').style.display = 'none'; 
+        document.getElementById('adminArea').style.display = 'block';      
+    }
+
+    function verifyAdminPassword() {
+        const inputPwd = document.getElementById('adminPassword').value;
+        const prizeBox = document.getElementById('prizeBoxContainer');
+        const prizeTitle = document.getElementById('prizePoolTitle');
+        const mainContents = document.querySelectorAll('.main-game-content');
+        
+        if (inputPwd === CORRECT_PASSWORD) {
+            prizeBox.style.display = 'block';
+            prizeTitle.style.display = 'block';
+            mainContents.forEach(el => el.style.display = 'flex');
+            document.getElementById('adminArea').style.display = 'none'; 
+        }
+    }
+
+    function updateSnapshot() {
+        const statsEl = document.getElementById('statsArea');
+        const gridEl = document.getElementById('gridContainer');
+        if(!statsEl || !gridEl) return; // 游客模式下已被移除则不执行
+
+        const countA = prizes.filter(p => p.type === "A").length;
+        const countB = prizes.filter(p => p.type === "B").length;
+        const countC = prizes.filter(p => p.type === "C").length;
+        const countE = prizes.filter(p => p.type === "empty").length;
+        
+        statsEl.innerHTML = `
+            <span style="color:#ff4757">[A级·红光] 豪华礼品: ${countA} 个</span>
+            <span style="color:#ffa502">[B级·金光] 精选礼品: ${countB} 个</span>
+            <span style="color:#e056fd">[C级·紫光] 基础礼品: ${countC} 个</span>
+            <span style="color:#57606f">[谢谢惠顾] 常驻项: ${countE} 个</span>
+        `;
+        gridEl.innerHTML = prizes.map(p => `
+            <div class="grid-item ${'item-' + p.type}">${p.type === 'empty' ? '✨' : '🎁'}<br>${p.name.slice(0,4)}</div>
+        `).join('');
+    }
+
+    function getWinIndex(pool) {
+        const totalWeight = pool.reduce((sum, p) => {
+            if (isGuestMode && p.type === 'empty') return sum + 2; 
+            return sum + p.weight;
+        }, 0);
+
+        let randomWeight = Math.random() * totalWeight;
+        let weightSum = 0;
+        
+        for (let i = 0; i < pool.length; i++) {
+            let currentWeight = pool[i].weight;
+            if (isGuestMode && pool[i].type === 'empty') currentWeight = 2;
+            
+            weightSum += currentWeight;
+            if (randomWeight <= weightSum) return i;
+        }
+        return pool.length - 1;
+    }
+
+    function preBuildDOMTrack(trackId) {
+        const track = document.getElementById(`track${trackId}`);
+        track.innerHTML = '';
+        for (let i = 0; i < totalItemsInTrack; i++) {
+            const card = document.createElement('div');
+            card.className = `card-item card-empty`;
+            card.id = `track-${trackId}-item-${i}`;
+            card.innerHTML = `<div class="card-icon">✨</div><div class="text-node">谢谢惠顾</div>`;
+            track.appendChild(card);
+        }
+    }
+
+    function launchDraw(rowCount) {
+        if (isRunning) return;
+        if (!isGuestMode && prizes.length < rowCount) {
+            alert(`⚠️ 库存不足以支撑 ${rowCount} 连抽！请点击左侧刷新奖池！`);
+            return;
+        }
+
+        isRunning = true;
+        document.getElementById('btnSingle').disabled = true;
+        document.getElementById('btnTriple').disabled = true;
+        const refreshBtn = document.getElementById('btnRefreshPool');
+        if(refreshBtn) refreshBtn.disabled = true;
+
+        let tempPool = [...prizes]; 
+        cachedFinalWinners = []; 
+
+        for (let i = 0; i < 3; i++) {
+            document.getElementById(`row${i}`).className = i < rowCount ? "roulette-row active" : "roulette-row";
+        }
+
+        for (let r = 0; r < rowCount; r++) {
+            const track = document.getElementById('track' + r);
+            track.style.transition = 'none'; 
+            track.style.transform = 'translate3d(0px, 0px, 0px)';
+            for (let i = 0; i < totalItemsInTrack; i++) {
+                document.getElementById(`track-${r}-item-${i}`).classList.remove('winner-highlight');
+            }
+            track.offsetHeight; 
+        }
+
+        for (let r = 0; r < rowCount; r++) {
+            const winIndex = getWinIndex(tempPool);
+            const winItem = tempPool[winIndex];
+            
+            cachedFinalWinners.push({ rowId: r, item: winItem, indexInPrizes: prizes.indexOf(winItem) });
+            
+            // 关键逻辑改动：如果是管理员模式，才从临时池中切除以防止多连抽抽中同个实物
+            if(!isGuestMode) {
+                tempPool.splice(winIndex, 1);
+            }
+            
+            for (let i = 0; i < totalItemsInTrack; i++) {
+                const card = document.getElementById(`track-${r}-item-${i}`);
+                let currentItem = (i === 48) ? winItem : (prizes[Math.floor(Math.random() * prizes.length)] || {type:"empty", name:"谢谢惠顾"});
+
+                card.className = `card-item card-${currentItem.type}`;
+                card.querySelector('.card-icon').innerText = currentItem.type === 'empty' ? '✨' : '🎁';
+                card.querySelector('.text-node').innerText = currentItem.name;
+            }
+        }
+
+        setTimeout(() => {
+            for (let r = 0; r < rowCount; r++) {
+                const track = document.getElementById(`track${r}`);
+                const containerWidth = document.getElementById(`row${r}`).offsetWidth;
+                const targetLeft = (48 * itemWidth) + (itemWidth / 2);
+                track.style.transition = 'transform 4.5s cubic-bezier(0.1, 0.85, 0.25, 1)';
+                track.style.transform = `translate3d(${-(targetLeft - (containerWidth / 2))}px, 0px, 0px)`;
+            }
+        }, 30);
+
+        setTimeout(() => {
+            const historyList = document.getElementById('historyList');
+            const timeStr = new Date().toLocaleTimeString();
+
+            if (historyList && historyList.innerText === "暂无抽取历史纪录") historyList.innerHTML = '';
+            specialTearQueue = [];
+
+            // 倒序删除真实库存（防止索引坍塌），且【仅在非游客模式】下执行删除
+            if (!isGuestMode) {
+                const sortedWinners = [...cachedFinalWinners].sort((a, b) => b.indexInPrizes - a.indexInPrizes);
+                sortedWinners.forEach(win => {
+                    if (win.indexInPrizes !== -1) prizes.splice(win.indexInPrizes, 1);
+                });
+            }
+
+            cachedFinalWinners.forEach(win => {
+                const targetCard = document.getElementById(`track-${win.rowId}-item-48`);
+                if (targetCard) targetCard.classList.add('winner-highlight');
+                
+                if (historyList) {
+                    historyList.innerHTML += `
+                        <div class="history-item">
+                            [${timeStr}] 轴${win.rowId+1} → <span class="txt-${win.item.type}">[${win.item.name}]</span>
+                        </div>
+                    `;
+                }
+
+                if (win.item.type === 'A' || win.item.type === 'B' || win.item.type === 'C') {
+                    specialTearQueue.push(win.item);
+                }
+            });
+
+            updateSnapshot();
+
+            if (specialTearQueue.length > 0) {
+                currentTearIndex = 0;
+                presentNextTear();
+            } else {
+                showFinalPubgOverlay();
+            }
+
+        }, 4600);
+    }
+
+    function presentNextTear() {
+        const item = specialTearQueue[currentTearIndex];
+        const stage = document.getElementById('tearStage');
+        
+        stage.classList.remove('ripped');
+        document.getElementById('tearInfoCard').style.color = item.type === 'A' ? '#ff4757' : (item.type === 'B' ? '#ffa502' : '#e056fd');
+        document.getElementById('tearItemRarity').innerText = `🏆 恭喜获得 - ${item.type}级`;
+        document.getElementById('tearItemName').innerText = item.name;
+        
+        document.getElementById('tearBgImage').style.backgroundImage = `url('${bgImages[item.type]}')`;
+        stage.style.display = 'block';
+
+        setTimeout(() => { stage.classList.add('ripped'); }, 150);
+    }
+
+    function handleTearStageClick() {
+        const stage = document.getElementById('tearStage');
+        if (!stage.classList.contains('ripped')) return;
+
+        currentTearIndex++;
+        if (currentTearIndex < specialTearQueue.length) {
+            presentNextTear();
+        } else {
+            stage.style.display = 'none';
+            showFinalPubgOverlay();
+        }
+    }
+
+    function showFinalPubgOverlay() {
+        let pubgItemsHtml = '';
+        cachedFinalWinners.forEach(win => {
+            const type = win.item.type;
+            pubgItemsHtml += `
+                <div class="pubg-prize-item glow-${type}" style="animation-delay: ${win.rowId * 0.15}s">
+                    ${type !== 'empty' ? `<div class="pubg-item-tag tag-${type}">品级 ${type}</div>` : ''}
+                    <div class="pubg-item-icon">${type === 'empty' ? '✨' : '🎁'}</div>
+                    <div class="pubg-item-name name-${type}">${win.item.name}</div>
+                </div>
+            `;
+        });
+
+        const overlay = document.getElementById('pubgOverlay');
+        document.getElementById('pubgPrizeList').innerHTML = pubgItemsHtml;
+        
+        overlay.classList.add('show');
+        setTimeout(() => { overlay.classList.add('animate-arrows'); }, 100);
+        setTimeout(() => { overlay.classList.add('show-banner'); }, 550);
+    }
+
+    function closePubgOverlay() {
+        const overlay = document.getElementById('pubgOverlay');
+        overlay.classList.remove('show', 'animate-arrows', 'show-banner');
+        
+        setTimeout(() => {
+            isRunning = false;
+            document.getElementById('btnSingle').disabled = false;
+            document.getElementById('btnTriple').disabled = false;
+            const refreshBtn = document.getElementById('btnRefreshPool');
+            if(refreshBtn) refreshBtn.disabled = false; // 解锁刷新键
+        }, 400);
+    }
+
+    init();
 </script>
+
 </body>
 </html>
