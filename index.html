@@ -2,19 +2,24 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>粉龙的大转盘</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b0c10; color: #e2e8f0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
-        .container { display: flex; max-width: 1200px; width: 100%; gap: 25px; flex-wrap: wrap; margin: auto 0; z-index: 1; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b0c10; color: #e2e8f0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
+        .container { display: flex; max-width: 1200px; width: 100%; gap: 20px; flex-wrap: wrap; margin: auto 0; z-index: 1; }
         
-        .panel { background: #13141c; border: 1px solid #222430; border-radius: 12px; padding: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.8); }
-        .left-panel { flex: 1; min-width: 320px; display: flex; flex-direction: column; }
-        .right-panel { flex: 2; min-width: 500px; display: flex; flex-direction: column; gap: 20px; justify-content: center; }
-        @media (max-width: 850px) { .container { flex-direction: column; } }
+        .panel { background: #13141c; border: 1px solid #222430; border-radius: 12px; padding: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.8); width: 100%; }
+        .left-panel { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+        .right-panel { flex: 2; min-width: 0; display: flex; flex-direction: column; gap: 20px; justify-content: center; }
+        
+        /* 移动端媒体查询：优先垂直排列 */
+        @media (max-width: 850px) { 
+            .container { flex-direction: column; margin: 0; } 
+            .panel { padding: 15px; }
+        }
 
-        h2 { font-size: 1.1rem; margin-bottom: 15px; color: #f1c40f; border-left: 4px solid #f1c40f; padding-left: 8px; text-transform: uppercase; letter-spacing: 1px; }
+        h2 { font-size: 1.05rem; margin-bottom: 15px; color: #f1c40f; border-left: 4px solid #f1c40f; padding-left: 8px; text-transform: uppercase; letter-spacing: 1px; }
         .form-group { margin-bottom: 20px; }
         
         /* 初始模式选择舞台 */
@@ -44,7 +49,7 @@
 
         .prize-box { background: #06070a; border-radius: 8px; padding: 15px; margin-bottom: 15px; border: 1px solid #1a1c26; display: none; }
         .stats { font-size: 0.8rem; color: #7f8c8d; margin-bottom: 10px; display: flex; flex-direction: column; gap: 4px; }
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 6px; max-height: 180px; overflow-y: auto; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 6px; max-height: 180px; overflow-y: auto; }
         .grid-item { padding: 6px; text-align: center; border-radius: 4px; font-size: 0.72rem; font-weight: bold; border: 1px solid transparent; }
         
         .item-A { background: rgba(231, 76, 60, 0.15); color: #ff4757; border-color: #e74c3c; }
@@ -60,7 +65,7 @@
         .txt-C { color: #e056fd; font-weight: bold; }
 
         /* ================= 滚动轴核心配置 ================= */
-        .case-roulette-container { display: flex; flex-direction: column; gap: 15px; background: #06070a; padding: 20px 10px; border-radius: 8px; border: 1px solid #1a1c26; }
+        .case-roulette-container { display: flex; flex-direction: column; gap: 15px; background: #06070a; padding: 20px 10px; border-radius: 8px; border: 1px solid #1a1c26; width: 100%; }
         .roulette-row { position: relative; width: 100%; height: 110px; background: #10121a; overflow: hidden; border: 2px solid #222430; border-radius: 4px; display: none; }
         .roulette-row.active { display: block; }
         
@@ -80,10 +85,15 @@
         /* ================= 全屏撕裂舞台 ================= */
         .tear-stage { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1000; display: none; overflow: hidden; background: #000; }
         .tear-bottom-url-bg { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1; }
-        .tear-winner-info { z-index: 2; text-align: center; background: rgba(0,0,0,0.6); padding: 20px 50px; border-radius: 4px; border-left: 5px solid currentColor; backdrop-filter: blur(5px); transform: translateY(50px); opacity: 0; transition: all 0.5s 0.4s ease-out; }
+        .tear-winner-info { z-index: 2; text-align: center; background: rgba(0,0,0,0.6); padding: 15px 30px; border-radius: 4px; border-left: 5px solid currentColor; backdrop-filter: blur(5px); transform: translateY(50px); opacity: 0; transition: all 0.5s 0.4s ease-out; max-width: 90%; }
         .tear-stage.ripped .tear-winner-info { transform: translateY(0); opacity: 1; }
-        .tear-winner-info h1 { font-size: 3rem; font-weight: 900; letter-spacing: 2px; margin-bottom: 5px; }
-        .tear-winner-info p { font-size: 1.2rem; color: #fff; letter-spacing: 8px; text-transform: uppercase; font-weight: bold; }
+        .tear-winner-info h1 { font-size: 2rem; font-weight: 900; letter-spacing: 2px; margin-bottom: 5px; word-break: break-all; }
+        .tear-winner-info p { font-size: 1rem; color: #fff; letter-spacing: 4px; text-transform: uppercase; font-weight: bold; }
+
+        @media (min-width: 768px) {
+            .tear-winner-info h1 { font-size: 3rem; }
+            .tear-winner-info p { font-size: 1.2rem; letter-spacing: 8px; }
+        }
 
         .tear-paper-top, .tear-paper-bottom { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #2d144d 0%, #150727 100%); z-index: 5; transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1); }
         .tear-paper-top { clip-path: polygon(0 0, 100% 0, 100% 20%, 0 80%); }
@@ -94,26 +104,30 @@
 
         .tear-laser-line { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 6; pointer-events: none; background: linear-gradient(28deg, rgba(255,255,255,0) 48%, #e056fd 50%, #fff 51%, rgba(255,255,255,0) 53%); transition: all 0.5s ease-out; transform: scale(1); opacity: 1; }
         .tear-stage.ripped .tear-laser-line { transform: scale(1.5); opacity: 0; }
-        .tear-click-next-tip { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 10; color: rgba(255,255,255,0.7); font-weight: bold; letter-spacing: 2px; font-size: 0.9rem; background: rgba(224, 86, 253, 0.2); border: 1px solid #e056fd; padding: 10px 30px; border-radius: 30px; pointer-events: none; animation: blink 1.5s infinite; display: none; }
+        .tear-click-next-tip { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 10; color: rgba(255,255,255,0.7); font-weight: bold; letter-spacing: 2px; font-size: 0.85rem; background: rgba(224, 86, 253, 0.2); border: 1px solid #e056fd; padding: 10px 20px; border-radius: 30px; pointer-events: none; animation: blink 1.5s infinite; display: none; white-space: nowrap; }
         .tear-stage.ripped .tear-click-next-tip { display: block; }
 
         /* ================= PUBG 最终综合结算大屏 ================= */
-        .pubg-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(3, 3, 5, 0.95); z-index: 999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
+        .pubg-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(3, 3, 5, 0.95); z-index: 999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1); padding: 10px; }
         .pubg-overlay.show { opacity: 1; pointer-events: auto; }
-        .pubg-arrow-left, .pubg-arrow-right { position: absolute; width: 200px; height: 60px; font-size: 2.5rem; color: rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.1, 1.2, 0.1, 1); opacity: 0; font-style: italic; font-weight: 900; letter-spacing: -5px; }
-        .pubg-arrow-left { left: -300px; } .pubg-arrow-right { right: -300px; }
-        .pubg-overlay.animate-arrows .pubg-arrow-left { left: 50%; transform: translateX(-280px); opacity: 1; color: #f1c40f; text-shadow: 0 0 20px #f1c40f; }
-        .pubg-overlay.animate-arrows .pubg-arrow-right { right: 50%; transform: translateX(280px); opacity: 1; color: #f1c40f; text-shadow: 0 0 20px #f1c40f; }
+        
+        /* 移动端隐藏两侧装饰箭头，避免重叠遮挡 */
+        .pubg-arrow-left, .pubg-arrow-right { position: absolute; width: 200px; height: 60px; font-size: 2.5rem; color: rgba(255, 255, 255, 0.2); display: none; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.1, 1.2, 0.1, 1); opacity: 0; font-style: italic; font-weight: 900; letter-spacing: -5px; }
+        @media (min-width: 850px) {
+            .pubg-arrow-left, .pubg-arrow-right { display: flex; }
+            .pubg-arrow-left { left: -300px; } .pubg-arrow-right { right: -300px; }
+            .pubg-overlay.animate-arrows .pubg-arrow-left { left: 50%; transform: translateX(-280px); opacity: 1; color: #f1c40f; text-shadow: 0 0 20px #f1c40f; }
+            .pubg-overlay.animate-arrows .pubg-arrow-right { right: 50%; transform: translateX(280px); opacity: 1; color: #f1c40f; text-shadow: 0 0 20px #f1c40f; }
+        }
 
-        .pubg-banner { width: 100%; height: 200px; background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(16,17,24,0.98) 15%, rgba(16,17,24,0.98) 85%, rgba(0,0,0,0) 100%); border-top: 2px solid #2c3144; border-bottom: 2px solid #2c3144; display: flex; flex-direction: column; align-items: center; justify-content: center; transform: scaleY(0); opacity: 0; transition: all 0.35s cubic-bezier(0.34, 1.4, 0.64, 1); position: relative; overflow: hidden; }
+        .pubg-banner { width: 100%; min-height: 180px; height: auto; padding: 20px 10px; background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(16,17,24,0.98) 15%, rgba(16,17,24,0.98) 85%, rgba(0,0,0,0) 100%); border-top: 2px solid #2c3144; border-bottom: 2px solid #2c3144; display: flex; flex-direction: column; align-items: center; justify-content: center; transform: scaleY(0); opacity: 0; transition: all 0.35s cubic-bezier(0.34, 1.4, 0.64, 1); position: relative; overflow: hidden; }
         .pubg-overlay.show-banner .pubg-banner { transform: scaleY(1); opacity: 1; }
-        .pubg-overlay.show-banner .pubg-banner::before { animation: pubg-shine 2.5s infinite linear; }
 
-        .pubg-title { font-size: 0.85rem; color: #8f96a3; font-weight: bold; letter-spacing: 6px; text-transform: uppercase; margin-bottom: 12px; opacity: 0; transform: translateY(-10px); transition: all 0.3s 0.2s; }
+        .pubg-title { font-size: 0.8rem; color: #8f96a3; font-weight: bold; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 15px; opacity: 0; transform: translateY(-10px); transition: all 0.3s 0.2s; text-align: center; }
         .pubg-overlay.show-banner .pubg-title { opacity: 1; transform: translateY(0); }
 
-        .pubg-list { display: flex; gap: 35px; justify-content: center; align-items: center; width: 100%; }
-        .pubg-prize-item { display: flex; flex-direction: column; align-items: center; position: relative; padding: 10px 25px; border-radius: 6px; }
+        .pubg-list { display: flex; gap: 15px; justify-content: center; align-items: center; width: 100%; flex-wrap: wrap; }
+        .pubg-prize-item { display: flex; flex-direction: column; align-items: center; position: relative; padding: 8px 15px; border-radius: 6px; min-width: 90px; }
         
         .pubg-prize-item.glow-A { animation: pubg-pulse-A 1.8s infinite ease-in-out, pubg-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.2) both; }
         .pubg-prize-item.glow-B { animation: pubg-pulse-B 1.8s infinite ease-in-out, pubg-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.2) both; }
@@ -122,28 +136,28 @@
 
         @keyframes pubg-pop { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         @keyframes pubg-pulse-A {
-            0%, 100% { box-shadow: 0 0 20px rgba(255, 71, 87, 0.2); background: rgba(255, 71, 87, 0.04); border: 1px solid rgba(255, 71, 87, 0.3); }
-            50% { box-shadow: 0 0 45px rgba(255, 71, 87, 0.7); background: rgba(255, 71, 87, 0.12); border: 1px solid rgba(255, 71, 87, 0.6); }
+            0%, 100% { box-shadow: 0 0 15px rgba(255, 71, 87, 0.2); background: rgba(255, 71, 87, 0.04); border: 1px solid rgba(255, 71, 87, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(255, 71, 87, 0.6); background: rgba(255, 71, 87, 0.12); border: 1px solid rgba(255, 71, 87, 0.6); }
         }
         @keyframes pubg-pulse-B {
-            0%, 100% { box-shadow: 0 0 20px rgba(241, 196, 15, 0.2); background: rgba(241, 196, 15, 0.04); border: 1px solid rgba(241, 196, 15, 0.3); }
-            50% { box-shadow: 0 0 45px rgba(241, 196, 15, 0.7); background: rgba(241, 196, 15, 0.12); border: 1px solid rgba(241, 196, 15, 0.6); }
+            0%, 100% { box-shadow: 0 0 15px rgba(241, 196, 15, 0.2); background: rgba(241, 196, 15, 0.04); border: 1px solid rgba(241, 196, 15, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(241, 196, 15, 0.7); background: rgba(241, 196, 15, 0.12); border: 1px solid rgba(241, 196, 15, 0.6); }
         }
         @keyframes pubg-pulse-C {
-            0%, 100% { box-shadow: 0 0 20px rgba(155, 89, 182, 0.2); background: rgba(155, 89, 182, 0.04); border: 1px solid rgba(155, 89, 182, 0.3); }
-            50% { box-shadow: 0 0 45px rgba(155, 89, 182, 0.7); background: rgba(155, 89, 182, 0.12); border: 1px solid rgba(155, 89, 182, 0.6); }
+            0%, 100% { box-shadow: 0 0 15px rgba(155, 89, 182, 0.2); background: rgba(155, 89, 182, 0.04); border: 1px solid rgba(155, 89, 182, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(155, 89, 182, 0.7); background: rgba(155, 89, 182, 0.12); border: 1px solid rgba(155, 89, 182, 0.6); }
         }
 
-        .pubg-item-tag { position: absolute; top: -8px; font-size: 0.65rem; padding: 1px 6px; border-radius: 3px; font-weight: 900; background: #000; color: #fff; border: 1px solid currentColor; }
+        .pubg-item-tag { position: absolute; top: -8px; font-size: 0.6rem; padding: 1px 4px; border-radius: 3px; font-weight: 900; background: #000; color: #fff; border: 1px solid currentColor; white-space: nowrap; }
         .tag-A { color: #ff4757; } .tag-B { color: #ffa502; } .tag-C { color: #e056fd; }
-        .pubg-item-icon { font-size: 2.2rem; margin-top: 4px; }
-        .pubg-item-name { font-size: 1.3rem; font-weight: 900; color: #fff; margin-top: 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.9); }
+        .pubg-item-icon { font-size: 1.8rem; margin-top: 4px; }
+        .pubg-item-name { font-size: 1rem; font-weight: 900; color: #fff; margin-top: 6px; text-shadow: 0 2px 4px rgba(0,0,0,0.9); text-align: center; word-break: break-all; }
         
-        .name-A { color: #ff4757; text-shadow: 0 0 15px rgba(255,71,87,0.5); }
-        .name-B { color: #ffa502; text-shadow: 0 0 15px rgba(241,196,15,0.5); }
-        .name-C { color: #e056fd; text-shadow: 0 0 15px rgba(155,89,182,0.5); }
+        .name-A { color: #ff4757; text-shadow: 0 0 10px rgba(255,71,87,0.5); }
+        .name-B { color: #ffa502; text-shadow: 0 0 10px rgba(241,196,15,0.5); }
+        .name-C { color: #e056fd; text-shadow: 0 0 10px rgba(155,89,182,0.5); }
         .name-empty { color: #57606f; }
-        .pubg-close-tip { margin-top: 40px; color: #4e5768; font-size: 0.8rem; letter-spacing: 2px; animation: blink 1.8s infinite; opacity: 0; transition: opacity 0.3s 0.6s; cursor: pointer; background: rgba(255,255,255,0.02); padding: 8px 24px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.06); }
+        .pubg-close-tip { margin-top: 30px; color: #4e5768; font-size: 0.75rem; letter-spacing: 1px; animation: blink 1.8s infinite; opacity: 0; transition: opacity 0.3s 0.6s; cursor: pointer; background: rgba(255,255,255,0.02); padding: 8px 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.06); text-align: center; max-width: 90%; }
         .pubg-overlay.show-banner .pubg-close-tip { opacity: 1; }
         @keyframes blink { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
     </style>
@@ -151,16 +165,13 @@
 <body>
 
 <div class="container">
-    <!-- 左侧控制面板 -->
     <div class="left-panel panel">
-        <!-- 第一选择舞台 -->
         <div id="modeSelectBlock" class="mode-selection-stage">
             <h2>第一步：请选择进入模式</h2>
             <button class="btn btn-guest" onclick="selectGuestMode()">进入：普通抽奖模式</button>
             <button class="btn btn-admin" onclick="selectAdminMode()">进入：官方管理模式</button>
         </div>
 
-        <!-- 密码验证区域 -->
         <div id="adminArea" style="display: none;">
             <h2>官方人员验证：</h2>
             <div style="background: #1a1c26; border: 1px dashed #3a3f58; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
@@ -168,23 +179,19 @@
             </div>
         </div>
 
-        <!-- 奖池显示区域（管理模式可见） -->
         <h2 id="prizePoolTitle" style="display: none;">奖池库存与概率：</h2>
         <div class="prize-box" id="prizeBoxContainer">
             <div class="stats" id="statsArea"></div>
             <div class="grid-container" id="gridContainer"></div>
-            <!-- 新增：管理员专属刷新重置功能 -->
             <button class="btn btn-refresh" id="btnRefreshPool" onclick="resetPrizePool()">🔄 刷新/重置初始奖池</button>
         </div>
 
-        <!-- 历史记录区域 -->
-        <div id="historyBlock" class="main-game-content" style="margin-top: auto;">
+        <div id="historyBlock" class="main-game-content" style="margin-top: 15px;">
             <h2>滚动记录</h2>
             <div class="history-list" id="historyList">暂无抽取历史纪录</div>
         </div>
     </div>
 
-    <!-- 右侧轮盘面板 -->
     <div class="right-panel panel main-game-content" id="rightWheelPanel">
         <h2>滚动系统</h2>
         
@@ -201,7 +208,6 @@
     </div>
 </div>
 
-<!-- 全屏撕裂互动舞台 -->
 <div class="tear-stage" id="tearStage" onclick="handleTearStageClick()">
     <div class="tear-bottom-url-bg" id="tearBgImage">
         <div class="tear-winner-info" id="tearInfoCard">
@@ -215,7 +221,6 @@
     <div class="tear-click-next-tip" id="tearNextTip">点击屏幕继续</div>
 </div>
 
-<!-- PUBG 最终结算总大屏 -->
 <div class="pubg-overlay" id="pubgOverlay" onclick="closePubgOverlay()">
     <div class="pubg-arrow-left">>>>></div>
     <div class="pubg-arrow-right"><<<<</div>
@@ -233,7 +238,7 @@
         "C": "https://i.postimg.cc/KzwgjsWR/QQ20260706-214805.png"
     };
 
-    const CORRECT_PASSWORD = "admin"; 
+    const CORRECT_PASSWORD = "1"; 
     let isGuestMode = false;
     let isRunning = false;
     const itemWidth = 110; 
@@ -243,13 +248,21 @@
     let currentTearIndex = 0;
     let cachedFinalWinners = []; 
 
-    // 固定的奖池母模板，用于管理员刷新重置
     const INITIAL_PRIZES_TEMPLATE = [
         { type: "A", name: "周卡", weight: 1 },
         { type: "A", name: "扩容名额次数*1", weight: 1 },
-        { type: "B", name: "日卡", weight: 8 },
+        { type: "B", name: "更改名字", weight: 8 },
         { type: "C", name: "12小时体验卡", weight: 15 },
         { type: "C", name: "5小时体验卡", weight: 15 },
+        { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 },
+        { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 },
+        { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 },
+        { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 },
+        { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 },
+        { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 },
+        { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 },
+        { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 },
+        { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 },
         { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 },
         { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 },
         { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 },
@@ -264,32 +277,42 @@
         { type: "empty", name: "谢谢惠顾", weight: 25 }, { type: "empty", name: "谢谢惠顾", weight: 25 }
     ];
 
-    // 当前实际运行使用的动态奖池
     let prizes = [];
 
     function init() {
-        resetPrizePool(); // 初始载入奖池数据
+        resetPrizePool(); 
         for(let i=0; i<3; i++) preBuildDOMTrack(i);
+        
+        // 监听视口改变，防止横竖屏切换时中奖位置对不齐
+        window.addEventListener('resize', () => {
+            if(!isRunning && cachedFinalWinners.length > 0) {
+                // 如果当前没有在运行但有抽奖记录，修正轨道位置
+                cachedFinalWinners.forEach(win => {
+                    const track = document.getElementById(`track${win.rowId}`);
+                    if(track && document.getElementById(`row${win.rowId}`).classList.contains('active')) {
+                        const containerWidth = document.getElementById(`row${win.rowId}`).offsetWidth;
+                        const targetLeft = (48 * itemWidth) + (itemWidth / 2);
+                        track.style.transition = 'none';
+                        track.style.transform = `translate3d(${-(targetLeft - (containerWidth / 2))}px, 0px, 0px)`;
+                    }
+                });
+            }
+        });
     }
 
-    // 管理员：一键刷新/重置初始奖池核心函数
     function resetPrizePool() {
         if (isRunning) return;
-        prizes = JSON.parse(JSON.stringify(INITIAL_PRIZES_TEMPLATE)); // 深拷贝重置
+        prizes = JSON.parse(JSON.stringify(INITIAL_PRIZES_TEMPLATE)); 
         updateSnapshot();
     }
 
     function selectGuestMode() {
         isGuestMode = true;
-        
-        // 彻底切断退路：从内存和 DOM 树中永远销毁管理相关的所有区块
         document.getElementById('adminArea').remove();
         document.getElementById('prizeBoxContainer').remove();
         document.getElementById('prizePoolTitle').remove();
         document.getElementById('historyBlock').remove();
         document.getElementById('modeSelectBlock').remove(); 
-        
-        // 显示纯净抽奖轮盘
         document.getElementById('rightWheelPanel').style.display = 'flex';
     }
 
@@ -316,7 +339,7 @@
     function updateSnapshot() {
         const statsEl = document.getElementById('statsArea');
         const gridEl = document.getElementById('gridContainer');
-        if(!statsEl || !gridEl) return; // 游客模式下已被移除则不执行
+        if(!statsEl || !gridEl) return; 
 
         const countA = prizes.filter(p => p.type === "A").length;
         const countB = prizes.filter(p => p.type === "B").length;
@@ -401,7 +424,6 @@
             
             cachedFinalWinners.push({ rowId: r, item: winItem, indexInPrizes: prizes.indexOf(winItem) });
             
-            // 关键逻辑改动：如果是管理员模式，才从临时池中切除以防止多连抽抽中同个实物
             if(!isGuestMode) {
                 tempPool.splice(winIndex, 1);
             }
@@ -433,7 +455,6 @@
             if (historyList && historyList.innerText === "暂无抽取历史纪录") historyList.innerHTML = '';
             specialTearQueue = [];
 
-            // 倒序删除真实库存（防止索引坍塌），且【仅在非游客模式】下执行删除
             if (!isGuestMode) {
                 const sortedWinners = [...cachedFinalWinners].sort((a, b) => b.indexInPrizes - a.indexInPrizes);
                 sortedWinners.forEach(win => {
@@ -528,12 +549,22 @@
             document.getElementById('btnSingle').disabled = false;
             document.getElementById('btnTriple').disabled = false;
             const refreshBtn = document.getElementById('btnRefreshPool');
-            if(refreshBtn) refreshBtn.disabled = false; // 解锁刷新键
+            if(refreshBtn) refreshBtn.disabled = false; 
         }, 400);
     }
 
     init();
+    
+    // 禁用右键及调试逻辑保持不变
+    document.oncontextmenu = function() { return false; };
+    document.onselectstart = function() { return false; };
+    document.onkeydown = function (e) {
+        if (e.keyCode === 123 || 
+            (e.ctrlKey && e.shiftKey && e.keyCode === 73) || 
+            (e.ctrlKey && e.keyCode === 85)) { 
+            return false;
+        }
+    };
 </script>
-
 </body>
 </html>
