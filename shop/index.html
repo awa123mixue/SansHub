@@ -37,7 +37,7 @@
     }
     button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
 
-    /* ================= 顶栏对齐 ================= */
+    /* ================= 顶栏 ================= */
     .header {
       position: fixed; top: 0; left: 0; right: 0; z-index: 1000; height: var(--header-height);
       background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -211,11 +211,11 @@
         <h4>步骤 1：交付佣金</h4><img id="qrImage1"><p>¥<span id="agentTotal">0.00</span></p>
       </div>
       <div id="step2" class="qr-container">
-        <h4>步骤 2：结算配额</h4><img id="qrImage2"><p>¥<span id="secondQrTotal">0.00</span></p>
+        <h4>步骤 2：给SansHub公款打入</h4><img id="qrImage2"><p>¥<span id="secondQrTotal">0.00</span></p>
       </div>
       <div class="qr-buttons">
         <button class="btn btn-secondary" id="backToCartBtn">返回修改</button>
-        <button class="btn btn-primary" id="paidBtn">我已完成支付</button>
+        <button class="btn btn-primary" id="paidBtn">完成支付后去找客服给付款凭证</button>
       </div>
     </div>
     
@@ -247,15 +247,15 @@
 
     // ======================= 🛒 商城控制业务层 =======================
     (function() {
-      // 🆕 核心安全跳转逻辑：跳回上级目录的首页，地址栏不带任何 .html 后缀
+      // 🎯 直接定向到大本营主站链接
       document.getElementById('homeBackBtn').addEventListener('click', () => {
-        window.location.href = '../'; 
+        window.location.href = 'https://awa123mixue.github.io/SansHub/'; 
       });
 
       const agents = [
-        { id: 'agent1', name: '枫洛', qq: '2984967309', avatar: 'https://q1.qlogo.cn/g?b=qq&nk=2984967309&s=100', paymentQR1: 'https://i.postimg.cc/X7qQKKxR/Screenshot-2026-04-12-21-53-38-311-com-tencent-mm.jpg', paymentQR2: 'https://i.postimg.cc/bvTsTVb0/QQ20260708-173514.png', desc: '总经理' },
-        { id: 'agent2', name: 'thrcvb', qq: '3429983254', avatar: 'https://q1.qlogo.cn/g?b=qq&nk=3429983254&s=100', paymentQR1: 'https://i.postimg.cc/k5zXfrGL/QQ20260708-173826.png', paymentQR2: 'https://i.postimg.cc/bvTsTVb0/QQ20260708-173514.png', desc: '售后调配员' },
-        { id: 'agent3', name: '红温狗', qq: '2304738737', avatar: 'https://q1.qlogo.cn/g?b=qq&nk=2304738737&s=100', paymentQR1: 'https://i.postimg.cc/B6jPncLg/QQ20260708-173529.png', paymentQR2: 'https://i.postimg.cc/bvTsTVb0/QQ20260708-173514.png', desc: '核心客服' }
+        { id: 'agent1', name: '枫洛', qq: '2984967309', avatar: 'https://q1.qlogo.cn/g?b=qq&nk=2984967309&s=100', paymentQR1: 'https://i.postimg.cc/X7qQKKxR/Screenshot-2026-04-12-21-53-38-311-com-tencent-mm.jpg', paymentQR2: 'https://i.postimg.cc/bvTsTVb0/QQ20260708-173514.png', desc: '无敌的神' },
+        { id: 'agent2', name: 'thrcvb', qq: '3429983254', avatar: 'https://q1.qlogo.cn/g?b=qq&nk=3429983254&s=100', paymentQR1: 'https://i.postimg.cc/k5zXfrGL/QQ20260708-173826.png', paymentQR2: 'https://i.postimg.cc/bvTsTVb0/QQ20260708-173514.png', desc: '乐乐' },
+        { id: 'agent3', name: '红温狗', qq: '2304738737', avatar: 'https://q1.qlogo.cn/g?b=qq&nk=2304738737&s=100', paymentQR1: 'https://i.postimg.cc/B6jPncLg/QQ20260708-173529.png', paymentQR2: 'https://i.postimg.cc/bvTsTVb0/QQ20260708-173514.png', desc: '乐乐' }
       ];
       
       const products = [
