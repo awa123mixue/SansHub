@@ -3,21 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SansHub</title>
-    
+    <title>SansHub - 国人原创脚本方案</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
-    
     <style>
-        /* 增加高级防选反蓝样式，全面保护文本内容 */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             -webkit-tap-highlight-color: transparent;
-            -webkit-user-select: none; /* 禁用苹果手机选中文本 */
-            -moz-user-select: none;    /* 禁用火狐选中文本 */
-            -ms-user-select: none;     /* 禁用IE选中文本 */
-            user-select: none;         /* 禁用标准浏览器选中文本 */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
         html, body {
@@ -174,6 +171,7 @@
             color: #cbd5e1;
             white-space: nowrap;
             opacity: 1;
+            transition: opacity 0.3s ease;
         }
 
         .sales-user {
@@ -339,6 +337,12 @@
             letter-spacing: 0.5px;
         }
 
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
         /* ================= 移动端竖屏高级防溢出排版 ================= */
         @media (max-width: 992px) {
             .live-counter-box {
@@ -392,7 +396,7 @@
                 <div class="live-dot"></div>
                 <span>累计注入次数</span>
             </div>
-            <div class="counter-number" id="inject-counter">0</div>
+            <div class="counter-number" id="inject-counter">15,056</div>
         </div>
         
         <div class="counter-item">
@@ -400,7 +404,7 @@
                 <div class="live-dot blue-dot"></div>
                 <span>加入SansHub玩家</span>
             </div>
-            <div class="counter-number player-number" id="player-counter">0</div>
+            <div class="counter-number player-number" id="player-counter">13 人</div>
         </div>
     </div>
 
@@ -408,7 +412,7 @@
         <div class="sales-track" id="sales-track">
             <div class="sales-item">
                 <span class="sales-badge">刚刚</span>
-                <span class="sales-user" id="sales-user">dog_furry63</span>
+                <span class="sales-user" id="sales-user">ScriptGod74</span>
                 <span class="sales-action" id="sales-action">成功激活 SansHub 终身版</span>
             </div>
         </div>
@@ -420,7 +424,7 @@
             <nav>
                 <a href="#" class="active">主页</a>
                 <a href="./games/">游戏</a>
-                <a href="./shop/">商店</a>
+                <a href="shop.html">商店</a>
                 <a href="./service/">客服</a>
             </nav>
         </header>
@@ -432,7 +436,7 @@
             
             <div class="btn-group">
                 <a href="./games/" class="btn btn-games">🔍 查看支持游戏</a>
-                <a href="./shop/" class="btn btn-shop">前往商店付款</a>
+                <a href="shop.html" class="btn btn-shop">前往商店付款</a>
                 <a href="./service/" class="btn btn-service">联系客服</a>
             </div>
         </section>
@@ -444,20 +448,10 @@
 
     <script>
         // ======================= 🔐 终极代码安全防御核心系统 =======================
-        // 1. 禁用全局右键菜单
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        });
-
-        // 2. 阻断键盘开发者工具快捷键 (F12、Ctrl+Shift+I、Ctrl+Shift+J、Ctrl+U、Ctrl+S)
+        document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', function(e) {
-            if (
-                e.key === 'F12' || 
-                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) || 
-                (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's' || e.key === 'H' || e.key === 'h'))
-            ) {
-                e.preventDefault();
-                return false;
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) || (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's' || e.key === 'H' || e.key === 'h'))) {
+                e.preventDefault(); return false;
             }
         });
 
@@ -465,102 +459,66 @@
         const COUNTER_KEY = 'sanshub_inject_count_v3';
         const TIME_KEY = 'sanshub_last_time_v3';
         const INCREASE_INTERVAL = 4000; 
-        
         const START_DATE_TIMESTAMP = new Date('2026-08-01T00:00:00+08:00').getTime(); 
         const BASE_VALUE = 13899; 
 
-        const USER_PREFIXES = [
-            'dog_furry', 'Xiaobai', 'guo_china', 'RobloxPlayer', 'ScriptGod', 
-            'VegaX_User', 'Codex', 'Fisch_Hunter', 'Roland', 'F3X_Builder', 
-            'Krampus', 'Solara', 'WaveExec', 'Synapse', 'Executor', 'BloxSlayer',
-            'SansFan', 'Gamer', 'Shadow', 'Ghost', 'Zero', 'Alpha', 'Neon'
-        ];
+        const USER_PREFIXES = ['dog_furry', 'Xiaobai', 'guo_china', 'RobloxPlayer', 'ScriptGod', 'VegaX_User', 'Codex', 'Fisch_Hunter', 'Roland', 'F3X_Builder', 'Krampus', 'Solara', 'WaveExec', 'Synapse', 'Executor', 'BloxSlayer', 'SansFan', 'Gamer', 'Shadow', 'Ghost', 'Zero', 'Alpha', 'Neon'];
 
         function initCounters() {
             const injectEl = document.getElementById('inject-counter');
             const playerEl = document.getElementById('player-counter');
             const now = Date.now();
 
-            // ------------------ 注入次数计算 ------------------
             let savedCount = localStorage.getItem(COUNTER_KEY);
             let lastTime = localStorage.getItem(TIME_KEY);
-
             const totalTimePassed = now - START_DATE_TIMESTAMP;
             const theoreticalIncrements = Math.floor(totalTimePassed / INCREASE_INTERVAL);
             const currentTheoreticalCount = BASE_VALUE + (theoreticalIncrements > 0 ? theoreticalIncrements : 0);
 
             if (!savedCount || !lastTime || parseInt(savedCount, 10) < currentTheoreticalCount) {
-                savedCount = currentTheoreticalCount;
-                lastTime = now;
-                localStorage.setItem(COUNTER_KEY, savedCount);
-                localStorage.setItem(TIME_KEY, lastTime);
+                savedCount = currentTheoreticalCount; lastTime = now;
+                localStorage.setItem(COUNTER_KEY, savedCount); localStorage.setItem(TIME_KEY, lastTime);
             } else {
-                savedCount = parseInt(savedCount, 10);
-                lastTime = parseInt(lastTime, 10);
+                savedCount = parseInt(savedCount, 10); lastTime = parseInt(lastTime, 10);
                 const timePassed = now - lastTime;
                 const missed = Math.floor(timePassed / INCREASE_INTERVAL);
                 if (missed > 0) {
-                    savedCount += missed;
-                    lastTime = now - (timePassed % INCREASE_INTERVAL);
-                    localStorage.setItem(COUNTER_KEY, savedCount);
-                    localStorage.setItem(TIME_KEY, lastTime);
+                    savedCount += missed; lastTime = now - (timePassed % INCREASE_INTERVAL);
+                    localStorage.setItem(COUNTER_KEY, savedCount); localStorage.setItem(TIME_KEY, lastTime);
                 }
             }
             injectEl.innerText = savedCount.toLocaleString();
 
             setInterval(() => {
                 savedCount += 1;
-                localStorage.setItem(COUNTER_KEY, savedCount);
-                localStorage.setItem(TIME_KEY, Date.now());
+                localStorage.setItem(COUNTER_KEY, savedCount); localStorage.setItem(TIME_KEY, Date.now());
                 injectEl.innerText = savedCount.toLocaleString();
             }, INCREASE_INTERVAL);
 
-            // ------------------ 玩家在线起伏 ------------------
-            let currentPlayers = Math.floor(Math.random() * 6) + 12; 
-            playerEl.innerText = currentPlayers + " 人";
-
+            let currentPlayers = Math.floor(Math.random() * 6) + 12; playerEl.innerText = currentPlayers + " 人";
             setInterval(() => {
-                const rand = Math.random();
-                let change = rand < 0.35 ? 1 : (rand < 0.70 ? -1 : (rand < 0.85 ? 2 : (rand < 0.98 ? -2 : 0)));
+                let change = Math.random() < 0.35 ? 1 : (Math.random() < 0.70 ? -1 : (Math.random() < 0.85 ? 2 : (Math.random() < 0.98 ? -2 : 0)));
                 currentPlayers += change;
-                if (currentPlayers < 12) currentPlayers = 13; 
-                if (currentPlayers > 27) currentPlayers = 25; 
+                if (currentPlayers < 12) currentPlayers = 13; if (currentPlayers > 27) currentPlayers = 25; 
                 playerEl.innerText = currentPlayers + " 人";
             }, 4500);
 
-            // ------------------ 左下角：无缝无BUG流水通知逻辑 ------------------
             const track = document.getElementById('sales-track');
             const userSpan = document.getElementById('sales-user');
             const actionSpan = document.getElementById('sales-action');
 
             function generateNewSale() {
-                // 淡出并瞬移重置
                 track.style.opacity = '0';
-                
                 setTimeout(() => {
-                    const randomPrefix = USER_PREFIXES[Math.floor(Math.random() * USER_PREFIXES.length)];
-                    const randomSuffix = Math.floor(Math.random() * 89) + 10; 
-                    const finalUser = `${randomPrefix}${randomSuffix}`;
-
+                    const finalUser = `${USER_PREFIXES[Math.floor(Math.random() * USER_PREFIXES.length)]}${Math.floor(Math.random() * 89) + 10}`;
                     const actions = ['成功激活 SansHub 终身版', '成功开通 月度特权卡', '获取了最新防检测卡密', '成功充值 250 积分'];
-                    const finalAction = actions[Math.floor(Math.random() * actions.length)];
-
-                    userSpan.innerText = finalUser;
-                    actionSpan.innerText = finalAction;
-                    
-                    // 渐显展示新纪录
+                    userSpan.innerText = finalUser; actionSpan.innerText = actions[Math.floor(Math.random() * actions.length)];
                     track.style.opacity = '1';
                 }, 300);
-
-                // 随机决定后续每次滚动的微妙间隙时间 (5秒~8秒)
-                const nextInterval = Math.floor(Math.random() * 3000) + 5000;
-                setTimeout(generateNewSale, nextInterval);
+                setTimeout(generateNewSale, Math.floor(Math.random() * 3000) + 5000);
             }
-            
-            // 页面加载完 5 秒后正式开启循环变动
             setTimeout(generateNewSale, 5000);
         }
-
         document.addEventListener('DOMContentLoaded', initCounters);
 
         // ======================= 连线粒子画布逻辑 =======================
@@ -570,56 +528,33 @@
         const particleCount = 35;
         const connectionDistance = 90; 
 
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas); resizeCanvas();
 
         class Particle {
             constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.vx = (Math.random() - 0.5) * 0.5;
-                this.vy = (Math.random() - 0.5) * 0.5;
+                this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5; this.vy = (Math.random() - 0.5) * 0.5;
                 this.radius = Math.random() * 1.5 + 1;
             }
             update() {
-                this.x += this.vx;
-                this.y += this.vy;
+                this.x += this.vx; this.y += this.vy;
                 if (this.x < 0 || this.x > canvas.width) this.vx = -this.vx;
                 if (this.y < 0 || this.y > canvas.height) this.vy = -this.vy;
             }
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(168, 85, 247, 0.5)';
-                ctx.fill();
-            }
+            draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fillStyle = 'rgba(168, 85, 247, 0.5)'; ctx.fill(); }
         }
-
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle());
-        }
+        for (let i = 0; i < particleCount; i++) particles.push(new Particle());
 
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particles.forEach(p => { p.update(); p.draw(); });
-
             for (let i = 0; i < particles.length; i++) {
                 for (let j = i + 1; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < connectionDistance) {
-                        ctx.beginPath();
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        const alpha = (1 - dist / connectionDistance) * 0.15;
-                        ctx.strokeStyle = `rgba(99, 102, 241, ${alpha})`;
-                        ctx.lineWidth = 0.6;
-                        ctx.stroke();
+                    const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
+                    if (Math.sqrt(dx * dx + dy * dy) < connectionDistance) {
+                        ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `rgba(99, 102, 241, ${(1 - Math.sqrt(dx * dx + dy * dy) / connectionDistance) * 0.15})`; ctx.lineWidth = 0.6; ctx.stroke();
                     }
                 }
             }
