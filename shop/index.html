@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SansHub 商城 - 次世代 Roblox 脚本方案</title>
+  <title>SansHub商城</title>
   
+  <!-- 引入科幻感专属字体与图标库 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
   
@@ -48,7 +49,9 @@
       min-height: 100vh;
       overflow-x: hidden;
       padding-top: var(--header-height);
+      transition: opacity 0.3s ease;
     }
+    body.fade-out { opacity: 0; }
     a { text-decoration: none; color: inherit; }
     button { font-family: inherit; cursor: pointer; border: none; background: none; font-size: inherit; color: inherit; }
 
@@ -72,16 +75,36 @@
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       letter-spacing: 1px; display: flex; align-items: center; gap: 10px; cursor: pointer;
     }
-    .header-actions { display: flex; align-items: center; gap: 16px; }
+    .header-actions { display: flex; align-items: center; gap: 12px; }
     
-    .cart-toggle-btn {
-      position: relative; width: 44px; height: 44px; border-radius: 12px;
+    /* 统一顶栏控制键的基础样式 */
+    .nav-action-btn {
+      position: relative; height: 42px; border-radius: 12px;
       display: flex; align-items: center; justify-content: center; 
-      background: rgba(255, 255, 255, 0.04);
+      background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      transition: var(--transition); font-size: 1.1rem; color: var(--text-primary);
+      transition: var(--transition); color: var(--text-primary);
+      font-size: 1.05rem;
     }
-    .cart-toggle-btn:hover { background: rgba(168, 85, 247, 0.1); border-color: var(--border-glow-hover); transform: scale(1.05); }
+    .nav-action-btn:hover { 
+      background: rgba(168, 85, 247, 0.08); 
+      border-color: var(--border-glow-hover); 
+      transform: translateY(-1px);
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.15);
+    }
+    .nav-action-btn:active { transform: translateY(1px) scale(0.98); }
+    
+    /* 独立按钮宽度与特征控制 */
+    .cart-toggle-btn { width: 44px; }
+    .home-back-btn { 
+      padding: 0 16px; 
+      gap: 8px; 
+      font-size: 0.85rem; 
+      font-weight: 700; 
+      color: var(--text-secondary);
+    }
+    .home-back-btn:hover { color: var(--text-primary); }
+
     .cart-badge {
       position: absolute; top: -5px; right: -5px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 50%;
       background: #a855f7; color: #ffffff; font-size: 0.7rem; font-weight: 700; font-family: var(--font-display);
@@ -249,6 +272,8 @@
       .product-price { font-size: 1.15rem; }
       .add-to-cart-btn { padding: 10px; font-size: 0.8rem; border-radius: 8px; }
       .qr-container { padding: 14px; }
+      .home-back-btn span { display: none; } /* 移动端只保留图标以防挤压 */
+      .home-back-btn { padding: 0 12px; }
     }
   </style>
 </head>
@@ -260,7 +285,13 @@
         <span style="display:flex;align-items:center;"><i class="fa-solid fa-store" style="font-size:1.3rem;margin-right:6px;"></i> SansHub</span>商城
       </div>
       <div class="header-actions">
-        <button class="cart-toggle-btn" id="cartToggleBtn">
+        <!-- 🆕 新增：返回首页功能键 -->
+        <button class="nav-action-btn home-back-btn" id="homeBackBtn">
+          <i class="fa-solid fa-house"></i>
+          <span>返回首页</span>
+        </button>
+        <!-- 购物车入口 -->
+        <button class="nav-action-btn cart-toggle-btn" id="cartToggleBtn">
           <i class="fa-solid fa-bag-shopping"></i>
           <span class="cart-badge" id="cartBadge">0</span>
         </button>
@@ -269,12 +300,14 @@
   </header>
 
   <main class="main-content">
+    <!-- 客服选择页面 -->
     <div id="agentPage" class="agent-page">
       <h2>👥 选择 <span>专属服务客服</span></h2>
       <div class="agent-cards" id="agentCards"></div>
       <p style="color:var(--text-muted); margin-top:24px; font-size:0.75rem;">* 客服购买后不可变更未来售后服务，付款完成后请务必主动添加对应客服 QQ</p>
     </div>
 
+    <!-- 商品页面 -->
     <div id="productPage" style="display:none;">
       <div class="product-page-header">
         <button class="back-btn" id="backToAgentBtn"><i class="fa-solid fa-arrow-left"></i> 返回客服选择</button>
@@ -289,6 +322,7 @@
     </div>
   </main>
 
+  <!-- 购物车侧边栏结构 -->
   <div class="cart-overlay" id="cartOverlay"></div>
   <aside class="cart-sidebar" id="cartSidebar">
     <div class="cart-header">
@@ -300,6 +334,7 @@
       <div class="cart-empty">暂无待备资产配置</div>
     </div>
     
+    <!-- 收款渲染 -->
     <div class="qr-section" id="qrSection">
       <div id="step1" class="qr-container">
         <h4><i class="fa-solid fa-shield-halved" style="color:#a855f7;margin-right:4px;"></i> 步骤 1：向客服交付技术佣金</h4>
@@ -325,6 +360,7 @@
     </div>
   </aside>
 
+  <!-- 客服清空冲突提示弹窗 -->
   <div class="modal-overlay" id="conflictModal">
     <div class="modal">
       <h2>⚠️ 检测到调度变动</h2>
@@ -338,11 +374,10 @@
 
   <div class="toast-container" id="toastContainer"></div>
 
+  <!-- 特效与商城联动逻辑 + 终极核心防御代码 -->
   <script>
     // ======================= 🔐 终极代码安全防御核心系统 =======================
-    // 1. 禁用右键菜单
     document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
-    // 2. 阻断 F12、Ctrl+Shift+I/J/C、Ctrl+U、Ctrl+S 偷看复制源码
     document.addEventListener('keydown', function(e) {
       if (
         e.key === 'F12' || 
@@ -356,10 +391,21 @@
 
     // ======================= 🛒 商城底层交互业务层 =======================
     (function() {
+      // 绑定返回首页的转场特效
+      const homeBtn = document.getElementById('homeBackBtn');
+      if(homeBtn) {
+        homeBtn.addEventListener('click', () => {
+          document.body.classList.add('fade-out');
+          setTimeout(() => {
+            window.location.href = 'index.html'; // 如果你的首页文件名不是 index.html，可以在此自行修改
+          }, 300);
+        });
+      }
+
       const agents = [
         { id: 'agent1', name: '枫洛', qq: '2984967309', avatar: 'https://q1.qlogo.cn/g?b=qq&nk=2984967309&s=100', paymentQR1: 'https://i.postimg.cc/X7qQKKxR/Screenshot-2026-04-12-21-53-38-311-com-tencent-mm.jpg', paymentQR2: 'https://i.postimg.cc/bvTsTVb0/QQ20260708-173514.png', desc: '总经理' },
-        { id: 'agent2', name: 'thrcvb', qq: '3429983254', avatar: 'https://q1.qlogo.cn/g?b=qq&nk=3429983254&s=100', paymentQR1: 'https://i.postimg.cc/k5zXfrGL/QQ20260708-173826.png', paymentQR2: 'https://i.postimg.cc/bvTsTVb0/QQ20260708-173514.png', desc: '售后调配员' },
-        { id: 'agent3', name: '红温狗', qq: '2304738737', avatar: 'https://q1.qlogo.cn/g?b=qq&nk=2304738737&s=100', paymentQR1: 'https://i.postimg.cc/B6jPncLg/QQ20260708-173529.png', paymentQR2: 'https://i.postimg.cc/bvTsTVb0/QQ20260708-173514.png', desc: '核心客服' }
+        { id: 'agent2', name: 'thrcvb', qq: '3429983254', avatar: 'https://q1.qlogo.cn/g?b=qq&nk=3429983254&s=100', paymentQR1: 'https://i.postimg.cc/k5zXfrGL/QQ20260708-173826.png', paymentQR2: 'https://i.postimg.cc/bvTsTVb0/QQ20260708-173514.png', desc: '客服' },
+        { id: 'agent3', name: '红温狗', qq: '2304738737', avatar: 'https://q1.qlogo.cn/g?b=qq&nk=2304738737&s=100', paymentQR1: 'https://i.postimg.cc/B6jPncLg/QQ20260708-173529.png', paymentQR2: 'https://i.postimg.cc/bvTsTVb0/QQ20260708-173514.png', desc: '客服' }
       ];
       
       const products = [
@@ -492,7 +538,7 @@
         
         document.querySelectorAll('.qty-btn').forEach(b=>b.addEventListener('click',()=>{
           const id=b.dataset.id, d=parseInt(b.dataset.d);
-          const item=cart.find(i=>i.id===id); if(item){ item.qty+=d; if(item.qty<=0) cart=cart.filter(i=>i.id!==id); if(!cart.length) cartAgentId=null; updateCartUI(); renderProducts(); saveCart(); }
+          const item=cart.find(i=>id===item.id); if(item){ item.qty+=d; if(item.qty<=0) cart=cart.filter(i=>i.id!==id); if(!cart.length) cartAgentId=null; updateCartUI(); renderProducts(); saveCart(); }
         }));
         saveCart();
       }
