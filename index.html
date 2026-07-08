@@ -2,335 +2,630 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DC 机器人 - 探索智能与机械的未来</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SansHub</title>
     
-    <!-- 引入炫酷的 Google 字体 -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+SC:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
+        /* 增加高级防选反蓝样式，全面保护文本内容 */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none; /* 禁用苹果手机选中文本 */
+            -moz-user-select: none;    /* 禁用火狐选中文本 */
+            -ms-user-select: none;     /* 禁用IE选中文本 */
+            user-select: none;         /* 禁用标准浏览器选中文本 */
         }
 
-        body {
+        html, body {
+            width: 100%;
+            height: 100vh;
+            height: -webkit-fill-available;
+            overflow: hidden; 
+            background: #000000;
             font-family: 'Noto Sans SC', -apple-system, sans-serif;
-            background: #060b13;
             color: #e2e8f0;
-            overflow-x: hidden;
-            line-height: 1.6;
         }
 
-        /* 科技感网格与渐变背景 */
-        .bg-grid {
+        /* ================= 背景跑马灯 ================= */
+        .marquee-wrapper {
+            position: fixed;
+            top: 42%;
+            left: 0;
+            width: 100%;
+            height: 56.25vw;
+            max-height: 45vh;
+            transform: translateY(-50%);
+            z-index: 1;
+            overflow: hidden;
+            opacity: 0.28;
+            pointer-events: none;
+        }
+
+        .marquee-track {
+            display: flex;
+            width: 300%; 
+            height: 100%;
+            animation: marquee 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        .marquee-slide {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+        }
+
+        @keyframes marquee {
+            0%, 28% { transform: translateX(0); }
+            33%, 61% { transform: translateX(-33.333%); }
+            66%, 95% { transform: translateX(-66.666%); }
+            100% { transform: translateX(0); }
+        }
+
+        /* ================= 粒子画布 ================= */
+        #particle-canvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: 
-                linear-gradient(rgba(0, 242, 254, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 242, 254, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            z-index: -2;
-        }
-
-        .bg-glow {
-            position: fixed;
-            top: -20%;
-            right: -10%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(0, 242, 254, 0.08) 0%, transparent 70%);
-            z-index: -1;
+            z-index: 2;
             pointer-events: none;
         }
 
-        /* 头部导航栏 */
+        /* ================= 左侧双重数据看板 ================= */
+        .live-counter-box {
+            position: fixed;
+            left: 4%;
+            top: 42%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 1.2rem;
+            border-radius: 16px;
+            z-index: 10;
+            min-width: 210px;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .counter-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .counter-title {
+            font-size: 0.78rem;
+            color: #94a3b8;
+            letter-spacing: 1px;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #10b981;
+            animation: pulse 1.5s infinite;
+        }
+        .blue-dot {
+            background: #3b82f6;
+            box-shadow: 0 0 8px #3b82f6;
+        }
+
+        .counter-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.7rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #3b82f6, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .player-number {
+            background: linear-gradient(90deg, #10b981, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ================= 左下角：实时会员购买信息通知栏 ================= */
+        .live-sales-box {
+            position: fixed;
+            left: 4%;
+            bottom: 4%;
+            z-index: 10;
+            width: 240px;
+            height: 42px;
+            overflow: hidden;
+            background: rgba(168, 85, 247, 0.06);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 10px;
+            padding: 0 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .sales-track {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .sales-item {
+            height: 42px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.82rem;
+            color: #cbd5e1;
+            white-space: nowrap;
+            opacity: 1;
+        }
+
+        .sales-user {
+            font-family: 'Orbitron', sans-serif;
+            color: #c084fc;
+            font-weight: 700;
+        }
+
+        .sales-action {
+            color: #94a3b8;
+        }
+
+        .sales-badge {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            font-size: 0.7rem;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            font-weight: bold;
+        }
+
+        /* ================= 主界面层 ================= */
+        .main-ui {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; 
+            z-index: 3;
+            padding: 1.2rem 6% 2rem 6%;
+        }
+
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.5rem 5%;
-            background: rgba(6, 11, 19, 0.7);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(0, 242, 254, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            width: 100%;
+            padding-top: 0.5rem;
         }
 
         .logo {
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #00f2fe;
-            text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #a855f7, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             text-decoration: none;
+            letter-spacing: 1px;
         }
 
         nav a {
             color: #94a3b8;
             text-decoration: none;
-            margin-left: 2rem;
+            margin-left: 1.2rem;
+            font-size: 0.9rem;
             font-weight: 500;
-            transition: color 0.3s;
         }
 
         nav a:hover, nav a.active {
-            color: #00f2fe;
-            text-shadow: 0 0 8px rgba(0, 242, 254, 0.3);
+            color: #a855f7;
         }
 
-        /* 英雄展示区 (Hero Section) */
         .hero {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 8rem 5% 5rem 5%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            min-height: 80vh;
-        }
-
-        .hero-text {
             flex: 1;
-            max-width: 600px;
-            animation: fadeInLeft 1s ease-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            margin-top: -1rem;
         }
 
-        .hero-tag {
+        .badge {
             font-family: 'Orbitron', sans-serif;
-            color: #4facfe;
-            text-transform: uppercase;
-            letter-spacing: 3px;
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            color: #c084fc;
+            padding: 0.25rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
             font-weight: 700;
-            margin-bottom: 1rem;
-            display: inline-block;
-            border-bottom: 2px solid #00f2fe;
-            padding-bottom: 4px;
+            letter-spacing: 1.5px;
+            margin-bottom: 0.8rem;
         }
 
         .hero h1 {
-            font-size: 3.5rem;
+            font-size: 2.1rem;
             font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+            line-height: 1.3;
+            margin-bottom: 0.8rem;
+            letter-spacing: -0.5px;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(90deg, #c084fc, #6366f1);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .hero p {
-            font-size: 1.1rem;
-            color: #94a3b8;
-            margin-bottom: 2.5rem;
-        }
-
-        /* 酷炫3D感觉的机器人占位视觉效果 */
-        .hero-visual {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            animation: fadeInRight 1s ease-out;
-        }
-
-        .robot-sphere {
-            width: 350px;
-            height: 350px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(0,242,254,0.1) 0%, rgba(79,172,254,0.02) 70%);
-            border: 2px dashed rgba(0, 242, 254, 0.3);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            animation: rotate 20s linear infinite;
-        }
-
-        .robot-core {
-            width: 180px;
-            height: 180px;
-            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
-            border-radius: 30px;
-            box-shadow: 0 0 50px rgba(0, 242, 254, 0.4);
-            transform: rotate(45deg);
-            animation: float 4s ease-in-out infinite;
-        }
-
-        /* 按钮样式 */
-        .cta-btn {
-            display: inline-block;
-            padding: 1rem 2.5rem;
-            font-size: 1rem;
-            font-weight: 700;
-            color: #060b13;
-            background: linear-gradient(90deg, #00f2fe, #4facfe);
-            border-radius: 50px;
-            text-decoration: none;
-            box-shadow: 0 4px 20px rgba(0, 242, 254, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .cta-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 30px rgba(0, 242, 254, 0.6);
-        }
-
-        /* 特性服务区域 */
-        .services {
-            max-width: 1200px;
-            margin: 0 auto 8rem auto;
-            padding: 0 5%;
-        }
-
-        .section-title {
-            text-align: center;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2rem;
-            margin-bottom: 4rem;
-            color: #ffffff;
-            letter-spacing: 1px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 2.5rem 2rem;
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            background: rgba(0, 242, 254, 0.02);
-            border-color: rgba(0, 242, 254, 0.2);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .card-icon {
-            font-size: 2rem;
-            color: #00f2fe;
-            margin-bottom: 1.5rem;
-        }
-
-        .card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-            color: #ffffff;
-        }
-
-        .card p {
-            color: #94a3b8;
             font-size: 0.95rem;
+            color: #94a3b8;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            max-width: 90%;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
         }
 
-        /* 动画关键帧 */
-        @keyframes fadeInLeft {
-            from { opacity: 0; transform: translateX(-40px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        @keyframes fadeInRight {
-            from { opacity: 0; transform: translateX(40px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        @keyframes rotate {
-            100% { transform: rotate(360deg); }
-        }
-        @keyframes float {
-            0%, 100% { transform: rotate(45deg) translateY(0); }
-            50% { transform: rotate(45deg) translateY(-15px); }
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: 0.65rem;
+            max-width: 320px;
         }
 
-        /* 响应式适配 */
-        @media (max-width: 968px) {
-            .hero {
-                flex-direction: column;
-                text-align: center;
-                padding-top: 5rem;
+        .btn {
+            width: 100%;
+            padding: 0.8rem 0; 
+            font-size: 0.95rem;
+            font-weight: 700;
+            border-radius: 14px;
+            text-decoration: none;
+            text-align: center;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+            opacity: 0.9;
+        }
+
+        .btn-games {
+            background: rgba(255, 255, 255, 0.05);
+            color: #f1f5f9;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .btn-shop {
+            background: linear-gradient(90deg, #a855f7, #6366f1);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+        }
+
+        .btn-service {
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.72rem;
+            color: #475569;
+            letter-spacing: 0.5px;
+        }
+
+        /* ================= 移动端竖屏高级防溢出排版 ================= */
+        @media (max-width: 992px) {
+            .live-counter-box {
+                position: static;
+                transform: none;
+                margin: 0 auto 0.5rem auto;
+                padding: 0.5rem 0.8rem;
+                flex-direction: row; 
+                justify-content: space-around;
+                gap: 15px;
+                min-width: 92%;
+                border-radius: 16px;
+                background: rgba(255, 255, 255, 0.01);
             }
-            .hero-text {
-                margin-bottom: 4rem;
+            .counter-title { margin-bottom: 0px; }
+            .counter-number { font-size: 1.1rem; }
+
+            .live-sales-box {
+                position: static;
+                margin: 0.5rem auto 0.5rem auto;
+                width: 92%;
+                max-width: 320px;
+                height: 38px;
+                border-radius: 12px;
+                justify-content: center;
+                background: rgba(168, 85, 247, 0.03);
             }
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            .robot-sphere {
-                width: 280px;
-                height: 280px;
-            }
-            .robot-core {
-                width: 140px;
-                height: 140px;
+            .sales-item {
+                height: 38px;
+                font-size: 0.78rem;
+                justify-content: center;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- 背景装饰 -->
-    <div class="bg-grid"></div>
-    <div class="bg-glow"></div>
+    <div class="marquee-wrapper">
+        <div class="marquee-track">
+            <div class="marquee-slide" style="background-image: url('https://picsum.photos/1080/1920?random=1');"></div>
+            <div class="marquee-slide" style="background-image: url('https://picsum.photos/1080/1920?random=2');"></div>
+            <div class="marquee-slide" style="background-image: url('https://picsum.photos/1080/1920?random=3');"></div>
+        </div>
+    </div>
 
-    <!-- 导航栏 -->
-    <header>
-        <a href="#" class="logo">DC BOT</a>
-        <nav>
-            <a href="#" class="active">首页</a>
-            <a href="./shop/">商店</a> <!-- 契合你上一题的 /shop 后缀 -->
-            <a href="#services">核心技术</a>
-        </nav>
-    </header>
+    <canvas id="particle-canvas"></canvas>
 
-    <!-- 英雄核心展示区 -->
-    <section class="hero">
-        <div class="hero-text">
-            <span class="hero-tag">DC Robotics Project</span>
-            <h1>进化，<br>从智能机械开始</h1>
-            <p>DC机器人致力于打破虚拟与现实的边界。基于自研的高性能动力核心与全景 AI 感知算法，为未来数字世界和自动化场景提供最硬核的机器人技术解决方案。</p>
-            <a href="./shop/" class="cta-btn">立即探索</a>
+    <div class="live-counter-box">
+        <div class="counter-item">
+            <div class="counter-title">
+                <div class="live-dot"></div>
+                <span>累计注入次数</span>
+            </div>
+            <div class="counter-number" id="inject-counter">0</div>
         </div>
         
-        <div class="hero-visual">
-            <div class="robot-sphere">
-                <div class="robot-core"></div>
+        <div class="counter-item">
+            <div class="counter-title">
+                <div class="live-dot blue-dot"></div>
+                <span>加入SansHub玩家</span>
+            </div>
+            <div class="counter-number player-number" id="player-counter">0</div>
+        </div>
+    </div>
+
+    <div class="live-sales-box">
+        <div class="sales-track" id="sales-track">
+            <div class="sales-item">
+                <span class="sales-badge">刚刚</span>
+                <span class="sales-user" id="sales-user">dog_furry63</span>
+                <span class="sales-action" id="sales-action">成功激活 SansHub 终身版</span>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- 核心板块展示 -->
-    <section class="services" id="services">
-        <h2 class="section-title">CORE CAPABILITIES</h2>
-        <div class="grid">
-            <!-- 板块 1 -->
-            <div class="card">
-                <div class="card-icon">⚡</div>
-                <h3>高精度动力伺服</h3>
-                <p>自研高扭矩伺服电机，毫秒级响应速度，为机器人每一次抓取与位移提供绝对稳定的动力支撑。</p>
-            </div>
-            <!-- 板块 2 -->
-            <div class="card">
-                <div class="card-icon">👁️</div>
-                <h3>AI 视觉孪生</h3>
-                <p>集成多传感器融合与三维空间建模算法，让机器人在复杂的环境中不仅“看得见”，更能“看得懂”。</p>
-            </div>
-            <!-- 板块 3 -->
-            <div class="card">
-                <div class="card-icon">🌐</div>
-                <h3>多端云同步控制</h3>
-                <p>完美适配现代化控制后台，不仅能通过云端实时下发指令，更能无缝接入沙盒与仿真平台。</p>
-            </div>
-        </div>
-    </section>
+    <div class="main-ui">
+        <header>
+            <a href="#" class="logo">SansHub</a>
+            <nav>
+                <a href="#" class="active">主页</a>
+                <a href="./games/">游戏</a>
+                <a href="./shop/">商店</a>
+                <a href="./service/">客服</a>
+            </nav>
+        </header>
 
+        <section class="hero">
+            <div class="badge">ROBLOX SCRIPT</div>
+            <h1>注入 <span>SansHub</span><br>最佳Roblox国人原创脚本</h1>
+            <p>专属安全防检测机制，提供最强实用和去掉凑数脚本的国人行业</p>
+            
+            <div class="btn-group">
+                <a href="./games/" class="btn btn-games">🔍 查看支持游戏</a>
+                <a href="./shop/" class="btn btn-shop">前往商店付款</a>
+                <a href="./service/" class="btn btn-service">联系客服</a>
+            </div>
+        </section>
+
+        <footer>
+            <p>© 2026 SansHub Project. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // ======================= 🔐 终极代码安全防御核心系统 =======================
+        // 1. 禁用全局右键菜单
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // 2. 阻断键盘开发者工具快捷键 (F12、Ctrl+Shift+I、Ctrl+Shift+J、Ctrl+U、Ctrl+S)
+        document.addEventListener('keydown', function(e) {
+            if (
+                e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) || 
+                (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's' || e.key === 'H' || e.key === 'h'))
+            ) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // ======================= 📊 核心数据业务层 =======================
+        const COUNTER_KEY = 'sanshub_inject_count_v3';
+        const TIME_KEY = 'sanshub_last_time_v3';
+        const INCREASE_INTERVAL = 4000; 
+        
+        const START_DATE_TIMESTAMP = new Date('2026-08-01T00:00:00+08:00').getTime(); 
+        const BASE_VALUE = 13899; 
+
+        const USER_PREFIXES = [
+            'dog_furry', 'Xiaobai', 'guo_china', 'RobloxPlayer', 'ScriptGod', 
+            'VegaX_User', 'Codex', 'Fisch_Hunter', 'Roland', 'F3X_Builder', 
+            'Krampus', 'Solara', 'WaveExec', 'Synapse', 'Executor', 'BloxSlayer',
+            'SansFan', 'Gamer', 'Shadow', 'Ghost', 'Zero', 'Alpha', 'Neon'
+        ];
+
+        function initCounters() {
+            const injectEl = document.getElementById('inject-counter');
+            const playerEl = document.getElementById('player-counter');
+            const now = Date.now();
+
+            // ------------------ 注入次数计算 ------------------
+            let savedCount = localStorage.getItem(COUNTER_KEY);
+            let lastTime = localStorage.getItem(TIME_KEY);
+
+            const totalTimePassed = now - START_DATE_TIMESTAMP;
+            const theoreticalIncrements = Math.floor(totalTimePassed / INCREASE_INTERVAL);
+            const currentTheoreticalCount = BASE_VALUE + (theoreticalIncrements > 0 ? theoreticalIncrements : 0);
+
+            if (!savedCount || !lastTime || parseInt(savedCount, 10) < currentTheoreticalCount) {
+                savedCount = currentTheoreticalCount;
+                lastTime = now;
+                localStorage.setItem(COUNTER_KEY, savedCount);
+                localStorage.setItem(TIME_KEY, lastTime);
+            } else {
+                savedCount = parseInt(savedCount, 10);
+                lastTime = parseInt(lastTime, 10);
+                const timePassed = now - lastTime;
+                const missed = Math.floor(timePassed / INCREASE_INTERVAL);
+                if (missed > 0) {
+                    savedCount += missed;
+                    lastTime = now - (timePassed % INCREASE_INTERVAL);
+                    localStorage.setItem(COUNTER_KEY, savedCount);
+                    localStorage.setItem(TIME_KEY, lastTime);
+                }
+            }
+            injectEl.innerText = savedCount.toLocaleString();
+
+            setInterval(() => {
+                savedCount += 1;
+                localStorage.setItem(COUNTER_KEY, savedCount);
+                localStorage.setItem(TIME_KEY, Date.now());
+                injectEl.innerText = savedCount.toLocaleString();
+            }, INCREASE_INTERVAL);
+
+            // ------------------ 玩家在线起伏 ------------------
+            let currentPlayers = Math.floor(Math.random() * 6) + 12; 
+            playerEl.innerText = currentPlayers + " 人";
+
+            setInterval(() => {
+                const rand = Math.random();
+                let change = rand < 0.35 ? 1 : (rand < 0.70 ? -1 : (rand < 0.85 ? 2 : (rand < 0.98 ? -2 : 0)));
+                currentPlayers += change;
+                if (currentPlayers < 12) currentPlayers = 13; 
+                if (currentPlayers > 27) currentPlayers = 25; 
+                playerEl.innerText = currentPlayers + " 人";
+            }, 4500);
+
+            // ------------------ 左下角：无缝无BUG流水通知逻辑 ------------------
+            const track = document.getElementById('sales-track');
+            const userSpan = document.getElementById('sales-user');
+            const actionSpan = document.getElementById('sales-action');
+
+            function generateNewSale() {
+                // 淡出并瞬移重置
+                track.style.opacity = '0';
+                
+                setTimeout(() => {
+                    const randomPrefix = USER_PREFIXES[Math.floor(Math.random() * USER_PREFIXES.length)];
+                    const randomSuffix = Math.floor(Math.random() * 89) + 10; 
+                    const finalUser = `${randomPrefix}${randomSuffix}`;
+
+                    const actions = ['成功激活 SansHub 终身版', '成功开通 月度特权卡', '获取了最新防检测卡密', '成功充值 250 积分'];
+                    const finalAction = actions[Math.floor(Math.random() * actions.length)];
+
+                    userSpan.innerText = finalUser;
+                    actionSpan.innerText = finalAction;
+                    
+                    // 渐显展示新纪录
+                    track.style.opacity = '1';
+                }, 300);
+
+                // 随机决定后续每次滚动的微妙间隙时间 (5秒~8秒)
+                const nextInterval = Math.floor(Math.random() * 3000) + 5000;
+                setTimeout(generateNewSale, nextInterval);
+            }
+            
+            // 页面加载完 5 秒后正式开启循环变动
+            setTimeout(generateNewSale, 5000);
+        }
+
+        document.addEventListener('DOMContentLoaded', initCounters);
+
+        // ======================= 连线粒子画布逻辑 =======================
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const particleCount = 35;
+        const connectionDistance = 90; 
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.radius = Math.random() * 1.5 + 1;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx = -this.vx;
+                if (this.y < 0 || this.y > canvas.height) this.vy = -this.vy;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(168, 85, 247, 0.5)';
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < connectionDistance) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        const alpha = (1 - dist / connectionDistance) * 0.15;
+                        ctx.strokeStyle = `rgba(99, 102, 241, ${alpha})`;
+                        ctx.lineWidth = 0.6;
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
 </body>
 </html>
