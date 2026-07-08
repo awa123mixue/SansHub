@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DC 机器人 - 探索智能与机械的未来</title>
+    
+    <!-- 引入炫酷的 Google 字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+SC:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, sans-serif;
+            background: #060b13;
+            color: #e2e8f0;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* 科技感网格与渐变背景 */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 242, 254, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 254, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -2;
+        }
+
+        .bg-glow {
+            position: fixed;
+            top: -20%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.08) 0%, transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* 头部导航栏 */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: rgba(6, 11, 19, 0.7);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 242, 254, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #00f2fe;
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+            text-decoration: none;
+        }
+
+        nav a {
+            color: #94a3b8;
+            text-decoration: none;
+            margin-left: 2rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover, nav a.active {
+            color: #00f2fe;
+            text-shadow: 0 0 8px rgba(0, 242, 254, 0.3);
+        }
+
+        /* 英雄展示区 (Hero Section) */
+        .hero {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 8rem 5% 5rem 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 80vh;
+        }
+
+        .hero-text {
+            flex: 1;
+            max-width: 600px;
+            animation: fadeInLeft 1s ease-out;
+        }
+
+        .hero-tag {
+            font-family: 'Orbitron', sans-serif;
+            color: #4facfe;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: inline-block;
+            border-bottom: 2px solid #00f2fe;
+            padding-bottom: 4px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            margin-bottom: 2.5rem;
+        }
+
+        /* 酷炫3D感觉的机器人占位视觉效果 */
+        .hero-visual {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            animation: fadeInRight 1s ease-out;
+        }
+
+        .robot-sphere {
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,242,254,0.1) 0%, rgba(79,172,254,0.02) 70%);
+            border: 2px dashed rgba(0, 242, 254, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: rotate 20s linear infinite;
+        }
+
+        .robot-core {
+            width: 180px;
+            height: 180px;
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            border-radius: 30px;
+            box-shadow: 0 0 50px rgba(0, 242, 254, 0.4);
+            transform: rotate(45deg);
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* 按钮样式 */
+        .cta-btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #060b13;
+            background: linear-gradient(90deg, #00f2fe, #4facfe);
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 4px 20px rgba(0, 242, 254, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 30px rgba(0, 242, 254, 0.6);
+        }
+
+        /* 特性服务区域 */
+        .services {
+            max-width: 1200px;
+            margin: 0 auto 8rem auto;
+            padding: 0 5%;
+        }
+
+        .section-title {
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 4rem;
+            color: #ffffff;
+            letter-spacing: 1px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            background: rgba(0, 242, 254, 0.02);
+            border-color: rgba(0, 242, 254, 0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            color: #00f2fe;
+            margin-bottom: 1.5rem;
+        }
+
+        .card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .card p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+
+        /* 动画关键帧 */
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes float {
+            0%, 100% { transform: rotate(45deg) translateY(0); }
+            50% { transform: rotate(45deg) translateY(-15px); }
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 968px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding-top: 5rem;
+            }
+            .hero-text {
+                margin-bottom: 4rem;
+            }
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .robot-sphere {
+                width: 280px;
+                height: 280px;
+            }
+            .robot-core {
+                width: 140px;
+                height: 140px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 背景装饰 -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+
+    <!-- 导航栏 -->
+    <header>
+        <a href="#" class="logo">DC BOT</a>
+        <nav>
+            <a href="#" class="active">首页</a>
+            <a href="./shop/">商店</a> <!-- 契合你上一题的 /shop 后缀 -->
+            <a href="#services">核心技术</a>
+        </nav>
+    </header>
+
+    <!-- 英雄核心展示区 -->
+    <section class="hero">
+        <div class="hero-text">
+            <span class="hero-tag">DC Robotics Project</span>
+            <h1>进化，<br>从智能机械开始</h1>
+            <p>DC机器人致力于打破虚拟与现实的边界。基于自研的高性能动力核心与全景 AI 感知算法，为未来数字世界和自动化场景提供最硬核的机器人技术解决方案。</p>
+            <a href="./shop/" class="cta-btn">立即探索</a>
+        </div>
+        
+        <div class="hero-visual">
+            <div class="robot-sphere">
+                <div class="robot-core"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 核心板块展示 -->
+    <section class="services" id="services">
+        <h2 class="section-title">CORE CAPABILITIES</h2>
+        <div class="grid">
+            <!-- 板块 1 -->
+            <div class="card">
+                <div class="card-icon">⚡</div>
+                <h3>高精度动力伺服</h3>
+                <p>自研高扭矩伺服电机，毫秒级响应速度，为机器人每一次抓取与位移提供绝对稳定的动力支撑。</p>
+            </div>
+            <!-- 板块 2 -->
+            <div class="card">
+                <div class="card-icon">👁️</div>
+                <h3>AI 视觉孪生</h3>
+                <p>集成多传感器融合与三维空间建模算法，让机器人在复杂的环境中不仅“看得见”，更能“看得懂”。</p>
+            </div>
+            <!-- 板块 3 -->
+            <div class="card">
+                <div class="card-icon">🌐</div>
+                <h3>多端云同步控制</h3>
+                <p>完美适配现代化控制后台，不仅能通过云端实时下发指令，更能无缝接入沙盒与仿真平台。</p>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>
