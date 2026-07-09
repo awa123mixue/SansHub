@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SansHub - 支持游戏中心</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #050508;
+            --border-glow: rgba(168, 85, 247, 0.25);
+            --border-glow-hover: rgba(168, 85, 247, 0.6);
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --font-sans: 'Noto Sans SC', -apple-system, sans-serif;
+            --font-display: 'Orbitron', sans-serif;
+            --header-height: 72px;
+            --transition: 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            background: var(--bg-primary);
+            font-family: var(--font-sans);
+            color: var(--text-primary);
+        }
+
+        #particle-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;
+        }
+
+        /* ================= 导航顶栏 ================= */
+        .header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000; height: var(--header-height);
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center;
+        }
+        .header-inner { width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 4%; display: flex; align-items: center; justify-content: space-between; }
+        .logo {
+            font-family: var(--font-display); font-size: 1.6rem; font-weight: 800;
+            background: linear-gradient(45deg, #a855f7, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: 1px; text-decoration: none;
+        }
+        .home-back-btn {
+            height: 42px; padding: 0 18px; border-radius: 12px; display: flex; align-items: center; gap: 8px;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); 
+            color: var(--text-secondary); font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: var(--transition);
+        }
+        .home-back-btn:hover { 
+            background: rgba(168, 85, 247, 0.1); border-color: var(--border-glow-hover); transform: translateY(-1px);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.2); color: var(--text-primary);
+        }
+
+        /* ================= 主体内容布局 ================= */
+        .main-container {
+            position: relative; z-index: 2; height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; padding-top: var(--header-height);
+        }
+
+        .page-header { text-align: center; margin-bottom: 25px; }
+        .page-header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+        .page-header h1 span { background: linear-gradient(90deg, #c084fc, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .legend-box {
+            display: inline-flex; gap: 16px; background: rgba(255, 255, 255, 0.02); 
+            border: 1px solid rgba(255,255,255,0.05); padding: 6px 16px; border-radius: 30px; font-size: 0.8rem;
+        }
+        .legend-item { display: flex; align-items: center; gap: 6px; color: var(--text-secondary); }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .dot-normal { background: #10b981; box-shadow: 0 0 8px #10b981; }
+        .dot-open { background: #3b82f6; box-shadow: 0 0 8px #3b82f6; }
+
+        /* ================= CS开箱式三行滚动传送带 ================= */
+        .showcase-stage {
+            width: 100%; max-width: 100vw; overflow: hidden; display: flex; flex-direction: column;
+            gap: 20px; padding: 10px 0; position: relative;
+        }
+
+        /* 传送带中间的准星/聚焦视觉线 (类似CS抽奖中心线) */
+        .showcase-stage::before, .showcase-stage::after {
+            content: ''; position: absolute; top: 0; bottom: 0; width: 120px; z-index: 5; pointer-events: none;
+        }
+        .showcase-stage::before { left: 0; background: linear-gradient(90deg, #000 0%, transparent 100%); }
+        .showcase-stage::after { right: 0; background: linear-gradient(-90deg, #000 0%, transparent 100%); }
+
+        .marquee-row {
+            display: flex; width: max-content; overflow: hidden; pointer-events: auto;
+        }
+        
+        /* 三行交错滚动动画 */
+        .row-left { animation: scrollLeft 35s linear infinite; }
+        .row-right { animation: scrollRight 35s linear infinite; }
+        
+        .row-left:hover, .row-right:hover { animation-play-state: paused; }
+
+        @keyframes scrollLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes scrollRight { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
+
+        .track-inner { display: flex; gap: 20px; padding-right: 20px; }
+
+        /* ================= 游戏微型卡片 ================= */
+        .game-mini-card {
+            width: 260px; background: var(--bg-secondary); border: 1px solid var(--border-glow);
+            border-radius: 14px; overflow: hidden; cursor: pointer; flex-shrink: 0;
+            transition: var(--transition); display: flex; flex-direction: column;
+        }
+        .game-mini-card:hover {
+            border-color: #a855f7; transform: scale(1.03); box-shadow: 0 8px 25px rgba(168, 85, 247, 0.2);
+        }
+
+        .card-cover-thumb { width: 100%; aspect-ratio: 16/9; background: #0c0b11; position: relative; overflow: hidden; }
+        .card-cover-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
+        
+        .status-tag {
+            position: absolute; top: 8px; right: 8px; padding: 2px 8px; border-radius: 12px;
+            font-size: 0.65rem; font-weight: 700; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+        }
+        .tag-normal { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .tag-open { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+
+        .card-body { padding: 12px; display: flex; align-items: center; gap: 10px; }
+        .card-icon-box { width: 38px; height: 38px; border-radius: 8px; overflow: hidden; background: #111; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.05); }
+        .card-icon-img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .card-info { display: flex; flex-direction: column; min-width: 0; }
+        .card-title { font-size: 0.88rem; font-weight: 700; color: #f1f5f9; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .card-alias { font-size: 0.75rem; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* ================= 全屏详情弹窗系统 (Modal) ================= */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .modal-content {
+            width: 90%; max-width: 580px; background: #06060a; border: 1px solid rgba(168, 85, 247, 0.4);
+            border-radius: 24px; overflow: hidden; position: relative; transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 20px 50px rgba(168, 85, 247, 0.25);
+        }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+
+        .modal-close-btn {
+            position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; border-radius: 50%;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; transition: 0.2s;
+        }
+        .modal-close-btn:hover { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; }
+
+        .modal-hero-cover { width: 100%; aspect-ratio: 16/9; position: relative; background: #000; }
+        .modal-cover-img { width: 100%; height: 100%; object-fit: cover; }
+        .modal-hero-cover::after {
+            content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 60%;
+            background: linear-gradient(to top, #06060a, transparent);
+        }
+
+        .modal-details { padding: 24px; position: relative; margin-top: -40px; z-index: 2; }
+        .modal-header-flex { display: flex; gap: 18px; align-items: flex-end; margin-bottom: 20px; }
+        .modal-avatar-box {
+            width: 76px; height: 76px; border-radius: 16px; overflow: hidden; background: #111;
+            border: 2px solid #a855f7; box-shadow: 0 8px 20px rgba(0,0,0,0.6); flex-shrink: 0;
+        }
+        .modal-avatar-img { width: 100%; height: 100%; object-fit: cover; }
+
+        .modal-meta-text { display: flex; flex-direction: column; gap: 4px; }
+        .modal-main-title { font-size: 1.4rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+        .modal-sub-alias { font-size: 0.9rem; color: var(--text-secondary); }
+
+        .modal-status-badge {
+            display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 700;
+            padding: 4px 12px; border-radius: 30px; margin-bottom: 20px; background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        /* 🚀 华丽的Roblox跳转按键 */
+        .roblox-redirect-btn {
+            width: 100%; padding: 14px 0; border-radius: 14px; display: flex; align-items: center;
+            justify-content: center; gap: 10px; font-size: 1rem; font-weight: 700; color: #fff;
+            text-decoration: none; background: linear-gradient(90deg, #a855f7, #3b82f6);
+            box-shadow: 0 4px 20px rgba(168, 85, 247, 0.35); transition: 0.2s; cursor: pointer;
+        }
+        .roblox-redirect-btn:hover {
+            transform: translateY(-2px); box-shadow: 0 6px 25px rgba(168, 85, 247, 0.5);
+            background: linear-gradient(90deg, #b967ff, #4f94ff);
+        }
+        .roblox-redirect-btn:active { transform: translateY(1px); }
+
+        @media (max-width: 768px) {
+            .page-header h1 { font-size: 1.6rem; }
+            .game-mini-card { width: 210px; }
+            .card-icon-box { width: 32px; height: 32px; }
+            .card-title { font-size: 0.8rem; }
+            .modal-content { width: 92%; }
+            .modal-main-title { font-size: 1.15rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <header class="header">
+        <div class="header-inner">
+            <a href="https://awa123mixue.github.io/SansHub/" class="logo">SansHub</a>
+            <button class="home-back-btn" id="homeBackBtn">
+                <i class="fa-solid fa-house"></i>
+                <span>返回首页</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="page-header">
+            <h1>目前的 <span>支持游戏中心</span></h1>
+            <div class="legend-box">
+                <div class="legend-item"><div class="dot dot-normal"></div><span>正常注入</span></div>
+                <div class="legend-item"><div class="dot dot-open"></div><span>原创开源</span></div>
+            </div>
+        </div>
+
+        <div class="showcase-stage">
+            <div class="marquee-row row-left" id="row-1"></div>
+            <div class="marquee-row row-right" id="row-2"></div>
+            <div class="marquee-row row-left" id="row-3"></div>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal-content">
+            <div class="modal-close-btn" id="modalClose"><i class="fa-solid fa-xmark"></i></div>
+            
+            <div class="modal-hero-cover">
+                <img class="modal-cover-img" id="modalCover" src="" alt="Cover">
+            </div>
+            
+            <div class="modal-details">
+                <div class="modal-header-flex">
+                    <div class="modal-avatar-box">
+                        <img class="modal-avatar-img" id="modalIcon" src="" alt="Icon">
+                    </div>
+                    <div class="modal-meta-text">
+                        <div class="modal-main-title" id="modalTitle">Game Title</div>
+                        <div class="modal-sub-alias" id="modalAlias">Game Subtitle</div>
+                    </div>
+                </div>
+
+                <div class="modal-status-badge">
+                    <div class="dot" id="modalStatusDot"></div>
+                    <span id="modalStatusText">状态读取中</span>
+                </div>
+
+                <a class="roblox-redirect-btn" id="robloxLink" href="#" target="_blank">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>进入 Roblox 游戏页面</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ======================= 🔐 终极代码安全防御核心系统 =======================
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || (e.ctrlKey && (e.key === 'U' || e.key === 's'))) e.preventDefault();
+        });
+
+        document.getElementById('homeBackBtn').addEventListener('click', () => {
+            window.location.href = 'https://awa123mixue.github.io/SansHub/';
+        });
+
+        // ======================= 🎮 游戏核心资产静态配置数据库 =======================
+        const gamesData = [
+            { 
+                name: 'UmaRacing', 
+                alias: '[NEO宇宙 💫] 乌玛竞速', 
+                status: 'normal', 
+                iconUrl: 'https://tr.rbxcdn.com/180DAY-cd4ab78dfd4673263e44dc9e520834c3/256/256/Image/Webp/noFilter', 
+                coverUrl: 'https://tr.rbxcdn.com/180DAY-c740743df58a8110e650d11deadd3022/768/432/Image/Webp/noFilter',
+                robloxUrl: 'https://www.roblox.com/games/94101948530988/'
+            },
+            { 
+                name: 'Ashwood : SURVIVAL', 
+                alias: '灰木 : 生存', 
+                status: 'normal', 
+                iconUrl: 'https://tr.rbxcdn.com/180DAY-25a96b610776cf377c7676c1e6b63717/256/256/Image/Webp/noFilter', 
+                coverUrl: 'https://tr.rbxcdn.com/180DAY-53fbd5b785aaab37466723b2fc3da323/768/432/Image/Webp/noFilter',
+                robloxUrl: 'https://www.roblox.com/games/123103243826077/'
+            },
+            { 
+                name: 'Forsaken', 
+                alias: '被遗弃', 
+                status: 'normal', 
+                iconUrl: 'https://tr.rbxcdn.com/180DAY-46bb07b960c8036df7a55bcafef03c92/256/256/Image/Webp/noFilter', 
+                coverUrl: 'https://tr.rbxcdn.com/180DAY-462965dcfaadda40803a8a887cedfb39/768/432/Image/Webp/noFilter',
+                robloxUrl: 'https://www.roblox.com/games/18687417158/'
+            },
+            { 
+                name: 'Dead-Spells', 
+                alias: '死亡法术', 
+                status: 'normal', 
+                iconUrl: 'https://tr.rbxcdn.com/180DAY-fd8fdea55925042e7c4e98c82851805f/256/256/Image/Webp/noFilter', 
+                coverUrl: 'https://tr.rbxcdn.com/180DAY-4f5c029aa1392b12b290f1657442a803/768/432/Image/Webp/noFilter',
+                robloxUrl: 'https://www.roblox.com/games/104770044244450/'
+            },
+            { 
+                name: 'DogsOfWar', 
+                alias: '⭐DoW⭐ 战争之犬 ：第二次世界大战', 
+                status: 'normal', 
+                iconUrl: 'https://tr.rbxcdn.com/180DAY-a78720ee66c3d8dfeb61b514481ffb7a/256/256/Image/Webp/noFilter', 
+                coverUrl: 'https://tr.rbxcdn.com/180DAY-8ce84b16cb8ec33641eaf9069c316b4c/768/432/Image/Webp/noFilter',
+                robloxUrl: 'https://www.roblox.com/games/15555246249/'
+            },
+            { 
+                name: 'SCP retroBreach', 
+                alias: 'SCP 复古突破', 
+                status: 'normal', 
+                iconUrl: 'https://tr.rbxcdn.com/180DAY-651ce328ca91b9aa13c95e2e92913f83/256/256/Image/Webp/noFilter', 
+                coverUrl: 'https://tr.rbxcdn.com/180DAY-9111f09cd16497c8dbba5271ffaa03d4/768/432/Image/Webp/noFilter',
+                robloxUrl: 'https://www.roblox.com/games/113217312262185/'
+            },
+            { 
+                name: 'AnimalAnomaly', 
+                alias: '动物医院', 
+                status: 'normal', 
+                iconUrl: 'https://tr.rbxcdn.com/180DAY-3e496d8fe414b9b4d9fef8a28a42aeb9/256/256/Image/Webp/noFilter', 
+                coverUrl: 'https://tr.rbxcdn.com/180DAY-fa4a2190a41ed86f2649c34306b07710/768/432/Image/Webp/noFilter',
+                robloxUrl: 'https://www.roblox.com/games/78515283254292/Animal-Hospital'
+            },
+            { 
+                name: 'Chain', 
+                alias: '[ 内容已删除 ]', 
+                status: 'open', 
+                iconUrl: 'https://tr.rbxcdn.com/180DAY-bdda9b4f6fc5acb541631860086b0176/256/256/Image/Webp/noFilter', 
+                coverUrl: 'https://tr.rbxcdn.com/180DAY-f470b9750a07760a04a48a4184568adb/768/432/Image/Webp/noFilter',
+                robloxUrl: 'https://www.roblox.com/games/10204250851/'
+            },
+            { 
+                name: 'Undertale:JudgementDay', 
+                alias: '审判日', 
+                status: 'normal', 
+                iconUrl: 'https://tr.rbxcdn.com/180DAY-e07e44051f69804695c113e5200f0c5e/256/256/Image/Webp/noFilter', 
+                coverUrl: 'https://tr.rbxcdn.com/180DAY-ce8e8520a56dce1f45bd668aa1b053cc/768/432/Image/Webp/noFilter',
+                robloxUrl: 'https://www.roblox.com/games/4994661268/'
+            }
+        ];
+
+        // 构建无缝无限循环跑马灯节点（CS开箱渲染层）
+        function createTrackDOM(rowId, shuffleModifier) {
+            const rowContainer = document.getElementById(rowId);
+            const track = document.createElement('div');
+            track.className = 'track-inner';
+            
+            // 为产生交错感，对数组元素次序进行微调
+            let displayList = [...gamesData];
+            if(shuffleModifier === 1) displayList.push(displayList.shift());
+            if(shuffleModifier === 2) displayList.unshift(displayList.pop());
+
+            // 复制两遍以实现完全无缝隙滚动拼接
+            const doubleList = [...displayList, ...displayList, ...displayList];
+
+            doubleList.forEach((game) => {
+                const tagClass = game.status === 'open' ? 'tag-open' : 'tag-normal';
+                const tagText = game.status === 'open' ? '开源' : '正常';
+
+                const card = document.createElement('div');
+                card.className = 'game-mini-card';
+                card.innerHTML = `
+                    <div class="card-cover-thumb">
+                        <img class="card-cover-img" src="${game.coverUrl}" alt="Cover">
+                        <div class="status-tag ${tagClass}">${tagText}</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-icon-box">
+                            <img class="card-icon-img" src="${game.iconUrl}" alt="Icon">
+                        </div>
+                        <div class="card-info">
+                            <div class="card-title">${game.name}</div>
+                            <div class="card-alias">${game.alias}</div>
+                        </div>
+                    </div>
+                `;
+
+                // 核心绑定：点击抽中触发卡片聚焦浮窗
+                card.addEventListener('click', () => openGameModal(game));
+                track.appendChild(card);
+            });
+
+            rowContainer.appendChild(track);
+        }
+
+        // ======================= 🎯 弹窗操控层 =======================
+        const modal = document.getElementById('detailModal');
+        
+        function openGameModal(game) {
+            document.getElementById('modalCover').src = game.coverUrl;
+            document.getElementById('modalIcon').src = game.iconUrl;
+            document.getElementById('modalTitle').innerText = game.name;
+            document.getElementById('modalAlias').innerText = game.alias;
+            
+            const statusDot = document.getElementById('modalStatusDot');
+            const statusTxt = document.getElementById('modalStatusText');
+            
+            if(game.status === 'open') {
+                statusDot.className = 'dot dot-open';
+                statusTxt.innerText = '核心功能：原创开源';
+                statusTxt.style.color = '#60a5fa';
+            } else {
+                statusDot.className = 'dot dot-normal';
+                statusTxt.innerText = '运行状态：正常注入';
+                statusTxt.style.color = '#10b981';
+            }
+
+            // 注入 Roblox 网页跳转地址
+            document.getElementById('robloxLink').href = game.robloxUrl;
+
+            // 让所有传送带定格
+            document.querySelectorAll('.marquee-row').forEach(row => row.style.animationPlayState = 'paused');
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            // 恢复传送带正常滚动速度
+            document.querySelectorAll('.marquee-row').forEach(row => row.style.animationPlayState = 'running');
+        }
+
+        document.getElementById('modalClose').addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            createTrackDOM('row-1', 0);
+            createTrackDOM('row-2', 1);
+            createTrackDOM('row-3', 2);
+        });
+
+        // ======================= 连线粒子画布业务 =======================
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas); resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.4; this.vy = (Math.random() - 0.5) * 0.4;
+                this.radius = Math.random() * 1.2 + 1;
+            }
+            update() {
+                this.x += this.vx; this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx = -this.vx;
+                if (this.y < 0 || this.y > canvas.height) this.vy = -this.vy;
+            }
+            draw() {
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(168, 85, 247, 0.4)'; ctx.fill();
+            }
+        }
+        for (let i = 0; i < 30; i++) particles.push(new Particle());
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 100) {
+                        ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `rgba(99, 102, 241, ${(1 - dist / 100) * 0.12})`; ctx.lineWidth = 0.5; ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
