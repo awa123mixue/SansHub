@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SansHub - 申请</title>
+  
+  <script src="https://cdn.staticfile.net/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.staticfile.net/cropperjs/1.6.2/cropper.min.css">
+  <script src="https://cdn.staticfile.net/cropperjs/1.6.2/cropper.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+        --bg-primary: #000000;
+        --bg-secondary: #07070c;
+        --border-glow: rgba(168, 85, 247, 0.2);
+        --border-glow-hover: rgba(168, 85, 247, 0.65);
+        --text-primary: #e2e8f0;
+        --text-secondary: #8e8ea0;
+        --font-sans: 'Noto Sans SC', -apple-system, sans-serif;
+        --font-display: 'Orbitron', sans-serif;
+        --transition: cubic-bezier(0.25, 1, 0.5, 1) 0.4s;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    /* 🍏 全局平滑流式设计 & 隐藏滚动条 */
+    html, body {
+        width: 100%;
+        min-height: 100vh;
+        background: var(--bg-primary);
+        font-family: var(--font-sans);
+        color: var(--text-primary);
+        overflow-x: hidden;
+        overflow-y: auto;
+        scrollbar-width: none;
+    }
+    ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+
+    #particle-canvas {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;
+    }
+
+    /* ================= 导航顶栏 ================= */
+    .header {
+        position: fixed; top: 0; left: 0; right: 0; z-index: 1000; height: 72px;
+        background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03); display: flex; align-items: center;
+    }
+    .header-inner { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; }
+    .logo {
+        font-family: var(--font-display); font-size: 1.5rem; font-weight: 800;
+        background: linear-gradient(45deg, #a855f7, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        letter-spacing: 1px; text-decoration: none;
+    }
+    .home-back-btn {
+        height: 38px; padding: 0 16px; border-radius: 30px; display: flex; align-items: center; gap: 8px;
+        background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); 
+        color: #fff; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: var(--transition);
+    }
+    .home-back-btn:hover { 
+        background: rgba(168, 85, 247, 0.12); border-color: var(--border-glow-hover);
+        box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+    }
+
+    /* ================= 主体安全布局区域 ================= */
+    .main-container {
+        position: relative; z-index: 2; width: 100%; max-width: 1200px; margin: 0 auto;
+        padding: 110px 24px 60px 24px; display: flex; flex-direction: column; align-items: center;
+    }
+
+    .page-header { text-align: center; margin-bottom: 32px; }
+    .page-header h1 { font-size: 2.2rem; font-weight: 700; letter-spacing: -1px; margin-bottom: 8px; }
+    .page-header h1 span { background: linear-gradient(90deg, #3b82f6, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .page-header p { font-size: 0.95rem; color: var(--text-secondary); }
+
+    /* ================= 🍏 科技 Bento 左右双栏 ================= */
+    .main-wrapper {
+        display: flex; flex-wrap: wrap; gap: 24px; width: 100%; justify-content: center; align-items: flex-start;
+    }
+
+    /* 左侧控制台卡片 */
+    .form-container {
+        flex: 1; min-width: 320px; max-width: 500px;
+        background: var(--bg-secondary); border: 1px solid var(--border-glow);
+        padding: 30px; border-radius: 24px; transition: var(--transition);
+    }
+    .form-container:hover { border-color: rgba(168, 85, 247, 0.4); box-shadow: 0 15px 30px rgba(168, 85, 247, 0.05); }
+
+    .form-group { margin-bottom: 22px; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 10px; color: #fff; font-size: 14px; letter-spacing: 0.5px;}
+
+    /* 统一深色控制台输入框样式 */
+    .form-group input[type="text"], .form-group select, .form-group input[type="date"] {
+        width: 100%; padding: 12px 16px; background-color: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; color: #fff;
+        font-size: 14px; outline: none; transition: var(--transition);
+    }
+    .form-group input[type="text"]:focus, .form-group select:focus, .form-group input[type="date"]:focus {
+        border-color: #a855f7; background-color: rgba(168, 85, 247, 0.05); box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
+    }
+    .form-group select option { background-color: #07070c; color: #fff; }
+
+    /* 伪装上传按钮 */
+    .upload-trigger-btn {
+        display: block; text-align: center; padding: 12px; background: rgba(255,255,255,0.02);
+        border: 1px dashed rgba(168, 85, 247, 0.4); border-radius: 12px; font-size: 13px;
+        color: #c084fc; cursor: pointer; font-weight: 500; transition: var(--transition);
+    }
+    .upload-trigger-btn:hover { background: rgba(168, 85, 247, 0.1); border-color: #a855f7; }
+
+    /* ⚡ 核心胶囊状态联动重置（完美契合暗黑风格） */
+    .custom-box input[type="checkbox"] { position: absolute; opacity: 0; width: 0; height: 0; }
+    .custom-box .capsule-span {
+        display: inline-block; padding: 8px 16px; background-color: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; font-size: 13px;
+        color: var(--text-secondary); transition: all 0.25s ease;
+    }
+    .custom-box input[type="checkbox"]:checked + .capsule-span {
+        background-color: rgba(168, 85, 247, 0.15) !important;
+        color: #e9d5ff !important;
+        border-color: #a855f7 !important;
+        font-weight: 600;
+        box-shadow: 0 0 12px rgba(168, 85, 247, 0.3);
+    }
+
+    /* 高科技编译导出按钮 */
+    .export-action-btn {
+        display: block; width: 100%; padding: 15px;
+        background: linear-gradient(90deg, #3b82f6, #a855f7); color: white;
+        border: none; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer;
+        margin-top: 30px; box-shadow: 0 4px 20px rgba(168, 85, 247, 0.3); transition: var(--transition);
+    }
+    .export-action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(168, 85, 247, 0.5); }
+
+    /* 右侧实时预览中心 */
+    .preview-container {
+        flex: 1; min-width: 320px; max-width: 460px; display: flex; flex-direction: column; align-items: center;
+    }
+    .preview-title-meta { font-size: 0.9rem; font-weight: 700; color: #a855f7; letter-spacing: 1.5px; margin-bottom: 14px; text-transform: uppercase; }
+
+    /* 🛡️ 科技卡片主体样式 */
+    #preview-card {
+        width: 100%; background: #0b0b12; border-radius: 24px; border: 1px solid rgba(168, 85, 247, 0.3);
+        overflow: hidden; box-sizing: border-box; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+    .card-header {
+        background: linear-gradient(135deg, #1e1b4b 0%, #07070c 100%);
+        padding: 26px; text-align: center; border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+    }
+    .card-header h3 { margin: 0; font-size: 18px; font-weight: 700; color: #fff; letter-spacing: 1px; }
+    .card-header p { margin: 6px 0 0 0; font-size: 11px; color: var(--text-secondary); font-family: var(--font-display); }
+
+    .card-body { padding: 26px; }
+    .info-table { width: 100%; border-collapse: collapse; }
+    .info-table tr { border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+    .info-table th { text-align: left; padding: 14px 0; color: var(--text-secondary); font-weight: 400; font-size: 13px; width: 35%; }
+    .info-table td { text-align: right; padding: 14px 0; color: #fff; font-weight: 600; font-size: 14px; }
+
+    /* 状态微标签 */
+    .status-badge { background-color: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+    
+    .proof-box { margin-top: 20px; border-top: 1px dashed rgba(168, 85, 247, 0.2); padding-top: 20px; }
+    .proof-label { font-size: 12px; color: var(--text-secondary); text-align: left; margin-bottom: 10px; font-weight: 500; }
+
+    /* ================= 裁剪弹窗 ================= */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: 9999; justify-content: center; align-items: center; }
+    .modal-content { background: #09090e; border: 1px solid rgba(168, 85, 247, 0.35); padding: 28px; border-radius: 24px; max-width: 480px; width: 90%; box-sizing: border-box; text-align: center; box-shadow: 0 30px 60px rgba(168, 85, 247, 0.2); }
+    .crop-wrapper { max-height: 320px; margin-bottom: 22px; overflow: hidden; background: #000; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+    #image-to-crop { max-width: 100%; display: block; }
+    
+    .modal-btns { display: flex; gap: 12px; justify-content: center; }
+    .btn { padding: 10px 22px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; }
+    .btn-confirm { background: linear-gradient(90deg, #3b82f6, #a855f7); color: #fff; }
+    .btn-confirm:hover { box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); }
+    .btn-cancel { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: #fff; }
+    .btn-cancel:hover { background: rgba(239, 68, 68, 0.15); border-color: #ef4444; color: #ef4444; }
+
+    /* ================= 🚨 微信/QQ 专属全屏拦截拦截器 ================= */
+    .app-browser-shield {
+        display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(4, 4, 8, 0.96); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+        z-index: 100000; flex-direction: column; align-items: center; justify-content: center; padding: 32px; box-sizing: border-box;
+    }
+    .shield-box {
+        max-width: 400px; text-align: center; background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 28px; padding: 40px 24px;
+        box-shadow: 0 20px 50px rgba(168, 85, 247, 0.15); position: relative;
+    }
+    .shield-arrow {
+        position: absolute; top: -10px; right: 24px; font-size: 2rem; color: #a855f7;
+        animation: hintBounce 1.5s infinite ease-in-out;
+    }
+    .shield-icon-group { display: flex; justify-content: center; gap: 20px; margin-bottom: 24px; font-size: 2.8rem; }
+    .shield-title { font-size: 1.4rem; font-weight: 700; color: #fff; margin-bottom: 14px; letter-spacing: -0.5px; }
+    .shield-desc { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 26px; }
+    .shield-action-notice {
+        font-size: 0.85rem; padding: 10px 16px; background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; color: #60a5fa; font-weight: 600;
+    }
+    @keyframes hintBounce {
+        0%, 100% { transform: translateY(0) scale(1); }
+        50% { transform: translateY(-12px) scale(1.1); color: #3b82f6; }
+    }
+
+    @media (max-width: 640px) {
+        .page-header h1 { font-size: 1.6rem; }
+        .main-wrapper { flex-direction: column; align-items: center; }
+        .form-container, .preview-container { max-width: 100%; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="browserShield" class="app-browser-shield">
+      <div class="shield-box">
+          <div class="shield-arrow"><i class="fa-solid fa-arrow-up-long"></i></div>
+          <div class="shield-icon-group">
+              <i class="fa-brands fa-weixin" style="color: #07c160;"></i>
+              <i class="fa-solid fa-ban" style="color: #ef4444; font-size: 1.8rem; margin: 0 -5px; align-self: center;"></i>
+              <i class="fa-brands fa-qq" style="color: #1296db;"></i>
+          </div>
+          <div class="shield-title">不支持在当前应用内运行</div>
+          <div class="shield-desc">
+              为了保障本地画布高精编译、图片文件双重裁剪不被容器拦截或产生缓存丢失，请勿在微信或QQ内置浏览器中操作。
+          </div>
+          <div class="shield-action-notice">
+              <i class="fa-solid fa-compass"></i> 请点击右上角，选择“在浏览器中打开”
+          </div>
+      </div>
+  </div>
+
+  <canvas id="particle-canvas"></canvas>
+
+  <header class="header">
+      <div class="header-inner">
+          <a href="https://awa123mixue.github.io/SansHub/" class="logo">SansHub</a>
+          <button class="home-back-btn" onclick="window.location.href='https://awa123mixue.github.io/SansHub/'">
+              <i class="fa-solid fa-house"></i>
+              <span>主页</span>
+          </button>
+      </div>
+  </header>
+
+  <main class="main-container">
+      <div class="page-header">
+          <h1>申请 <span>录入白名单凭证</span></h1>
+          <p>核实信息、请核实无误点击下方生成Png图片</p>
+      </div>
+
+      <div class="main-wrapper">
+        
+        <div class="form-container">
+          
+          <div class="form-group">
+            <label><i class="fa-solid fa-user" style="color: #3b82f6; margin-right: 6px;"></i> 您的Roblox游戏用户名:</label>
+            <input type="text" id="input-username" value="张三" oninput="updatePreview()">
+          </div>
+
+          <div class="form-group">
+            <label><i class="fa-solid fa-file-invoice" style="color: #a855f7; margin-right: 6px;"></i> 上传你的Roblox账户主页截图 (不知道用户名在填入):</label>
+            <label for="input-avatar-file" class="upload-trigger-btn">
+              <i class="fa-solid fa-cloud-arrow-up"></i> 选择并裁剪附加图片材料
+            </label>
+            <input type="file" id="input-avatar-file" accept="image/*" style="display: none;" onchange="startCrop(this, 'avatar')">
+          </div>
+
+          <div class="form-group">
+            <label><i class="fa-solid fa-headset" style="color: #10b981; margin-right: 6px;"></i> 你购买的客服:</label>
+            <input type="text" id="input-service" value="[ 粉龙 丨 红温狗 丨thrcvb  ]" oninput="updatePreview()">
+          </div>
+
+          <div class="form-group">
+            <label><i class="fa-solid fa-layer-group" style="color: #f59e0b; margin-right: 6px;"></i> 你的支付服务:</label>
+            <select id="select-plan" onchange="updatePreview()">
+              <option value="日卡">日卡</option>
+              <option value="周卡">周卡</option>
+              <option value="月卡" selected>月卡</option>
+              <option value="永久">永久</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label><i class="fa-solid fa-calendar-days" style="color: #ec4899; margin-right: 6px;"></i> 购买时间:</label>
+            <input type="date" id="input-date" onchange="updatePreview()">
+          </div>
+
+          <div class="form-group">
+            <label><i class="fa-solid fa-bars-progress" style="color: #6366f1; margin-right: 6px;"></i> 加入的游戏名单 (可多选):</label>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px;">
+              
+              <label class="custom-box">
+                <input type="checkbox" name="services" value="UmaRacing" onchange="updatePreview()">
+                <span class="capsule-span">UmaRacing</span>
+              </label>
+              
+              <label class="custom-box">
+                <input type="checkbox" name="services" value="灰木生存" onchange="updatePreview()">
+                <span class="capsule-span">灰木生存</span>
+              </label>
+              
+              <label class="custom-box">
+                <input type="checkbox" name="services" value=" 被遗弃" onchange="updatePreview()">
+                <span class="capsule-span"> 被遗弃</span>
+              </label>
+
+              <label class="custom-box">
+                <input type="checkbox" name="services" value=" Dead-Spells死亡法术" onchange="updatePreview()">
+                <span class="capsule-span"> 死亡法术</span>
+              </label>
+
+              <label class="custom-box">
+                <input type="checkbox" name="services" value=" 战争之犬" onchange="updatePreview()">
+                <span class="capsule-span"> 战争之犬 : 第二次世界大战</span>
+              </label>
+
+              <label class="custom-box">
+                <input type="checkbox" name="services" value=" SCP" onchange="updatePreview()">
+                <span class="capsule-span"> SCP复古突破</span>
+              </label>
+
+              <label class="custom-box">
+                <input type="checkbox" name="services" value=" 动物医院" onchange="updatePreview()">
+                <span class="capsule-span"> 动物医院</span>
+              </label>
+
+              <label class="custom-box">
+                <input type="checkbox" name="services" value=" FFA" onchange="updatePreview()">
+                <span class="capsule-span"> 枪地FFA</span>
+              </label>
+
+              <label class="custom-box">
+                <input type
