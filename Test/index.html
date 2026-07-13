@@ -1,582 +1,140 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SansHub - 服务申请生成器 (Cyber Bento Pro)</title>
-  
-  <script>
-    (function detectAndShield() {
-        const ua = navigator.userAgent.toLowerCase();
-        // 极致兼容级 QQ与微信 特征双重审查矩阵
-        const isWeChat = ua.indexOf('micromessenger') !== -1;
-        const isQQ = ua.indexOf('qq/') !== -1 || ua.indexOf('mqqbrowser') !== -1 || (window.MQQbrowser) || ua.indexOf('qqtheme') !== -1;
-        
-        if (isWeChat || isQQ) {
-            // 创建并强行注入全屏阻断样式，防止样式表未加载时白屏或闪烁
-            const style = document.createElement('style');
-            style.innerHTML = `
-                #browserShield { display: flex !important; }
-                body { overflow: hidden !important; height: 100vh !important; }
-                main, header, canvas { display: none !important; }
-            `;
-            document.head.appendChild(style);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - 页面去火星了</title>
+    
+    <link rel="icon" type="image/x-icon" href="https://roblox.com/favicon.ico">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
-    })();
-  </script>
 
-  <script src="https://cdn.staticfile.net/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.staticfile.net/cropperjs/1.6.2/cropper.min.css">
-  <script src="https://cdn.staticfile.net/cropperjs/1.6.2/cropper.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #f8fafc;
+            overflow: hidden;
+            position: relative;
+        }
 
-  <style>
-    :root {
-        --bg-primary: #000000;
-        --bg-secondary: #07070c;
-        --border-glow: rgba(168, 85, 247, 0.2);
-        --border-glow-hover: rgba(168, 85, 247, 0.65);
-        --text-primary: #e2e8f0;
-        --text-secondary: #8e8ea0;
-        --font-sans: 'Noto Sans SC', -apple-system, sans-serif;
-        --font-display: 'Orbitron', sans-serif;
-        --transition: cubic-bezier(0.25, 1, 0.5, 1) 0.4s;
-    }
+        /* 背景装饰粒子效果 */
+        body::before, body::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(99, 102, 241, 0.15);
+            filter: blur(80px);
+            z-index: 0;
+        }
+        body::before { top: 10%; left: 10%; }
+        body::after { bottom: 10%; right: 10%; }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        /* 核心卡片容器 */
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 3.5rem 2rem;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+            z-index: 1;
+            animation: fadeIn 0.8s ease-out;
+        }
 
-    /* 全局平滑流式设计 & 隐藏滚动条 */
-    html, body {
-        width: 100%;
-        min-height: 100vh;
-        background: var(--bg-primary);
-        font-family: var(--font-sans);
-        color: var(--text-primary);
-        overflow-x: hidden;
-        overflow-y: auto;
-        scrollbar-width: none;
-    }
-    ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+        /* 巨大的 404 数字 */
+        .error-code {
+            font-size: 8rem;
+            font-weight: 900;
+            line-height: 1;
+            background: linear-gradient(45deg, #6366f1, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -2px;
+            margin-bottom: 1rem;
+            animation: pulse 3s infinite alternate;
+        }
 
-    #particle-canvas {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;
-    }
+        /* 提示标题 */
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #f1f5f9;
+        }
 
-    /* ================= 导航顶栏 ================= */
-    .header {
-        position: fixed; top: 0; left: 0; right: 0; z-index: 1000; height: 72px;
-        background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.03); display: flex; align-items: center;
-    }
-    .header-inner { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; }
-    .logo {
-        font-family: var(--font-display); font-size: 1.5rem; font-weight: 800;
-        background: linear-gradient(45deg, #a855f7, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        letter-spacing: 1px; text-decoration: none;
-    }
-    .home-back-btn {
-        height: 38px; padding: 0 16px; border-radius: 30px; display: flex; align-items: center; gap: 8px;
-        background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); 
-        color: #fff; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: var(--transition);
-    }
-    .home-back-btn:hover { 
-        background: rgba(168, 85, 247, 0.12); border-color: var(--border-glow-hover);
-        box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
-    }
+        /* 详细描述 */
+        .error-message {
+            font-size: 1rem;
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+        }
 
-    /* ================= 主体排版安全布局区域 ================= */
-    .main-container {
-        position: relative; z-index: 2; width: 100%; max-width: 1200px; margin: 0 auto;
-        padding: 110px 24px 60px 24px; display: flex; flex-direction: column; align-items: center;
-    }
+        /* 单个按钮居中布局 */
+        .btn-group {
+            display: flex;
+            justify-content: center;
+        }
 
-    .page-header { text-align: center; margin-bottom: 32px; }
-    .page-header h1 { font-size: 2.2rem; font-weight: 700; letter-spacing: -1px; margin-bottom: 8px; }
-    .page-header h1 span { background: linear-gradient(90deg, #3b82f6, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .page-header p { font-size: 0.95rem; color: var(--text-secondary); }
+        .btn-primary {
+            display: inline-block;
+            padding: 0.85rem 2.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #ffffff;
+            background: #6366f1;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
 
-    /* ================= 🍏 科技 Bento 响应式自适应布局 ================= */
-    .main-wrapper {
-        display: flex; flex-direction: row; gap: 24px; width: 100%; justify-content: center; align-items: flex-start;
-    }
+        .btn-primary:hover {
+            background: #4f46e5;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+        }
 
-    /* 左侧控制台卡片：防止高度及内部元素被吞，取消固定高度，允许内容自然流式撑开 */
-    .form-container {
-        flex: 1.2; min-width: 320px;
-        background: var(--bg-secondary); border: 1px solid var(--border-glow);
-        padding: 30px; border-radius: 24px; transition: var(--transition);
-        height: auto;
-    }
-    .form-container:hover { border-color: rgba(168, 85, 247, 0.4); box-shadow: 0 15px 30px rgba(168, 85, 247, 0.05); }
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-    .form-group { margin-bottom: 22px; position: relative; width: 100%; }
-    .form-group label { display: block; font-weight: 600; margin-bottom: 10px; color: #fff; font-size: 14px; letter-spacing: 0.5px;}
-
-    /* 统一控制台深色输入框 */
-    .form-group input[type="text"], .form-group select, .form-group input[type="date"] {
-        width: 100%; padding: 12px 16px; background-color: rgba(255,255,255,0.03);
-        border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; color: #fff;
-        font-size: 14px; outline: none; transition: var(--transition);
-    }
-    .form-group input[type="text"]:focus, .form-group select:focus, .form-group input[type="date"]:focus {
-        border-color: #a855f7; background-color: rgba(168, 85, 247, 0.05); box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
-    }
-    .form-group select option { background-color: #07070c; color: #fff; }
-
-    /* 伪装上传按钮 */
-    .upload-trigger-btn {
-        display: block; text-align: center; padding: 12px; background: rgba(255,255,255,0.02);
-        border: 1px dashed rgba(168, 85, 247, 0.4); border-radius: 12px; font-size: 13px;
-        color: #c084fc; cursor: pointer; font-weight: 500; transition: var(--transition);
-    }
-    .upload-trigger-btn:hover { background: rgba(168, 85, 247, 0.1); border-color: #a855f7; }
-
-    /* ⚡ 修复后的多选胶囊区域：允许自适应弹性换行，绝对不会因为溢出而导致UI吞没 */
-    .capsule-group {
-        display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; width: 100%;
-    }
-    .custom-box { display: inline-block; position: relative; cursor: pointer; }
-    .custom-box input[type="checkbox"] { position: absolute; opacity: 0; width: 0; height: 0; }
-    .custom-box .capsule-span {
-        display: inline-block; padding: 8px 14px; background-color: rgba(255,255,255,0.02);
-        border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; font-size: 13px;
-        color: var(--text-secondary); transition: all 0.25s ease; white-space: nowrap;
-    }
-    .custom-box input[type="checkbox"]:checked + .capsule-span {
-        background-color: rgba(168, 85, 247, 0.15) !important;
-        color: #e9d5ff !important;
-        border-color: #a855f7 !important;
-        font-weight: 600;
-        box-shadow: 0 0 12px rgba(168, 85, 247, 0.3);
-    }
-
-    /* 高科技编译导出按钮 */
-    .export-action-btn {
-        display: block; width: 100%; padding: 15px;
-        background: linear-gradient(90deg, #3b82f6, #a855f7); color: white;
-        border: none; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer;
-        margin-top: 15px; box-shadow: 0 4px 20px rgba(168, 85, 247, 0.3); transition: var(--transition);
-    }
-    .export-action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(168, 85, 247, 0.5); }
-
-    /* 右侧实时预览中心 */
-    .preview-container {
-        flex: 1; min-width: 320px; max-width: 460px; display: flex; flex-direction: column; align-items: center;
-    }
-    .preview-title-meta { font-size: 0.9rem; font-weight: 700; color: #a855f7; letter-spacing: 1.5px; margin-bottom: 14px; text-transform: uppercase; }
-
-    /* 🛡️ 科技卡片主体样式 */
-    #preview-card {
-        width: 100%; background: #0b0b12; border-radius: 24px; border: 1px solid rgba(168, 85, 247, 0.3);
-        overflow: hidden; box-sizing: border-box; box-shadow: 0 20px 50px rgba(0,0,0,0.5); height: auto;
-    }
-    .card-header {
-        background: linear-gradient(135deg, #1e1b4b 0%, #07070c 100%);
-        padding: 26px; text-align: center; border-bottom: 1px solid rgba(168, 85, 247, 0.2);
-    }
-    .card-header h3 { margin: 0; font-size: 18px; font-weight: 700; color: #fff; letter-spacing: 1px; }
-    .card-header p { margin: 6px 0 0 0; font-size: 11px; color: var(--text-secondary); font-family: var(--font-display); }
-
-    .card-body { padding: 26px; }
-    .info-table { width: 100%; border-collapse: collapse; }
-    .info-table tr { border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
-    .info-table th { text-align: left; padding: 14px 0; color: var(--text-secondary); font-weight: 400; font-size: 13px; width: 35%; }
-    .info-table td { text-align: right; padding: 14px 0; color: #fff; font-weight: 600; font-size: 14px; word-break: break-all; }
-
-    /* 状态微标签 */
-    .status-badge { background-color: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; }
-    
-    .proof-box { margin-top: 20px; border-top: 1px dashed rgba(168, 85, 247, 0.2); padding-top: 20px; }
-    .proof-label { font-size: 12px; color: var(--text-secondary); text-align: left; margin-bottom: 10px; font-weight: 500; }
-
-    /* ================= 裁剪弹窗 ================= */
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: 9999; justify-content: center; align-items: center; }
-    .modal-content { background: #09090e; border: 1px solid rgba(168, 85, 247, 0.35); padding: 28px; border-radius: 24px; max-width: 480px; width: 90%; box-sizing: border-box; text-align: center; box-shadow: 0 30px 60px rgba(168, 85, 247, 0.2); }
-    .crop-wrapper { max-height: 320px; margin-bottom: 22px; overflow: hidden; background: #000; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
-    #image-to-crop { max-width: 100%; display: block; }
-    
-    .modal-btns { display: flex; gap: 12px; justify-content: center; }
-    .btn { padding: 10px 22px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; }
-    .btn-confirm { background: linear-gradient(90deg, #3b82f6, #a855f7); color: #fff; }
-    .btn-confirm:hover { box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); }
-    .btn-cancel { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: #fff; }
-    .btn-cancel:hover { background: rgba(239, 68, 68, 0.15); border-color: #ef4444; color: #ef4444; }
-
-    /* ================= 🚨 微信/QQ 专属全屏拦截安全舱 ================= */
-    .app-browser-shield {
-        display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(4, 4, 8, 0.98); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-        z-index: 100000; flex-direction: column; align-items: center; justify-content: center; padding: 32px; box-sizing: border-box;
-    }
-    .shield-box {
-        max-width: 400px; width: 100%; text-align: center; background: rgba(255, 255, 255, 0.02);
-        border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 28px; padding: 40px 24px;
-        box-shadow: 0 20px 50px rgba(168, 85, 247, 0.15); position: relative;
-    }
-    .shield-arrow {
-        position: absolute; top: -10px; right: 24px; font-size: 2rem; color: #a855f7;
-        animation: hintBounce 1.5s infinite ease-in-out;
-    }
-    .shield-icon-group { display: flex; justify-content: center; gap: 20px; margin-bottom: 24px; font-size: 2.8rem; }
-    .shield-title { font-size: 1.4rem; font-weight: 700; color: #fff; margin-bottom: 14px; letter-spacing: -0.5px; }
-    .shield-desc { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 26px; }
-    .shield-action-notice {
-        font-size: 0.85rem; padding: 10px 16px; background: rgba(59, 130, 246, 0.1);
-        border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; color: #60a5fa; font-weight: 600;
-    }
-    @keyframes hintBounce {
-        0%, 100% { transform: translateY(0) scale(1); }
-        50% { transform: translateY(-12px) scale(1.1); color: #3b82f6; }
-    }
-
-    /* 移动端无缝自适应重排（防止页面UI被吞的关键） */
-    @media (max-width: 820px) {
-        .main-wrapper { flex-direction: column; align-items: center; }
-        .form-container, .preview-container { max-width: 100%; width: 100%; }
-        .preview-container { order: -1; margin-bottom: 10px; } /* 手机上预览卡片先排在上方 */
-    }
-    @media (max-width: 640px) {
-        .page-header h1 { font-size: 1.6rem; }
-        .main-container { padding: 95px 16px 40px 16px; }
-        .form-container { padding: 20px; }
-    }
-  </style>
+        @keyframes pulse {
+            0% { filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.2)); }
+            100% { filter: drop-shadow(0 0 30px rgba(236, 72, 153, 0.4)); }
+        }
+    </style>
 </head>
 <body>
 
-  <div id="browserShield" class="app-browser-shield">
-      <div class="shield-box">
-          <div class="shield-arrow"><i class="fa-solid fa-arrow-up-long"></i></div>
-          <div class="shield-icon-group">
-              <i class="fa-brands fa-weixin" style="color: #07c160;"></i>
-              <i class="fa-solid fa-ban" style="color: #ef4444; font-size: 1.8rem; margin: 0 -5px; align-self: center;"></i>
-              <i class="fa-brands fa-qq" style="color: #1296db;"></i>
-          </div>
-          <div class="shield-title">不支持在当前应用内运行</div>
-          <div class="shield-desc">
-              为了保障本地外置画布高精编译、双重截图无损裁剪不被内部容器拦截报错，请勿在微信或QQ内置浏览器中操作。
-          </div>
-          <div class="shield-action-notice">
-              <i class="fa-solid fa-compass"></i> 请点击右上角，选择“在浏览器中打开”
-          </div>
-      </div>
-  </div>
-
-  <canvas id="particle-canvas"></canvas>
-
-  <header class="header">
-      <div class="header-inner">
-          <a href="https://awa123mixue.github.io/SansHub/" class="logo">SansHub</a>
-          <button class="home-back-btn" onclick="window.location.href='https://awa123mixue.github.io/SansHub/'">
-              <i class="fa-solid fa-house"></i>
-              <span>主页</span>
-          </button>
-      </div>
-  </header>
-
-  <main class="main-container">
-      <div class="page-header">
-          <h1>申请 <span>录入白名单凭证</span></h1>
-          <p>请核实表单信息无误后，点击下方按钮编译导出大图</p>
-      </div>
-
-      <div class="main-wrapper">
+    <div class="container">
+        <div class="error-code">404</div>
         
-        <div class="form-container">
-          
-          <div class="form-group">
-            <label><i class="fa-solid fa-user" style="color: #3b82f6; margin-right: 6px;"></i> 您的Roblox游戏用户名:</label>
-            <input type="text" id="input-username" value="张三" oninput="updatePreview()">
-          </div>
-
-          <div class="form-group">
-            <label><i class="fa-solid fa-file-invoice" style="color: #a855f7; margin-right: 6px;"></i> 上传你的Roblox账户主页截图:</label>
-            <label for="input-avatar-file" class="upload-trigger-btn">
-              <i class="fa-solid fa-cloud-arrow-up"></i> 选择并裁剪附加图片材料
-            </label>
-            <input type="file" id="input-avatar-file" accept="image/*" style="display: none;" onchange="startCrop(this, 'avatar')">
-          </div>
-
-          <div class="form-group">
-            <label><i class="fa-solid fa-headset" style="color: #10b981; margin-right: 6px;"></i> 你购买的客服:</label>
-            <input type="text" id="input-service" value="[ 粉龙 丨 红温狗 丨thrcvb ]" oninput="updatePreview()">
-          </div>
-
-          <div class="form-group">
-            <label><i class="fa-solid fa-layer-group" style="color: #f59e0b; margin-right: 6px;"></i> 你的支付服务:</label>
-            <select id="select-plan" onchange="updatePreview()">
-              <option value="日卡">日卡</option>
-              <option value="周卡">周卡</option>
-              <option value="月卡" selected>月卡</option>
-              <option value="永久">永久</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label><i class="fa-solid fa-calendar-days" style="color: #ec4899; margin-right: 6px;"></i> 购买时间:</label>
-            <input type="date" id="input-date" onchange="updatePreview()">
-          </div>
-
-          <div class="form-group">
-            <label><i class="fa-solid fa-bars-progress" style="color: #6366f1; margin-right: 6px;"></i> 加入的游戏名单 (可多选):</label>
-            <div class="capsule-group">
-              <label class="custom-box">
-                <input type="checkbox" name="services" value="UmaRacing" onchange="updatePreview()">
-                <span class="capsule-span">UmaRacing</span>
-              </label>
-              <label class="custom-box">
-                <input type="checkbox" name="services" value="灰木生存" onchange="updatePreview()">
-                <span class="capsule-span">灰木生存</span>
-              </label>
-              <label class="custom-box">
-                <input type="checkbox" name="services" value="被遗弃" onchange="updatePreview()">
-                <span class="capsule-span">被遗弃</span>
-              </label>
-              <label class="custom-box">
-                <input type="checkbox" name="services" value="Dead-Spells死亡法术" onchange="updatePreview()">
-                <span class="capsule-span">死亡法术</span>
-              </label>
-              <label class="custom-box">
-                <input type="checkbox" name="services" value="战争之犬" onchange="updatePreview()">
-                <span class="capsule-span">战争之犬</span>
-              </label>
-              <label class="custom-box">
-                <input type="checkbox" name="services" value="SCP复古突破" onchange="updatePreview()">
-                <span class="capsule-span">SCP复古突破</span>
-              </label>
-              <label class="custom-box">
-                <input type="checkbox" name="services" value="动物医院" onchange="updatePreview()">
-                <span class="capsule-span">动物医院</span>
-              </label>
-              <label class="custom-box">
-                <input type="checkbox" name="services" value="枪地FFA" onchange="updatePreview()">
-                <span class="capsule-span">枪地FFA</span>
-              </label>
-              <label class="custom-box">
-                <input type="checkbox" name="services" value="Undertale : TimelineReset" onchange="updatePreview()">
-                <span class="capsule-span">UTR</span>
-              </label>
-              <label class="custom-box">
-                <input type="checkbox" name="services" value="审判日丨UJD" onchange="updatePreview()" checked>
-                <span class="capsule-span">审判日丨UJD</span>
-              </label>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label><i class="fa-solid fa-credit-card" style="color: #14b8a6; margin-right: 6px;"></i> 上传并裁剪支付证明:</label>
-            <label for="input-pay-file" class="upload-trigger-btn" style="border-color: rgba(20, 184, 166, 0.4); color: #2dd4bf;">
-              <i class="fa-solid fa-receipt"></i> 选择并裁剪支付凭证图片
-            </label>
-            <input type="file" id="input-pay-file" accept="image/*" style="display: none;" onchange="startCrop(this, 'pay')">
-          </div>
-
-          <button class="export-action-btn" onclick="exportPreviewToImage()">
-            <i class="fa-solid fa-wand-magic-sparkles"></i> 生成并下载凭证大图
-          </button>
+        <h1 class="error-title">抱歉，页面不见了</h1>
+        <p class="error-message">您访问的链接可能已经失效、被删除，或者由于输入错误导致无法访问。不如先返回首页看看吧？</p>
+        
+        <div class="btn-group">
+            <a href="https://awa123mixue.github.io/SansHub" class="btn-primary">返回首页</a>
         </div>
-
-        <div class="preview-container">
-          <div class="preview-title-meta">Real-time Preview</div>
-          
-          <div id="preview-card">
-            <div class="card-header">
-              <h3>服务申请与支付确认单</h3>
-              <p>GENERATED: <span id="preview-date-now"></span></p>
-            </div>
-            
-            <div class="card-body">
-              <table class="info-table">
-                <tr><th>用户名</th><td id="preview-username" style="color: #fff;">张三</td></tr>
-                
-                <tr id="preview-avatar-row" style="display: none;">
-                  <th style="vertical-align: middle;">附加证明</th>
-                  <td><img id="preview-avatar-img" src="" style="max-height: 85px; max-width: 150px; border-radius: 8px; border: 1px solid rgba(168,85,247,0.2); object-fit: contain; margin: 4px 0;"></td>
-                </tr>
-
-                <tr><th>对接客服</th><td id="preview-service" style="color: #a855f7;">小美</td></tr>
-                <tr><th>订阅套餐</th><td><span class="status-badge" id="preview-plan">月卡</span></td></tr>
-                <tr><th>购买时间</th><td id="preview-date" style="font-family: var(--font-display); font-size: 13px; color: #cbd5e1;"></td></tr>
-                <tr style="border-bottom: none;">
-                    <th style="vertical-align: top;">名单服务</th>
-                    <td id="preview-services" style="color: #e2e8f0; font-size: 13px; line-height: 1.6; font-weight: 500;">VIP专属交流群</td>
-                </tr>
-              </table>
-
-              <div class="proof-box">
-                <div class="proof-label">支付凭证附件：</div>
-                <div style="text-align: center;">
-                    <img id="preview-pay-img" src="" style="max-width: 100%; max-height: 200px; border-radius: 10px; border: 1px solid rgba(168,85,247,0.2); display: none; object-fit: contain;" alt="支付凭证">
-                </div>
-              </div>
-            </div>
-
-            <div style="text-align: center; padding: 14px; background-color: rgba(255,255,255,0.01); color: var(--text-secondary); font-size: 11px; border-top: 1px solid rgba(255,255,255,0.03);">本凭证由控制台基于本地实时附件动态编译生成。</div>
-          </div>
-        </div>
-
-      </div>
-  </main>
-
-  <div id="cropModal" class="modal">
-    <div class="modal-content">
-      <h3 style="color:#fff; font-size: 1.15rem; margin-bottom: 4px;">临时裁剪中心</h3>
-      <p style="font-size:12px; color: var(--text-secondary); margin-bottom: 20px;">请调整网格切除多余空白边缘</p>
-      <div class="crop-wrapper">
-        <img id="image-to-crop" src="">
-      </div>
-      <div class="modal-btns">
-        <button class="btn btn-confirm" onclick="confirmCrop()">确认裁剪</button>
-        <button class="btn btn-cancel" onclick="closeCropModal()">取消</button>
-      </div>
     </div>
-  </div>
 
-  <script>
-    let cropper = null;
-    let currentTargetType = ''; 
-
-    // 初始化时注入初始默认时间并启动更新
-    document.addEventListener('DOMContentLoaded', function() {
-      // 检查是否已被拦截，被拦截则不初始化后续组件
-      if(document.getElementById('browserShield').style.display === 'flex') return;
-
-      document.getElementById('input-date').valueAsDate = new Date();
-      document.getElementById('preview-date-now').innerText = new Date().toLocaleString();
-      updatePreview();
-    });
-
-    function updatePreview() {
-      const username = document.getElementById('input-username').value.trim() || '(未填写)';
-      const serviceName = document.getElementById('input-service').value.trim() || '(未指派)';
-      const plan = document.getElementById('select-plan').value;
-      const date = document.getElementById('input-date').value || '(未选择)';
-      
-      const checkedBoxes = document.querySelectorAll('input[name="services"]:checked');
-      let servicesArray = [];
-      checkedBoxes.forEach(box => servicesArray.push(box.value));
-      const servicesText = servicesArray.length > 0 ? servicesArray.join('<br>') : '未选择任何服务';
-
-      document.getElementById('preview-username').innerText = username;
-      document.getElementById('preview-service').innerText = serviceName;
-      document.getElementById('preview-plan').innerText = plan;
-      document.getElementById('preview-date').innerText = date;
-      document.getElementById('preview-services').innerHTML = servicesText;
-    }
-
-    function startCrop(input, type) {
-      const file = input.files[0];
-      if (!file) return;
-      currentTargetType = type;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const imageToCrop = document.getElementById('image-to-crop');
-        imageToCrop.src = e.target.result;
-        document.getElementById('cropModal').style.display = 'flex';
-
-        if (cropper) { cropper.destroy(); }
-        cropper = new Cropper(imageToCrop, {
-          viewMode: 1,
-          autoCropArea: 0.9, 
-          movable: true,
-          zoomable: true,
-          scalable: false,
-          rotatable: false
-        });
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function confirmCrop() {
-      if (!cropper) return;
-      const canvas = cropper.getCroppedCanvas({ maxWidth: 800, maxHeight: 800 });
-      const croppedImgUrl = canvas.toDataURL('image/jpeg');
-
-      if (currentTargetType === 'avatar') {
-        const avatarImg = document.getElementById('preview-avatar-img');
-        avatarImg.src = croppedImgUrl;
-        document.getElementById('preview-avatar-row').style.display = 'table-row';
-      } else if (currentTargetType === 'pay') {
-        const payImg = document.getElementById('preview-pay-img');
-        payImg.src = croppedImgUrl;
-        payImg.style.display = 'inline-block';
-      }
-      closeCropModal();
-      setTimeout(updatePreview, 100);
-    }
-
-    function closeCropModal() {
-      document.getElementById('cropModal').style.display = 'none';
-      if (cropper) { cropper.destroy(); cropper = null; }
-      document.getElementById('input-avatar-file').value = '';
-      document.getElementById('input-pay-file').value = '';
-    }
-
-    function exportPreviewToImage() {
-      const username = document.getElementById('input-username').value.trim() || '用户';
-      const target = document.getElementById('preview-card');
-      document.getElementById('preview-date-now').innerText = new Date().toLocaleString();
-
-      html2canvas(target, {
-        scale: 2.5, 
-        useCORS: true,
-        backgroundColor: '#0b0b12'
-      }).then(canvas => {
-        const imgUrl = canvas.toDataURL('image/png');
-        const downloadLink = document.createElement('a');
-        downloadLink.href = imgUrl;
-        downloadLink.download = username + '_高精服务核验单.png';
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-      }).catch(error => {
-        alert('生成大图失败。');
-        console.error(error);
-      });
-    }
-
-    // 🌌 星空网络连线粒子动效
-    const canvas = document.getElementById('particle-canvas');
-    const ctx = canvas.getContext('2d');
-    let particles = [];
-    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    window.addEventListener('resize', resizeCanvas); resizeCanvas();
-
-    class Particle {
-        constructor() {
-            this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
-            this.vx = (Math.random() - 0.5) * 0.4; this.vy = (Math.random() - 0.5) * 0.4;
-            this.radius = Math.random() * 1.2 + 1;
-        }
-        update() {
-            this.x += this.vx; this.y += this.vy;
-            if (this.x < 0 || this.x > canvas.width) this.vx = -this.vx;
-            if (this.y < 0 || this.y > canvas.height) this.vy = -this.vy;
-        }
-        draw() {
-            ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(168, 85, 247, 0.3)'; ctx.fill();
-        }
-    }
-    for (let i = 0; i < 20; i++) particles.push(new Particle());
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach(p => { p.update(); p.draw(); });
-        for (let i = 0; i < particles.length; i++) {
-            for (let j = i + 1; j < particles.length; j++) {
-                const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 110) {
-                    ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y);
-                    ctx.strokeStyle = `rgba(99, 102, 241, ${(1 - dist / 110) * 0.06})`; ctx.lineWidth = 0.5; ctx.stroke();
-                }
-            }
-        }
-        requestAnimationFrame(animate);
-    }
-    animate();
-  </script>
 </body>
 </html>
